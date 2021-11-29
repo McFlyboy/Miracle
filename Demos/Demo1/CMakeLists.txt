@@ -7,6 +7,4 @@ set_target_properties(
 	CXX_STANDARD_REQUIRED ON
 )
 
-target_link_libraries(Demo1 Miracle)
-
-install(TARGETS Demo1)
+target_link_libraries(Demo1 PRIVATE Miracle)

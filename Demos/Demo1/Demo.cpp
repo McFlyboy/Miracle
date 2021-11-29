@@ -1,3 +1,9 @@
+#include <Miracle/Miracle.hpp>
+
+using namespace Miracle;
+
 int main() {
-	return 0;
+	int successCode = MiracleApp().run();
+
+	return successCode;
 }
