@@ -9,20 +9,19 @@
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
-      "ctestCommandArgs": ""
-    },
-    {
-      "name": "WSL-x64-Debug",
-      "generator": "Ninja",
-      "configurationType": "Debug",
-      "buildRoot": "${projectDir}\\out\\build\\${name}",
-      "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeExecutable": "cmake",
-      "cmakeCommandArgs": "",
-      "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "linux_x64" ],
-      "wslPath": "${defaultWSLPath}"
+      "variables": [
+        {
+          "name": "MIRACLE_BUILD_DEMO_PROJECTS",
+          "value": "False",
+          "type": "BOOL"
+        },
+        {
+          "name": "MIRACLE_BUILD_SHARED",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ]
     }
   ]
 }

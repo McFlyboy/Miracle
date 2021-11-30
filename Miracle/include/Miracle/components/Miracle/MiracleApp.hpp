@@ -1,7 +1,7 @@
 #pragma once
 
 namespace Miracle {
-	class MiracleApp {
+	class MIRACLE_API MiracleApp {
 	public:
 		int run();
 	};

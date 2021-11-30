@@ -3,7 +3,7 @@
 using namespace Miracle;
 
 int main() {
-	int successCode = MiracleApp().run();
+	int exitCode = MiracleApp().run();
 
-	return successCode;
+	return exitCode;
 }

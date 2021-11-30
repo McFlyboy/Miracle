@@ -1,4 +1,4 @@
-﻿#include <MiracleApp.hpp>
+﻿#include <Miracle/MiracleApp.hpp>
 
 #include <iostream>
 

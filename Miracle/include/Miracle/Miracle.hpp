@@ -1,3 +1,6 @@
 #pragma once
 
-#include "components/MiracleApp.hpp"
+#include "components/PlatformDefinition.hpp"
+#include "components/ApiDefinition.hpp"
+
+#include "components/Miracle/MiracleApp.hpp"
