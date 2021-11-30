@@ -1,5 +1,7 @@
+# Project definition
 add_executable(Demo1 "Demo.cpp")
 
+# Project properties
 set_target_properties(
 	Demo1
 	PROPERTIES
@@ -7,8 +9,10 @@ set_target_properties(
 	CXX_STANDARD_REQUIRED ON
 )
 
+# Linking
 target_link_libraries(Demo1 PRIVATE Miracle)
 
+# Post-build step: Copy consumable shared library
 if(MIRACLE_BUILD_SHARED)
 	add_custom_command(
 		TARGET Demo1
@@ -16,4 +20,5 @@ if(MIRACLE_BUILD_SHARED)
 	)
 endif()
 
+# Install rules
 install(TARGETS Demo1)
