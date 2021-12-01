@@ -1,12 +1,12 @@
 ﻿# Linkage definition
 if(MIRACLE_BUILD_SHARED)
-	set(LIBRARY_LINKAGE SHARED)
+	set(LIBRARY_TYPE SHARED)
 else()
-	set(LIBRARY_LINKAGE STATIC)
+	set(LIBRARY_TYPE STATIC)
 endif()
 
 # Project definition
-add_library(Miracle ${LIBRARY_LINKAGE} "src/Miracle/MiracleApp.cpp" "include/Miracle/Miracle.hpp" "include/Miracle/components/Miracle/MiracleApp.hpp" "include/Miracle/components/PlatformDefinition.hpp" "include/Miracle/components/ApiDefinition.hpp" )
+add_library(Miracle ${LIBRARY_TYPE} "src/Miracle/MiracleApp.cpp" "include/Miracle/Miracle.hpp" "include/Miracle/components/Miracle/MiracleApp.hpp" "include/Miracle/components/PlatformDefinition.hpp" "include/Miracle/components/ApiDefinition.hpp")
 
 # Project properties
 set_target_properties(
@@ -30,7 +30,7 @@ target_compile_definitions(Miracle INTERFACE "MIRACLE_USAGE_CONSUME")
 
 # Linkage macro
 if(MIRACLE_BUILD_SHARED)
-	target_compile_definitions(Miracle PUBLIC "MIRACLE_LINKAGE_SHARED")
+	target_compile_definitions(Miracle PUBLIC "MIRACLE_LINKAGE_DYNAMIC")
 endif()
 
 # Pre-compiled headers
