@@ -2,9 +2,11 @@
 
 #include <iostream>
 
+#include <GLFW/glfw3.h>
+
 namespace Miracle {
 	int MiracleApp::run() {
-		std::cout << "Hello Miracle!" << std::endl;
+		std::cout << glfwGetVersionString() << std::endl;
 
 		return 0;
 	}
