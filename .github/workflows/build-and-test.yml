@@ -73,7 +73,7 @@ jobs:
       run: ctest -C ${{env.BUILD_TYPE}}
 
     - name: Print results
-      run: ls ${{github.workspace}}/build
+      run: ls ${{github.workspace}}/build/vcpkg_installed/x64-osx/lib
       
   ubuntu-build-and-test:
     # The CMake configure and build commands are platform agnostic and should work equally
@@ -91,7 +91,9 @@ jobs:
       run: git clone https://github.com/microsoft/vcpkg.git
 
     - name: Install required dependencies for GLFW
-      run: sudo apt install xinerama xcursor xorg libglu1-mesa
+      run: |
+        sudo apt-get update
+        sudo apt-get install xinerama xcursor xorg libglu1-mesa
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -109,4 +111,4 @@ jobs:
       run: ctest -C ${{env.BUILD_TYPE}}
       
     - name: Print results
-      run: ls ${{github.workspace}}/build
+      run: ls ${{github.workspace}}/build/vcpkg_installed/x64-linux/lib
