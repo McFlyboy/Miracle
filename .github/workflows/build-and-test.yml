@@ -93,7 +93,7 @@ jobs:
     - name: Install required dependencies for GLFW
       run: |
         sudo apt-get update
-        sudo apt-get install xinerama xcursor xorg libglu1-mesa
+        sudo apt-get install libxinerama libxcursor1 xorg libglu1-mesa
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
