@@ -1,10 +1,10 @@
 ﻿#include <Miracle/MiracleApp.hpp>
 
-#include <iostream>
+#include <spdlog/spdlog.h>
 
 namespace Miracle {
 	int MiracleApp::run() {
-		std::cout << "Hello Miracle!" << std::endl;
+		spdlog::info("Hello Miracle!");
 
 		return 0;
 	}
