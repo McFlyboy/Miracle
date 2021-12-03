@@ -29,7 +29,7 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMIRACLE_BUILD_DEMO_PROJECTS=ON -DMIRACLE_BUILD_SHARED=ON -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMIRACLE_BUILD_DEMO_PROJECTS=ON -DMIRACLE_BUILD_SHARED=ON -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static
 
     - name: Build
       # Build your program with the given configuration
@@ -60,7 +60,7 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMIRACLE_BUILD_DEMO_PROJECTS=ON -DMIRACLE_BUILD_SHARED=ON -DVCPKG_TARGET_TRIPLET=x64-osx -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMIRACLE_BUILD_DEMO_PROJECTS=ON -DMIRACLE_BUILD_SHARED=ON -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-osx
 
     - name: Build
       # Build your program with the given configuration
@@ -71,9 +71,6 @@ jobs:
       # Execute tests defined by the CMake configuration.  
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -C ${{env.BUILD_TYPE}}
-
-    - name: Print results
-      run: ls ${{github.workspace}}/build/vcpkg_installed/x64-osx/lib
       
   ubuntu-build-and-test:
     # The CMake configure and build commands are platform agnostic and should work equally
@@ -90,15 +87,10 @@ jobs:
     - name: Download vcpkg
       run: git clone https://github.com/microsoft/vcpkg.git
 
-    - name: Install required dependencies for GLFW
-      run: |
-        sudo apt-get update
-        sudo apt-get install libxinerama-dev libxcursor1 xorg libglu1-mesa
-
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMIRACLE_BUILD_DEMO_PROJECTS=ON -DMIRACLE_BUILD_SHARED=ON -DVCPKG_TARGET_TRIPLET=x64-linux -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMIRACLE_BUILD_DEMO_PROJECTS=ON -DMIRACLE_BUILD_SHARED=ON -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-linux
 
     - name: Build
       # Build your program with the given configuration
@@ -109,6 +101,3 @@ jobs:
       # Execute tests defined by the CMake configuration.  
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -C ${{env.BUILD_TYPE}}
-      
-    - name: Print results
-      run: ls ${{github.workspace}}/build/vcpkg_installed/x64-linux/lib
