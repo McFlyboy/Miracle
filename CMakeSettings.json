@@ -18,7 +18,7 @@
         },
         {
           "name": "MIRACLE_BUILD_SHARED",
-          "value": "True",
+          "value": "False",
           "type": "BOOL"
         },
         {

@@ -4,3 +4,4 @@
 #include "components/ApiDefinition.hpp"
 
 #include "components/Miracle/MiracleApp.hpp"
+#include "components/Miracle/Diagnostics/Logger.hpp"
