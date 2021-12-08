@@ -1,4 +1,4 @@
-#include <Miracle/Diagnostics/Logger.hpp>
+#include <Miracle/components/Miracle/Diagnostics/Logger.hpp>
 
 #include <spdlog/spdlog.h>
 

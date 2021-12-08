@@ -6,7 +6,7 @@ else()
 endif()
 
 # Project definition
-add_library(Miracle ${LIBRARY_TYPE} "src/Miracle/MiracleApp.cpp" "include/Miracle/Miracle.hpp" "include/Miracle/components/Miracle/MiracleApp.hpp" "include/Miracle/components/PlatformDefinition.hpp" "include/Miracle/components/ApiDefinition.hpp" "include/Miracle/components/Miracle/Diagnostics/Logger.hpp" "src/Miracle/Diagnostics/Logger.cpp" "include/Miracle/components/Miracle/Window/IWindow.hpp" "include/Miracle/components/Miracle/Window/Implementations/Window.hpp" "src/Miracle/Window/Implementations/Window.cpp")
+add_library(Miracle ${LIBRARY_TYPE} "src/Miracle/MiracleApp.cpp" "include/Miracle/Miracle.hpp" "include/Miracle/components/Miracle/MiracleApp.hpp" "include/Miracle/components/PlatformDefinition.hpp" "include/Miracle/components/ApiDefinition.hpp" "include/Miracle/components/Miracle/Diagnostics/Logger.hpp" "src/Miracle/Diagnostics/Logger.cpp" "include/Miracle/components/Miracle/Window/IWindow.hpp" "src/Miracle/Window/Implementations/Window.hpp" "src/Miracle/Window/Implementations/Window.cpp")
 
 # Project properties
 set_target_properties(
@@ -29,7 +29,7 @@ target_link_libraries(
 )
 
 # Include directories
-target_include_directories(Miracle PRIVATE "include/Miracle/components")
+target_include_directories(Miracle PRIVATE "src")
 target_include_directories(
 	Miracle
 	PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
