@@ -18,9 +18,7 @@ namespace Miracle::Window::Implementations {
 	}
 
 	bool Window::initializeGlfw() const {
-		Logger::info(
-			std::string("Initializing GLFW version: ") + glfwGetVersionString()
-		);
+		Logger::info(std::string("Initializing GLFW version: ") + glfwGetVersionString());
 
 		int initResult = glfwInit();
 
