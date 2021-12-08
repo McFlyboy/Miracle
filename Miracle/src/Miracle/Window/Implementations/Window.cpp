@@ -13,8 +13,6 @@ namespace Miracle::Window::Implementations {
 		bool initialized = initializeGlfw();
 
 		if (initialized == false) {
-			Logger::error("Failed to initialize GLFW!");
-
 			return;
 		}
 	}
@@ -26,7 +24,7 @@ namespace Miracle::Window::Implementations {
 
 		int initResult = glfwInit();
 
-		if (initResult != GLFW_TRUE) {
+		if (initResult == GLFW_TRUE) {
 			Logger::error("Failed to initialize GLFW!");
 
 			return false;
