@@ -5,7 +5,7 @@
 namespace Miracle::Diagnostics {
 	class MIRACLE_API Logger {
 	public:
-		static void initPattern();
+		static void initialize();
 
 		static void info(const char* const message);
 

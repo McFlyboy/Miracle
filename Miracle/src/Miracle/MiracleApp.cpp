@@ -2,12 +2,17 @@
 
 #include <Miracle/Diagnostics/Logger.hpp>
 
+#include <Miracle/Window/Implementations/Window.hpp>
+
 using namespace Miracle::Diagnostics;
+using namespace Miracle::Window;
 
 namespace Miracle {
-	int MiracleApp::run() {
-		Logger::initPattern();
-		Logger::info("Miracle started");
+	int MiracleApp::run() const {
+		Logger::initialize();
+		Logger::info("Starting Miracle");
+
+		IWindow window = Implementations::Window();
 
 		Logger::info("Shutting down...");
 

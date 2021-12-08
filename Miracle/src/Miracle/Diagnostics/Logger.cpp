@@ -3,7 +3,7 @@
 #include <spdlog/spdlog.h>
 
 namespace Miracle::Diagnostics {
-	void Logger::initPattern() {
+	void Logger::initialize() {
 		// Pattern documentation:
 		// https://github.com/gabime/spdlog/wiki/3.-Custom-formatting#pattern-flags
 		spdlog::set_pattern("%^[%H:%M:%S] [%l] %v%$");

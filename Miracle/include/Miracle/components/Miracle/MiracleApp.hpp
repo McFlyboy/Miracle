@@ -3,6 +3,6 @@
 namespace Miracle {
 	class MIRACLE_API MiracleApp {
 	public:
-		int run();
+		int run() const;
 	};
 }
