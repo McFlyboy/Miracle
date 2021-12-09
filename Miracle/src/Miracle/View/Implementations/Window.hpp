@@ -2,15 +2,15 @@
 
 #include <GLFW/glfw3.h>
 
-#include <Miracle/components/Miracle/Window/IWindow.hpp>
+#include <Miracle/components/Miracle/View/IWindow.hpp>
 
-namespace Miracle::Window::Implementations {
-	class Window : public Miracle::Window::IWindow {
+namespace Miracle::View::Implementations {
+	class Window : public IWindow {
 	private:
 		GLFWwindow* m_window;
 
 	public:
-		Window();
+		Window(const WindowProps& props);
 		~Window();
 
 		virtual void update() const override;

@@ -6,7 +6,7 @@ else()
 endif()
 
 # Project definition
-add_library(Miracle ${LIBRARY_TYPE} "src/Miracle/MiracleApp.cpp" "include/Miracle/Miracle.hpp" "include/Miracle/components/Miracle/MiracleApp.hpp" "include/Miracle/components/PlatformDefinition.hpp" "include/Miracle/components/ApiDefinition.hpp" "include/Miracle/components/Miracle/Diagnostics/Logger.hpp" "src/Miracle/Diagnostics/Logger.cpp" "include/Miracle/components/Miracle/Window/IWindow.hpp" "src/Miracle/Window/Implementations/Window.hpp" "src/Miracle/Window/Implementations/Window.cpp")
+add_library(Miracle ${LIBRARY_TYPE} "src/Miracle/MiracleApp.cpp" "include/Miracle/Miracle.hpp" "include/Miracle/components/Miracle/MiracleApp.hpp" "include/Miracle/components/PlatformDefinition.hpp" "include/Miracle/components/ApiDefinition.hpp" "include/Miracle/components/Miracle/Diagnostics/Logger.hpp" "src/Miracle/Diagnostics/Logger.cpp" "include/Miracle/components/Miracle/View/IWindow.hpp" "src/Miracle/View/Implementations/Window.hpp" "src/Miracle/View/Implementations/Window.cpp")
 
 # Project properties
 set_target_properties(

@@ -6,15 +6,15 @@
 
 using namespace Miracle::Diagnostics;
 
-namespace Miracle::Window::Implementations {
-	Window::Window() {
+namespace Miracle::View::Implementations {
+	Window::Window(const WindowProps& props) {
 		bool initialized = initializeGlfw();
 
 		if (initialized == false) {
 			return;
 		}
 
-		m_window = glfwCreateWindow(640, 480, "Miracle Application", nullptr, nullptr);
+		m_window = glfwCreateWindow(props.width, props.height, props.title, nullptr, nullptr);
 
 		if (m_window == nullptr) {
 			Logger::error("Failed to create application window!");
