@@ -5,8 +5,8 @@ using namespace Miracle;
 int main() {
 	auto app = MiracleAppBuilder()
 		.configureWindow(
-			[] (View::WindowProps& props) {
-				props.title = "Demo 1";
+			[](View::WindowProps& props) {
+				props.title = u8"Demo 1";
 				props.width = 1366;
 				props.height = 768;
 			}

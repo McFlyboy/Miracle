@@ -8,21 +8,47 @@ using namespace Miracle::Diagnostics;
 
 namespace Miracle::View::Implementations {
 	Window::Window(const WindowProps& props) {
-		bool initialized = initializeGlfw();
+		auto error = initializeGlfw();
 
-		if (initialized == false) {
-			throw -1;
+		if (error.has_value()) {
+			throw error.value();
 		}
 
-		m_window = glfwCreateWindow(props.width, props.height, props.title.c_str(), nullptr, nullptr);
+		glfwSetErrorCallback(
+			[](int errorCode, const char* description) {
+				Logger::error(std::string(description));
+			}
+		);
+
+		glfwWindowHint(GLFW_RESIZABLE, props.resizable);
+		glfwWindowHint(GLFW_VISIBLE, false);
+
+		m_window = glfwCreateWindow(
+			props.width,
+			props.height,
+			reinterpret_cast<const char*>(props.title.c_str()),
+			nullptr,
+			nullptr
+		);
 
 		if (m_window == nullptr) {
 			Logger::error("Failed to create application window!");
 
-			throw -1;
+			throw WindowError::windowCreationError;
 		}
 
 		Logger::info("Application window created");
+
+		glfwSetWindowRefreshCallback(
+			m_window,
+			[](GLFWwindow* window) {
+				glfwSwapBuffers(window);
+			}
+		);
+
+		glfwShowWindow(m_window);
+
+		Logger::info("Showing application window");
 	}
 
 	Window::~Window() {
@@ -41,19 +67,19 @@ namespace Miracle::View::Implementations {
 		return glfwWindowShouldClose(m_window) == GLFW_TRUE;
 	}
 
-	bool Window::initializeGlfw() const {
+	std::optional<WindowError> Window::initializeGlfw() const {
 		Logger::info(std::string("Initializing GLFW version: ") + glfwGetVersionString());
 
-		int initResult = glfwInit();
+		bool initialized = glfwInit();
 
-		if (initResult != GLFW_TRUE) {
+		if (!initialized) {
 			Logger::error("Failed to initialize GLFW!");
 
-			return false;
+			return WindowError::initializationError;
 		}
 
 		Logger::info("GLFW initialized");
 
-		return true;
+		return std::nullopt;
 	}
 }

@@ -18,7 +18,7 @@ namespace Miracle {
 		int exitCode = 0;
 
 		try {
-			const IWindow& window = Window(m_windowProps);
+			Window window = Window(m_windowProps);
 
 			while (!window.shouldClose()) {
 				window.update();
@@ -26,8 +26,18 @@ namespace Miracle {
 
 			Logger::info("Closing Miracle");
 		}
-		catch (int& errorCode) {
-			exitCode = errorCode;
+		catch (const WindowError& error) {
+			switch (error) {
+			case WindowError::initializationError:
+				exitCode = 1;
+				break;
+
+			case WindowError::windowCreationError:
+				exitCode = 2;
+				break;
+			default:
+				exitCode = -1;
+			}
 		}
 
 		Logger::info("Shutting down...");

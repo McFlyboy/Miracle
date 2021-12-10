@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include <GLFW/glfw3.h>
 
 #include <Miracle/components/Miracle/View/IWindow.hpp>
@@ -17,6 +19,6 @@ namespace Miracle::View::Implementations {
 		virtual bool shouldClose() const override;
 
 	private:
-		bool initializeGlfw() const;
+		std::optional<WindowError> initializeGlfw() const;
 	};
 }
