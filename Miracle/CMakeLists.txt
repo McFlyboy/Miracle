@@ -6,7 +6,7 @@ else()
 endif()
 
 # Project definition
-add_library(Miracle ${LIBRARY_TYPE} "src/Miracle/MiracleApp.cpp" "include/Miracle/Miracle.hpp" "include/Miracle/components/Miracle/MiracleApp.hpp" "include/Miracle/components/PlatformDefinition.hpp" "include/Miracle/components/ApiDefinition.hpp" "include/Miracle/components/Miracle/Diagnostics/Logger.hpp" "src/Miracle/Diagnostics/Logger.cpp")
+add_library(Miracle ${LIBRARY_TYPE} "src/Miracle/MiracleApp.cpp" "include/Miracle/Miracle.hpp" "include/Miracle/components/Miracle/MiracleApp.hpp" "include/Miracle/components/PlatformDefinition.hpp" "include/Miracle/components/ApiDefinition.hpp" "include/Miracle/components/Miracle/Diagnostics/Logger.hpp" "src/Miracle/Diagnostics/Logger.cpp" "include/Miracle/components/Miracle/View/IWindow.hpp" "src/Miracle/View/Implementations/Window.hpp" "src/Miracle/View/Implementations/Window.cpp" "include/Miracle/components/Miracle/MiracleAppBuilder.hpp" "src/Miracle/MiracleAppBuilder.cpp")
 
 # Project properties
 set_target_properties(
@@ -19,18 +19,20 @@ set_target_properties(
 
 # Find 3rd-party packages
 find_package(spdlog CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
 
 # Link 3rd-party libraries
 target_link_libraries(
 	Miracle
 	PRIVATE spdlog::spdlog
+	PRIVATE glfw
 )
 
 # Include directories
-target_include_directories(Miracle PRIVATE "include/Miracle/components")
+target_include_directories(Miracle PRIVATE "src")
 target_include_directories(
 	Miracle
-	INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+	PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
 	INTERFACE "$<INSTALL_INTERFACE:include>"
 )
 
