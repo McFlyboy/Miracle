@@ -8,12 +8,17 @@ using namespace Miracle::View;
 using namespace Miracle::View::Implementations;
 
 namespace Miracle {
-	int MiracleApp::run() const {
+	MiracleApp::MiracleApp(const WindowProps& windowProps) : m_windowProps(windowProps) {
 		Logger::initialize();
+	}
+
+	int MiracleApp::run() const {
 		Logger::info("Starting Miracle");
 
-		{
-			const IWindow& window = Window(WindowProps());
+		int exitCode = 0;
+
+		try {
+			const IWindow& window = Window(m_windowProps);
 
 			while (!window.shouldClose()) {
 				window.update();
@@ -21,9 +26,12 @@ namespace Miracle {
 
 			Logger::info("Closing Miracle");
 		}
+		catch (int& errorCode) {
+			exitCode = errorCode;
+		}
 
 		Logger::info("Shutting down...");
 
-		return 0;
+		return exitCode;
 	}
 }

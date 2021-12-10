@@ -1,10 +1,12 @@
 #pragma once
 
+#include <string>
+
 namespace Miracle::View {
 	struct MIRACLE_API WindowProps {
-		const int width = 640;
-		const int height = 480;
-		const char* title = "Miracle Application";
+		std::string title = "Miracle Application";
+		int width = 640;
+		int height = 480;
 	};
 
 	class MIRACLE_API IWindow {

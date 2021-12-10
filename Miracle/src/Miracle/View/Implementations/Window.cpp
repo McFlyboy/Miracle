@@ -11,15 +11,15 @@ namespace Miracle::View::Implementations {
 		bool initialized = initializeGlfw();
 
 		if (initialized == false) {
-			return;
+			throw -1;
 		}
 
-		m_window = glfwCreateWindow(props.width, props.height, props.title, nullptr, nullptr);
+		m_window = glfwCreateWindow(props.width, props.height, props.title.c_str(), nullptr, nullptr);
 
 		if (m_window == nullptr) {
 			Logger::error("Failed to create application window!");
 
-			return;
+			throw -1;
 		}
 
 		Logger::info("Application window created");
