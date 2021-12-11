@@ -7,8 +7,6 @@ int main() {
 		.configureWindow(
 			[](View::WindowProps& props) {
 				props.title = u8"Demo 1";
-				props.width = 1366;
-				props.height = 768;
 			}
 		).build();
 

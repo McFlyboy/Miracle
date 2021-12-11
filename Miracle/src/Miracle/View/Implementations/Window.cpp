@@ -20,14 +20,20 @@ namespace Miracle::View::Implementations {
 			}
 		);
 
-		glfwWindowHint(GLFW_RESIZABLE, props.resizable);
+		auto primaryMonitor = glfwGetPrimaryMonitor();
+		auto monitorVideoMode = glfwGetVideoMode(primaryMonitor);
+
+		glfwWindowHint(GLFW_RESIZABLE, !props.fullscreen && props.resizable);
 		glfwWindowHint(GLFW_VISIBLE, false);
 
+		int windowWidth = !props.fullscreen ? props.width : monitorVideoMode->width;
+		int windowHeight = !props.fullscreen ? props.height : monitorVideoMode->height;
+
 		m_window = glfwCreateWindow(
-			props.width,
-			props.height,
+			windowWidth,
+			windowHeight,
 			reinterpret_cast<const char*>(props.title.c_str()),
-			nullptr,
+			props.fullscreen ? primaryMonitor : nullptr,
 			nullptr
 		);
 
@@ -44,6 +50,12 @@ namespace Miracle::View::Implementations {
 			[](GLFWwindow* window) {
 				glfwSwapBuffers(window);
 			}
+		);
+
+		glfwSetWindowPos(
+			m_window,
+			(monitorVideoMode->width - windowWidth) / 2,
+			(monitorVideoMode->height - windowHeight) / 2
 		);
 
 		glfwShowWindow(m_window);

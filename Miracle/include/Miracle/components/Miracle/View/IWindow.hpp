@@ -8,6 +8,7 @@ namespace Miracle::View {
 		int width = 640;
 		int height = 480;
 		bool resizable = false;
+		bool fullscreen = false;
 	};
 
 	enum class MIRACLE_API WindowError {
