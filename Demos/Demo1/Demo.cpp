@@ -8,6 +8,14 @@ int main() {
 			[](View::WindowProps& props) {
 				props.title = u8"Demo 1";
 			}
+		).setStartScript(
+			[]() {
+				
+			}
+		).setUpdateScript(
+			[]() {
+				
+			}
 		).build();
 
 	int exitCode = app.run();

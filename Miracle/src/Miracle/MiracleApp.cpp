@@ -8,7 +8,15 @@ using namespace Miracle::View;
 using namespace Miracle::View::Implementations;
 
 namespace Miracle {
-	MiracleApp::MiracleApp(const WindowProps& windowProps) : m_windowProps(windowProps) {
+	MiracleApp::MiracleApp(
+		const WindowProps& windowProps,
+		const std::function<void()>& startScript,
+		const std::function<void()>& updateScript
+	) :
+		m_windowProps(windowProps),
+		m_startScript(startScript),
+		m_updateScript(updateScript)
+	{
 		Logger::initialize();
 	}
 
@@ -20,7 +28,11 @@ namespace Miracle {
 		try {
 			Window window = Window(m_windowProps);
 
+			m_startScript();
+
 			while (!window.shouldClose()) {
+				m_updateScript();
+
 				window.update();
 			}
 
