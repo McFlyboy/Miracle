@@ -2,10 +2,12 @@
 
 #include <Miracle/components/Miracle/Diagnostics/Logger.hpp>
 #include <Miracle/View/Implementations/Window.hpp>
+#include <Miracle/Input/Devices/Implementations/Keyboard.hpp>
 
 using namespace Miracle::Diagnostics;
 using namespace Miracle::View;
 using namespace Miracle::View::Implementations;
+using namespace Miracle::Input::Devices::Implementations;
 
 namespace Miracle {
 	MiracleApp::MiracleApp(
@@ -27,6 +29,7 @@ namespace Miracle {
 
 		try {
 			Window window = Window(m_windowProps);
+			Keyboard keyboard = Keyboard(window);
 
 			m_startScript();
 

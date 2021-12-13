@@ -71,8 +71,8 @@ namespace Miracle::View::Implementations {
 	}
 
 	void Window::update() const {
-		glfwPollEvents();
 		glfwSwapBuffers(m_window);
+		glfwPollEvents();
 	}
 
 	bool Window::shouldClose() const {
