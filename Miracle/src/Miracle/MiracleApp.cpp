@@ -10,6 +10,8 @@ using namespace Miracle::View::Implementations;
 using namespace Miracle::Input::Devices::Implementations;
 
 namespace Miracle {
+	MiracleApp* MiracleApp::s_currentApp = nullptr;
+
 	MiracleApp::MiracleApp(
 		const WindowProps& windowProps,
 		const std::function<void()>& startScript,
@@ -22,14 +24,18 @@ namespace Miracle {
 		Logger::initialize();
 	}
 
-	int MiracleApp::run() const {
+	int MiracleApp::run() {
 		Logger::info("Starting Miracle");
 
+		s_currentApp = this;
 		int exitCode = 0;
 
 		try {
-			Window window = Window(m_windowProps);
-			Keyboard keyboard = Keyboard(window);
+			auto window = Window(m_windowProps);
+			auto keyboard = Keyboard(window);
+
+			m_window = &window;
+			m_keyboard = &keyboard;
 
 			m_startScript();
 
@@ -55,7 +61,12 @@ namespace Miracle {
 			}
 		}
 
+		m_window = nullptr;
+		m_keyboard = nullptr;
+
 		Logger::info("Shutting down...");
+
+		s_currentApp = nullptr;
 
 		return exitCode;
 	}

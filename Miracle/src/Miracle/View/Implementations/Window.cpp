@@ -1,7 +1,5 @@
 #include "Window.hpp"
 
-#include <string>
-
 #include <fmt/format.h>
 
 #include <Miracle/components/Miracle/Diagnostics/Logger.hpp>
@@ -18,7 +16,7 @@ namespace Miracle::View::Implementations {
 
 		glfwSetErrorCallback(
 			[](int errorCode, const char* description) {
-				Logger::error(std::string(description));
+				Logger::error(description);
 			}
 		);
 
@@ -73,7 +71,6 @@ namespace Miracle::View::Implementations {
 	}
 
 	void Window::update() const {
-		glfwSwapBuffers(m_window);
 		glfwPollEvents();
 	}
 
