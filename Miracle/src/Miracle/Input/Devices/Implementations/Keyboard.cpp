@@ -46,19 +46,19 @@ namespace Miracle::Input::Devices::Implementations {
 		return isPressed;
 	}
 
-	bool Keyboard::keyPressedOrRepeated(const Key& key) {
+	bool Keyboard::keyPressedContinuously(const Key& key) {
 		bool isRepeated = keyStates[static_cast<int>(key)] == Keyboard::KeyStates::RepeatedUnchecked;
 
 		if (isRepeated) {
 			keyStates[static_cast<int>(key)] = Keyboard::KeyStates::RepeatedChecked;
-			return isRepeated;
+			return true;
 		}
 
 		bool isPressed = keyStates[static_cast<int>(key)] == Keyboard::KeyStates::PressedUnchecked;
 
 		if (isPressed) {
 			keyStates[static_cast<int>(key)] = Keyboard::KeyStates::PressedChecked;
-			return isPressed;
+			return true;
 		}
 
 		return false;

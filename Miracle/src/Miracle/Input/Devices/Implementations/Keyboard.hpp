@@ -15,7 +15,7 @@ namespace Miracle::Input::Devices::Implementations {
 		Keyboard(const Window& window);
 
 		virtual bool keyPressed(const Key& key) override;
-		virtual bool keyPressedOrRepeated(const Key& key) override;
+		virtual bool keyPressedContinuously(const Key& key) override;
 		virtual bool keyIsDown(const Key& key) override;
 
 		enum class KeyStates : int8_t {

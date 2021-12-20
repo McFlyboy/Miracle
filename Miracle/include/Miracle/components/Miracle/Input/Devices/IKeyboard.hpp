@@ -14,7 +14,7 @@ namespace Miracle::Input::Devices {
 		virtual ~IKeyboard() = default;
 
 		virtual bool keyPressed(const Key& key) = 0;
-		virtual bool keyPressedOrRepeated(const Key& key) = 0;
+		virtual bool keyPressedContinuously(const Key& key) = 0;
 		virtual bool keyIsDown(const Key& key) = 0;
 
 		enum class MIRACLE_API Key : int16_t {
