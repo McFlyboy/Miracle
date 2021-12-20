@@ -13,10 +13,12 @@ namespace Miracle::View::Implementations {
 
 	public:
 		Window(const WindowProps& props);
-		~Window();
+		~Window() override;
 
 		virtual void update() const override;
 		virtual bool shouldClose() const override;
+
+		inline GLFWwindow* getGlfwWindow() const { return m_window; }
 
 	private:
 		std::optional<WindowError> initializeGlfw() const;

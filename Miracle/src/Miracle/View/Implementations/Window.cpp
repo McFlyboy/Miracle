@@ -1,6 +1,6 @@
 #include "Window.hpp"
 
-#include <string>
+#include <fmt/format.h>
 
 #include <Miracle/components/Miracle/Diagnostics/Logger.hpp>
 
@@ -16,7 +16,7 @@ namespace Miracle::View::Implementations {
 
 		glfwSetErrorCallback(
 			[](int errorCode, const char* description) {
-				Logger::error(std::string(description));
+				Logger::error(description);
 			}
 		);
 
@@ -40,7 +40,7 @@ namespace Miracle::View::Implementations {
 		if (m_window == nullptr) {
 			Logger::error("Failed to create application window!");
 
-			throw WindowError::windowCreationError;
+			throw WindowError::WindowCreationError;
 		}
 
 		Logger::info("Application window created");
@@ -72,7 +72,6 @@ namespace Miracle::View::Implementations {
 
 	void Window::update() const {
 		glfwPollEvents();
-		glfwSwapBuffers(m_window);
 	}
 
 	bool Window::shouldClose() const {
@@ -80,14 +79,14 @@ namespace Miracle::View::Implementations {
 	}
 
 	std::optional<WindowError> Window::initializeGlfw() const {
-		Logger::info(std::string("Initializing GLFW version: ") + glfwGetVersionString());
+		Logger::info(fmt::format("Initializing GLFW version: {}", glfwGetVersionString()));
 
 		bool initialized = glfwInit();
 
 		if (!initialized) {
 			Logger::error("Failed to initialize GLFW!");
 
-			return WindowError::initializationError;
+			return WindowError::InitializationError;
 		}
 
 		Logger::info("GLFW initialized");
