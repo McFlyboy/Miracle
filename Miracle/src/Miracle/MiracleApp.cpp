@@ -43,11 +43,11 @@ namespace Miracle {
 		}
 		catch (const WindowError& error) {
 			switch (error) {
-			case WindowError::initializationError:
+			case WindowError::InitializationError:
 				exitCode = 1;
 				break;
 
-			case WindowError::windowCreationError:
+			case WindowError::WindowCreationError:
 				exitCode = 2;
 				break;
 			default:

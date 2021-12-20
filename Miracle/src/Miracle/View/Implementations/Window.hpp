@@ -18,7 +18,7 @@ namespace Miracle::View::Implementations {
 		virtual void update() const override;
 		virtual bool shouldClose() const override;
 
-		GLFWwindow* getGlfwWindow() const { return m_window; }
+		inline GLFWwindow* getGlfwWindow() const { return m_window; }
 
 	private:
 		std::optional<WindowError> initializeGlfw() const;

@@ -12,8 +12,8 @@ namespace Miracle::View {
 	};
 
 	enum class MIRACLE_API WindowError {
-		initializationError,
-		windowCreationError 
+		InitializationError,
+		WindowCreationError 
 	};
 
 	class MIRACLE_API IWindow {

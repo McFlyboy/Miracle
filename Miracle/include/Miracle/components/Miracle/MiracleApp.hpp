@@ -8,8 +8,8 @@ namespace Miracle {
 	class MIRACLE_API MiracleApp {
 	private:
 		const View::WindowProps m_windowProps;
-		std::function<void()> m_startScript;
-		std::function<void()> m_updateScript;
+		const std::function<void()> m_startScript;
+		const std::function<void()> m_updateScript;
 
 	public:
 		MiracleApp(
