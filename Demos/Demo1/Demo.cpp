@@ -16,6 +16,10 @@ int main() {
 			}
 		).setUpdateScript(
 			[&keyboard]() {
+				if (keyboard->keyPressed(Input::Devices::IKeyboard::Key::Escape)) {
+					MiracleApp::getCurrentApp()->close();
+				}
+
 				if (keyboard->keyIsDown(Input::Devices::IKeyboard::Key::Space)) {
 					Diagnostics::Logger::info("Holding space");
 				}

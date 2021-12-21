@@ -28,7 +28,7 @@ namespace Miracle {
 		Logger::info("Starting Miracle");
 
 		s_currentApp = this;
-		int exitCode = 0;
+		m_exitCode = 0;
 
 		try {
 			auto window = Window(m_windowProps);
@@ -50,14 +50,14 @@ namespace Miracle {
 		catch (const WindowError& error) {
 			switch (error) {
 			case WindowError::InitializationError:
-				exitCode = 1;
+				m_exitCode = 1;
 				break;
 
 			case WindowError::WindowCreationError:
-				exitCode = 2;
+				m_exitCode = 2;
 				break;
 			default:
-				exitCode = -1;
+				m_exitCode = -1;
 			}
 		}
 
@@ -68,6 +68,11 @@ namespace Miracle {
 
 		s_currentApp = nullptr;
 
-		return exitCode;
+		return m_exitCode;
+	}
+
+	void MiracleApp::close(int exitCode) {
+		m_exitCode = exitCode;
+		m_window->close();
 	}
 }

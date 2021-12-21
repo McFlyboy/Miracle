@@ -75,7 +75,11 @@ namespace Miracle::View::Implementations {
 	}
 
 	bool Window::shouldClose() const {
-		return glfwWindowShouldClose(m_window) == GLFW_TRUE;
+		return glfwWindowShouldClose(m_window);
+	}
+
+	void Window::close() const {
+		glfwSetWindowShouldClose(m_window, true);
 	}
 
 	std::optional<WindowError> Window::initializeGlfw() const {

@@ -26,5 +26,6 @@ namespace Miracle::View {
 
 		virtual void update() const = 0;
 		virtual bool shouldClose() const = 0;
+		virtual void close() const = 0;
 	};
 }

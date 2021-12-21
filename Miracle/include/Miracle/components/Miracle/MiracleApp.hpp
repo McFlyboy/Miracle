@@ -15,6 +15,7 @@ namespace Miracle {
 		const std::function<void()> m_updateScript;
 		View::IWindow* m_window = nullptr;
 		Input::Devices::IKeyboard* m_keyboard = nullptr;
+		int m_exitCode = 0;
 
 	public:
 		MiracleApp(
@@ -27,6 +28,7 @@ namespace Miracle {
 		inline Input::Devices::IKeyboard* getKeyboard() { return m_keyboard; }
 
 		int run();
+		void close(int exitCode = 0);
 
 		static MiracleApp* getCurrentApp() { return s_currentApp; }
 	};
