@@ -13,6 +13,7 @@ namespace Miracle {
 		const View::WindowProps m_windowProps;
 		const std::function<void()> m_startScript;
 		const std::function<void()> m_updateScript;
+
 		View::IWindow* m_window = nullptr;
 		Input::Devices::IKeyboard* m_keyboard = nullptr;
 		int m_exitCode = 0;
@@ -30,6 +31,6 @@ namespace Miracle {
 		int run();
 		void close(int exitCode = 0);
 
-		static MiracleApp* getCurrentApp() { return s_currentApp; }
+		static inline MiracleApp* getCurrentApp() { return s_currentApp; }
 	};
 }

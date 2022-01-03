@@ -14,11 +14,8 @@ namespace Miracle {
 
 	public:
 		MiracleAppBuilder& configureWindow(std::function<void(View::WindowProps&)> configurer);
-
 		MiracleAppBuilder& setStartScript(std::function<void()> startScript);
-
 		MiracleAppBuilder& setUpdateScript(std::function<void()> updateScript);
-
 		MiracleApp build() const;
 	};
 }

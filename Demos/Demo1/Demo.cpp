@@ -2,22 +2,26 @@
 
 using namespace Miracle;
 
-int main() {
-	Input::Devices::IKeyboard* keyboard = nullptr;
+MiracleApp* currentApp = nullptr;
+View::IWindow* window = nullptr;
+Input::Devices::IKeyboard* keyboard = nullptr;
 
+int main() {
 	auto app = MiracleAppBuilder()
 		.configureWindow(
 			[](View::WindowProps& props) {
 				props.title = u8"Demo 1";
 			}
 		).setStartScript(
-			[&keyboard]() {
-				keyboard = MiracleApp::getCurrentApp()->getKeyboard();
+			[]() {
+				currentApp = MiracleApp::getCurrentApp();
+				window = currentApp->getWindow();
+				keyboard = currentApp->getKeyboard();
 			}
 		).setUpdateScript(
-			[&keyboard]() {
+			[]() {
 				if (keyboard->keyPressed(Input::Devices::IKeyboard::Key::Escape)) {
-					MiracleApp::getCurrentApp()->close();
+					currentApp->close();
 				}
 
 				if (keyboard->keyIsDown(Input::Devices::IKeyboard::Key::Space)) {

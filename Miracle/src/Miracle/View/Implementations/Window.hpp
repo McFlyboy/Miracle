@@ -15,9 +15,9 @@ namespace Miracle::View::Implementations {
 		Window(const WindowProps& props);
 		~Window() override;
 
-		virtual void update() const override;
+		virtual void update() override;
 		virtual bool shouldClose() const override;
-		virtual void close() const override;
+		virtual void close() override;
 
 		inline GLFWwindow* getGlfwWindow() const { return m_window; }
 

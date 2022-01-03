@@ -20,20 +20,17 @@ namespace Miracle::View::Implementations {
 			}
 		);
 
-		auto primaryMonitor = glfwGetPrimaryMonitor();
-		auto monitorVideoMode = glfwGetVideoMode(primaryMonitor);
+		auto monitorVideoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
-		glfwWindowHint(GLFW_RESIZABLE, !props.fullscreen && props.resizable);
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		glfwWindowHint(GLFW_RESIZABLE, false);
 		glfwWindowHint(GLFW_VISIBLE, false);
 
-		int windowWidth = !props.fullscreen ? props.width : monitorVideoMode->width;
-		int windowHeight = !props.fullscreen ? props.height : monitorVideoMode->height;
-
 		m_window = glfwCreateWindow(
-			windowWidth,
-			windowHeight,
+			props.width,
+			props.height,
 			reinterpret_cast<const char*>(props.title.c_str()),
-			props.fullscreen ? primaryMonitor : nullptr,
+			nullptr,
 			nullptr
 		);
 
@@ -45,17 +42,10 @@ namespace Miracle::View::Implementations {
 
 		Logger::info("Application window created");
 
-		glfwSetWindowRefreshCallback(
-			m_window,
-			[](GLFWwindow* window) {
-				glfwSwapBuffers(window);
-			}
-		);
-
 		glfwSetWindowPos(
 			m_window,
-			(monitorVideoMode->width - windowWidth) / 2,
-			(monitorVideoMode->height - windowHeight) / 2
+			(monitorVideoMode->width - props.width) / 2,
+			(monitorVideoMode->height - props.height) / 2
 		);
 
 		glfwShowWindow(m_window);
@@ -70,7 +60,7 @@ namespace Miracle::View::Implementations {
 		Logger::info("Terminated GLFW");
 	}
 
-	void Window::update() const {
+	void Window::update() {
 		glfwPollEvents();
 	}
 
@@ -78,7 +68,7 @@ namespace Miracle::View::Implementations {
 		return glfwWindowShouldClose(m_window);
 	}
 
-	void Window::close() const {
+	void Window::close() {
 		glfwSetWindowShouldClose(m_window, true);
 	}
 
