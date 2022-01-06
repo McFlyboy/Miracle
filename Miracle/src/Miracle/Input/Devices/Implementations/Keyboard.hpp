@@ -11,8 +11,12 @@ using namespace Miracle::View::Implementations;
 
 namespace Miracle::Input::Devices::Implementations {
 	class Keyboard : public IKeyboard {
+	private:
+		const Window& m_window;
+
 	public:
 		Keyboard(const Window& window);
+		~Keyboard() override;
 
 		virtual bool keyPressed(const Key& key) override;
 		virtual bool keyPressedContinuously(const Key& key) override;

@@ -23,9 +23,9 @@ namespace Miracle::Input::Devices::Implementations {
 		);
 	}
 
-	Keyboard::Keyboard(const Window& window) {
+	Keyboard::Keyboard(const Window& window) : m_window(window) {
 		glfwSetKeyCallback(
-			window.getGlfwWindow(),
+			m_window.getGlfwWindow(),
 			[](GLFWwindow* window, int key, int scancode, int action, int mods) {
 				if (key == GLFW_KEY_UNKNOWN) {
 					return;
@@ -34,6 +34,10 @@ namespace Miracle::Input::Devices::Implementations {
 				keyStates[key] = static_cast<Keyboard::KeyStates>(action) | Keyboard::KeyStates::Unchecked;
 			}
 		);
+	}
+
+	Keyboard::~Keyboard() {
+		glfwSetKeyCallback(m_window.getGlfwWindow(), nullptr);
 	}
 
 	bool Keyboard::keyPressed(const Key& key) {
