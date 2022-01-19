@@ -3,6 +3,7 @@
   "version-string": "0.0.0-unofficial",
   "dependencies": [
     "spdlog",
-    "glfw3"
+    "glfw3",
+    "vulkan"
   ]
 }

@@ -20,12 +20,14 @@ set_target_properties(
 # Find 3rd-party packages
 find_package(spdlog CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
+find_package(Vulkan REQUIRED)
 
 # Link 3rd-party libraries
 target_link_libraries(
 	Miracle
 	PRIVATE spdlog::spdlog
 	PRIVATE glfw
+	PRIVATE Vulkan::Vulkan
 )
 
 # Include directories
