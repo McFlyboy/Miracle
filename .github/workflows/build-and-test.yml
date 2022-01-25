@@ -33,8 +33,9 @@ jobs:
         Write-Output "Installing Vulkan SDK"
         .\vulkan_sdk.exe --accept-licenses --default-answer --confirm-command install
         Write-Output "Refreshing VULKAN_SDK environment variable"
-        Write-Output([System.Environment]::GetEnvironmentVariable("VULKAN_SDK", "Machine"))
         $env:VULKAN_SDK = [System.Environment]::GetEnvironmentVariable("VULKAN_SDK", "Machine")
+        Write-Output($env:VULKAN_SDK)
+        dir $env:VULKAN_SDK\Bin
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
