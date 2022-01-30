@@ -28,9 +28,9 @@ jobs:
 
     - name: Download and install Vulkan SDK
       run: |
-        echo "Downloading Vulkan SDK"
-        curl -Uri https://sdk.lunarg.com/sdk/download/latest/windows/vulkan_sdk.exe -OutFile vulkan_sdk.exe
-        echo "Installing Vulkan SDK"
+        Write-Output "Downloading Vulkan SDK"
+        Invoke-WebRequest -Uri https://sdk.lunarg.com/sdk/download/latest/windows/vulkan_sdk.exe -OutFile vulkan_sdk.exe
+        Write-Output "Installing Vulkan SDK"
         .\vulkan_sdk.exe --accept-licenses --default-answer --confirm-command install
         Write-Output "Refreshing VULKAN_SDK system environment variable"
         $env:VULKAN_SDK = [System.Environment]::GetEnvironmentVariable("VULKAN_SDK", "Machine")
