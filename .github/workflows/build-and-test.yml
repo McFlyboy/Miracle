@@ -37,15 +37,14 @@ jobs:
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
-        Write-Output "Refreshing VULKAN_SDK system environment variable"
         $env:VULKAN_SDK = [System.Environment]::GetEnvironmentVariable("VULKAN_SDK", "Machine")
-        Write-Output "Vulkan installed at $env:VULKAN_SDK"
-        cmake -E environment
         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMIRACLE_BUILD_DEMO_PROJECTS=ON -DMIRACLE_BUILD_SHARED=ON -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: |
+        Write-Output "Vulkan installed at $env:VULKAN_SDK"
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
     - name: Test
       working-directory: ${{github.workspace}}/build
