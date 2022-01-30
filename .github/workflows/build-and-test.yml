@@ -28,29 +28,27 @@ jobs:
 
     - name: Download and install Vulkan SDK
       run: |
-        Write-Output "Downloading Vulkan SDK"
-        Invoke-WebRequest -Uri https://sdk.lunarg.com/sdk/download/latest/windows/vulkan_sdk.exe -OutFile vulkan_sdk.exe
-        Write-Output "Installing Vulkan SDK"
+        echo Downloading Vulkan SDK
+        curl -Uri https://sdk.lunarg.com/sdk/download/latest/windows/vulkan_sdk.exe -OutFile vulkan_sdk.exe
+        echo Installing Vulkan SDK
         .\vulkan_sdk.exe --accept-licenses --default-answer --confirm-command install
-        Write-Output "Refreshing VULKAN_SDK environment variable"
+        Write-Output "Refreshing VULKAN_SDK system environment variable"
         $env:VULKAN_SDK = [System.Environment]::GetEnvironmentVariable("VULKAN_SDK", "Machine")
-        Write-Output($env:VULKAN_SDK)
-        dir $env:VULKAN_SDK\Bin
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMIRACLE_BUILD_DEMO_PROJECTS=ON -DMIRACLE_BUILD_SHARED=ON -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static
+      run: cmake -E env VULKAN_SDK=$env:VULKAN_SDK cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMIRACLE_BUILD_DEMO_PROJECTS=ON -DMIRACLE_BUILD_SHARED=ON -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake -E env VULKAN_SDK=$env:VULKAN_SDK cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
     - name: Test
       working-directory: ${{github.workspace}}/build
       # Execute tests defined by the CMake configuration.  
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest -C ${{env.BUILD_TYPE}}
+      run: cmake -E env VULKAN_SDK=$env:VULKAN_SDK ctest -C ${{env.BUILD_TYPE}}
       
 
   macos-build-and-test:
