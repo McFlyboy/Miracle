@@ -107,6 +107,7 @@ jobs:
         sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-focal.list http://packages.lunarg.com/vulkan/lunarg-vulkan-focal.list
         sudo apt update
         sudo apt install vulkan-sdk
+        source ~/.bashrc
         echo Vulkan SDK location at $VULKAN_SDK
         cmake -E environment
 
