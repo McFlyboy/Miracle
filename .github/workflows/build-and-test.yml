@@ -104,21 +104,22 @@ jobs:
     - name: Download and install Vulkan SDK
       run: |
         echo Downloading Vulkan SDK
-        SDK_VERSION=`curl https://vulkan.lunarg.com/sdk/latest/linux.txt`
+        curl -o vulkan_sdk_version.txt https://vulkan.lunarg.com/sdk/latest/linux.txt
+        SDK_VERSION=`cat vulkan_sdk_version.txt`
         curl -O https://sdk.lunarg.com/sdk/download/${SDK_VERSION}/linux/vulkan_sdk.tar.gz
         echo Installing Vulkan SDK
         mkdir VulkanSDK
         cd VulkanSDK
         tar xf ../vulkan_sdk.tar.gz
         cd ..
-        source VulkanSDK/${SDK_VERSION}/setup-env.sh
-        echo "Vulkan SDK installed at $VULKAN_SDK"
-        cmake -E environment
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMIRACLE_BUILD_DEMO_PROJECTS=ON -DMIRACLE_BUILD_SHARED=ON -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-linux
+      run: |
+        SDK_VERSION=`cat vulkan_sdk_version.txt`
+        source VulkanSDK/${SDK_VERSION}/setup-env.sh
+        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMIRACLE_BUILD_DEMO_PROJECTS=ON -DMIRACLE_BUILD_SHARED=ON -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-linux
 
     - name: Build
       # Build your program with the given configuration
