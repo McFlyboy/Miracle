@@ -107,7 +107,13 @@ jobs:
         SDK_VERSION=`curl https://vulkan.lunarg.com/sdk/latest/linux.txt`
         curl -O https://sdk.lunarg.com/sdk/download/${SDK_VERSION}/linux/vulkan_sdk.tar.gz
         echo Installing Vulkan SDK
-
+        mkdir VulkanSDK
+        cd VulkanSDK
+        tar xf ../vulkan_sdk.tar.gz
+        cd ..
+        source VulkanSDK/${SDK_VERSION}/setup-env.sh
+        echo "Vulkan SDK installed at $VULKAN_SDK"
+        cmake -E environment
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
