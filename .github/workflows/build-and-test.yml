@@ -73,7 +73,8 @@ jobs:
         curl -O https://sdk.lunarg.com/sdk/download/${SDK_VERSION}/mac/vulkan_sdk.dmg
         echo Installing Vulkan SDK
         sudo hdiutil attach vulkan_sdk.dmg
-        ls /Volumes/vulkansdk-macos-${SDK_VERSION}
+        sudo /Volumes/vulkansdk-macos-${SDK_VERSION}/InstallVulkan.app/Contents/MacOS/InstallVulkan --root ./VulkanSDK copy_only=1 --accept-licenses --default-answer --confirm-command install
+        ls VulkanSDK
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
