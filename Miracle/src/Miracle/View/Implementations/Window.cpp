@@ -26,6 +26,11 @@ namespace Miracle::View::Implementations {
 		glfwWindowHint(GLFW_RESIZABLE, false);
 		glfwWindowHint(GLFW_VISIBLE, false);
 
+		uint32_t extensionCount = 0;
+		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+
+		Logger::info(fmt::format("Vulkan extensions supported: {}", extensionCount));
+
 		m_window = glfwCreateWindow(
 			props.width,
 			props.height,
