@@ -20,6 +20,10 @@ namespace Miracle {
 	}
 
 	MiracleApp MiracleAppBuilder::build() const {
-		return MiracleApp(m_windowProps, m_startScript, m_updateScript);
+		return MiracleApp(
+			m_windowProps,
+			m_startScript,
+			m_updateScript
+		);
 	}
 }

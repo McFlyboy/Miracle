@@ -9,11 +9,6 @@ namespace Miracle::View {
 		int height = 480;
 	};
 
-	enum class MIRACLE_API WindowError {
-		InitializationError,
-		WindowCreationError 
-	};
-
 	class MIRACLE_API IWindow {
 	protected:
 		IWindow() = default;

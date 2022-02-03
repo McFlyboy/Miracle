@@ -32,5 +32,8 @@ namespace Miracle {
 		void close(int exitCode = 0);
 
 		static inline MiracleApp* getCurrentApp() { return s_currentApp; }
+
+	private:
+		void runEngine();
 	};
 }

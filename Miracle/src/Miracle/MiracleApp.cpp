@@ -1,13 +1,13 @@
 ﻿#include <Miracle/components/Miracle/MiracleApp.hpp>
 
+#include <memory>
+
+#include "EngineDependencies.hpp"
 #include <Miracle/components/Miracle/Diagnostics/Logger.hpp>
-#include <Miracle/View/Implementations/Window.hpp>
-#include <Miracle/Input/Devices/Implementations/Keyboard.hpp>
+#include "MiracleError.hpp"
 
 using namespace Miracle::Diagnostics;
 using namespace Miracle::View;
-using namespace Miracle::View::Implementations;
-using namespace Miracle::Input::Devices::Implementations;
 
 namespace Miracle {
 	MiracleApp* MiracleApp::s_currentApp = nullptr;
@@ -30,39 +30,7 @@ namespace Miracle {
 		s_currentApp = this;
 		m_exitCode = 0;
 
-		try {
-			auto window = Window(m_windowProps);
-			auto keyboard = Keyboard(window);
-
-			m_window = &window;
-			m_keyboard = &keyboard;
-
-			m_startScript();
-
-			while (!window.shouldClose()) {
-				m_updateScript();
-
-				window.update();
-			}
-
-			Logger::info("Closing Miracle");
-		}
-		catch (const WindowError& error) {
-			switch (error) {
-			case WindowError::InitializationError:
-				m_exitCode = 1;
-				break;
-
-			case WindowError::WindowCreationError:
-				m_exitCode = 2;
-				break;
-			default:
-				m_exitCode = -1;
-			}
-		}
-
-		m_window = nullptr;
-		m_keyboard = nullptr;
+		runEngine();
 
 		Logger::info("Shutting down...");
 
@@ -74,5 +42,33 @@ namespace Miracle {
 	void MiracleApp::close(int exitCode) {
 		m_exitCode = exitCode;
 		m_window->close();
+	}
+
+	void MiracleApp::runEngine() {
+		std::unique_ptr<EngineDependencies> dependencies = nullptr;
+
+		try {
+			dependencies = std::make_unique<EngineDependencies>(m_windowProps);
+		}
+		catch (const MiracleError& error) {
+			m_exitCode = static_cast<int>(error);
+			return;
+		}
+
+		m_window = &dependencies->getWindow();
+		m_keyboard = &dependencies->getKeyboard();
+
+		m_startScript();
+
+		while (!m_window->shouldClose()) {
+			m_updateScript();
+
+			m_window->update();
+		}
+
+		Logger::info("Closing Miracle");
+
+		m_window = nullptr;
+		m_keyboard = nullptr;
 	}
 }

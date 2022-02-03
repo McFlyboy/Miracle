@@ -42,7 +42,7 @@ namespace Miracle::View::Implementations {
 		if (m_window == nullptr) {
 			Logger::error("Failed to create application window!");
 
-			throw WindowError::WindowCreationError;
+			throw MiracleError::WindowCreationError;
 		}
 
 		Logger::info("Application window created");
@@ -77,7 +77,7 @@ namespace Miracle::View::Implementations {
 		glfwSetWindowShouldClose(m_window, true);
 	}
 
-	std::optional<WindowError> Window::initializeGlfw() const {
+	std::optional<MiracleError> Window::initializeGlfw() const {
 		Logger::info(fmt::format("Initializing GLFW version: {}", glfwGetVersionString()));
 
 		bool initialized = glfwInit();
@@ -85,7 +85,7 @@ namespace Miracle::View::Implementations {
 		if (!initialized) {
 			Logger::error("Failed to initialize GLFW!");
 
-			return WindowError::InitializationError;
+			return MiracleError::WindowInitializationError;
 		}
 
 		Logger::info("GLFW initialized");

@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include <Miracle/components/Miracle/View/IWindow.hpp>
+#include <Miracle/MiracleError.hpp>
 
 namespace Miracle::View::Implementations {
 	class Window : public IWindow {
@@ -23,6 +24,6 @@ namespace Miracle::View::Implementations {
 		inline GLFWwindow* getGlfwWindow() const { return m_window; }
 
 	private:
-		std::optional<WindowError> initializeGlfw() const;
+		std::optional<MiracleError> initializeGlfw() const;
 	};
 }
