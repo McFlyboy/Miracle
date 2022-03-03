@@ -58,6 +58,8 @@ namespace Miracle {
 		m_window = &dependencies->getWindow();
 		m_keyboard = &dependencies->getKeyboard();
 
+		m_window->show();
+
 		m_startScript();
 
 		while (!m_window->shouldClose()) {

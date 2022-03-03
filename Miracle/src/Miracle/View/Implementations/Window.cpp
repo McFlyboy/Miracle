@@ -26,11 +26,6 @@ namespace Miracle::View::Implementations {
 		glfwWindowHint(GLFW_RESIZABLE, false);
 		glfwWindowHint(GLFW_VISIBLE, false);
 
-		uint32_t extensionCount = 0;
-		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-
-		Logger::info(fmt::format("Vulkan extensions supported: {}", extensionCount));
-
 		m_window = glfwCreateWindow(
 			props.width,
 			props.height,
@@ -52,10 +47,6 @@ namespace Miracle::View::Implementations {
 			(monitorVideoMode->width - props.width) / 2,
 			(monitorVideoMode->height - props.height) / 2
 		);
-
-		glfwShowWindow(m_window);
-
-		Logger::info("Showing application window");
 	}
 
 	Window::~Window() {
@@ -63,6 +54,12 @@ namespace Miracle::View::Implementations {
 		glfwTerminate();
 
 		Logger::info("Terminated GLFW");
+	}
+
+	void Window::show() {
+		glfwShowWindow(m_window);
+
+		Logger::info("Showing application window");
 	}
 
 	void Window::update() {
