@@ -1,5 +1,7 @@
 #include "Window.hpp"
 
+#include <utility>
+
 #include <fmt/format.h>
 
 #include <Miracle/components/Miracle/Diagnostics/Logger.hpp>
@@ -72,6 +74,35 @@ namespace Miracle::View::Implementations {
 
 	void Window::close() {
 		glfwSetWindowShouldClose(m_window, true);
+	}
+
+	std::vector<const char*> Window::getRequiredInstanceExtensions() const {
+		uint32_t extensionCount;
+		auto extensionNames = glfwGetRequiredInstanceExtensions(&extensionCount);
+
+		auto extensions = std::vector<const char*>();
+		extensions.reserve(extensionCount);
+
+		for (uint32_t i = 0; i < extensionCount; i++) {
+			extensions.push_back(extensionNames[i]);
+		}
+
+		return std::move(extensions);
+	}
+
+	std::variant<MiracleError, vk::raii::SurfaceKHR> Window::createSurface(
+		const vk::raii::Instance& instance
+	) const {
+		VkSurfaceKHR surface;
+		auto result = vk::Result(glfwCreateWindowSurface(*instance, m_window, nullptr, &surface));
+
+		if (result != vk::Result::eSuccess) {
+			Logger::error("Failed to create Vulkan Surface from GLFW window!");
+			Logger::error(vk::to_string(result));
+			return MiracleError::VulkanGraphicsEngineSurfaceCreationError;
+		}
+
+		return vk::raii::SurfaceKHR(instance, surface);
 	}
 
 	std::optional<MiracleError> Window::initializeGlfw() const {

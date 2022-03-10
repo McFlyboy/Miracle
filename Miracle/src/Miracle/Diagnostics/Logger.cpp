@@ -13,23 +13,11 @@ namespace Miracle::Diagnostics {
 		spdlog::info(message);
 	}
 
-	void Logger::info(const std::string& message) {
-		info(message.c_str());
-	}
-
 	void Logger::warning(const char* const message) {
 		spdlog::warn(message);
 	}
 
-	void Logger::warning(const std::string& message) {
-		warning(message.c_str());
-	}
-
 	void Logger::error(const char* const message) {
 		spdlog::error(message);
-	}
-
-	void Logger::error(const std::string& message) {
-		error(message.c_str());
 	}
 }

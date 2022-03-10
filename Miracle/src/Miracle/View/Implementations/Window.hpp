@@ -7,9 +7,10 @@
 
 #include <Miracle/components/Miracle/View/IWindow.hpp>
 #include <Miracle/MiracleError.hpp>
+#include <Miracle/Graphics/Implementations/Vulkan/ISurfaceTarget.hpp>
 
 namespace Miracle::View::Implementations {
-	class Window : public IWindow {
+	class Window : public IWindow, public Graphics::Implementations::Vulkan::ISurfaceTarget {
 	private:
 		GLFWwindow* m_window;
 
@@ -23,6 +24,12 @@ namespace Miracle::View::Implementations {
 		virtual void close() override;
 
 		inline GLFWwindow* getGlfwWindow() const { return m_window; }
+
+		virtual std::vector<const char*> getRequiredInstanceExtensions() const override;
+
+		virtual std::variant<MiracleError, vk::raii::SurfaceKHR> createSurface(
+			const vk::raii::Instance& instance
+		) const override;
 
 	private:
 		std::optional<MiracleError> initializeGlfw() const;
