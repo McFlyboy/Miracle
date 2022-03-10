@@ -1,5 +1,6 @@
 #include "PhysicalDeviceSelector.hpp"
 
+#include <cstring>
 #include <optional>
 #include <utility>
 
@@ -56,7 +57,8 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		const vk::raii::SurfaceKHR& supportedSurface
 	) {
 		return DeviceSupportDetails{
-			.queueFamilyIndices = queryQueueFamilyIndices(physicalDevice, supportedSurface)
+			.queueFamilyIndices  = queryQueueFamilyIndices(physicalDevice, supportedSurface),
+			.extensionsSupported = queryExtensionsSupported(physicalDevice)
 		};
 	}
 
@@ -88,5 +90,21 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		}
 
 		return std::move(queueFamilyIndices);
+	}
+
+	ExtensionsSupported PhysicalDeviceSelector::queryExtensionsSupported(
+		const vk::raii::PhysicalDevice& physicalDevice
+	) {
+		auto extensionsSupported = ExtensionsSupported();
+
+		auto extensionPropertiesList = physicalDevice.enumerateDeviceExtensionProperties();
+
+		for (auto& extensionProperties : extensionPropertiesList) {
+			if (strcmp(extensionProperties.extensionName.data(), VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0) {
+				extensionsSupported.khrSwapchainExtensionSupported = true;
+			}
+		}
+
+		return extensionsSupported;
 	}
 }

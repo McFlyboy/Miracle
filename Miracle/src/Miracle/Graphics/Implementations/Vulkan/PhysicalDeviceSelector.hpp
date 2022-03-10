@@ -25,5 +25,9 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			const vk::raii::PhysicalDevice& physicalDevice,
 			const vk::raii::SurfaceKHR& supportedSurface
 		);
+
+		static ExtensionsSupported queryExtensionsSupported(
+			const vk::raii::PhysicalDevice& physicalDevice
+		);
 	};
 }

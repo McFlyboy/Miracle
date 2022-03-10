@@ -2,6 +2,7 @@
 
 #include <set>
 #include <utility>
+#include <array>
 
 #include "Instance.hpp"
 #include "PhysicalDeviceSelector.hpp"
@@ -64,15 +65,17 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		auto validationLayers = Instance::getValidationLayers();
 
+		auto extensions = std::array{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
 		try {
 			m_device = selectedPhysicalDevice.createDevice({
-				.flags = {},
+				.flags                   = {},
 				.queueCreateInfoCount    = static_cast<uint32_t>(queueCreateInfos.size()),
 				.pQueueCreateInfos       = queueCreateInfos.data(),
 				.enabledLayerCount       = static_cast<uint32_t>(validationLayers.size()),
 				.ppEnabledLayerNames     = validationLayers.data(),
-				.enabledExtensionCount   = 0,
-				.ppEnabledExtensionNames = nullptr,
+				.enabledExtensionCount   = static_cast<uint32_t>(extensions.size()),
+				.ppEnabledExtensionNames = extensions.data(),
 				.pEnabledFeatures        = nullptr,
 			});
 		}

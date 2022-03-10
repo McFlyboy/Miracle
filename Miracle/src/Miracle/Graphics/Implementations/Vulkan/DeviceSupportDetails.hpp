@@ -24,7 +24,8 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		}
 
 		inline bool hasAllRequired() const {
-			return graphicsFamilyIndex.has_value() && presentFamilyIndex.has_value();
+			return graphicsFamilyIndex.has_value()
+				&& presentFamilyIndex.has_value();
 		}
 
 		inline bool hasAll() const {
@@ -32,11 +33,21 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		}
 	};
 
+	struct ExtensionsSupported {
+		bool khrSwapchainExtensionSupported;
+
+		inline bool supportsAllRequired() const {
+			return khrSwapchainExtensionSupported;
+		}
+	};
+
 	struct DeviceSupportDetails {
 		QueueFamilyIndices queueFamilyIndices;
+		ExtensionsSupported extensionsSupported;
 
 		inline bool meetsAllRequirements() const {
-			return queueFamilyIndices.hasAllRequired();
+			return queueFamilyIndices.hasAllRequired()
+				&& extensionsSupported.supportsAllRequired();
 		}
 	};
 }
