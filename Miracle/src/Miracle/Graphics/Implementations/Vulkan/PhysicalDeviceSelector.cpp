@@ -57,8 +57,9 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		const vk::raii::SurfaceKHR& supportedSurface
 	) {
 		return DeviceSupportDetails{
-			.queueFamilyIndices  = queryQueueFamilyIndices(physicalDevice, supportedSurface),
-			.extensionsSupported = queryExtensionsSupported(physicalDevice)
+			.queueFamilyIndices      = queryQueueFamilyIndices(physicalDevice, supportedSurface),
+			.extensionsSupported     = queryExtensionsSupported(physicalDevice),
+			.swapchainSupportDetails = querySwapchainSupportDetails(physicalDevice, supportedSurface)
 		};
 	}
 
@@ -106,5 +107,47 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		}
 
 		return extensionsSupported;
+	}
+
+	SwapchainSupportDetails PhysicalDeviceSelector::querySwapchainSupportDetails(
+		const vk::raii::PhysicalDevice& physicalDevice,
+		const vk::raii::SurfaceKHR& supportedSurface
+	) {
+		return SwapchainSupportDetails{
+			.capabilities = physicalDevice.getSurfaceCapabilitiesKHR(*supportedSurface),
+			.formats = physicalDevice.getSurfaceFormatsKHR(*supportedSurface),
+			.presentModesSupported = queryPresentModesSupported(physicalDevice, supportedSurface)
+		};
+	}
+
+	PresentModesSupported PhysicalDeviceSelector::queryPresentModesSupported(
+		const vk::raii::PhysicalDevice& physicalDevice,
+		const vk::raii::SurfaceKHR& supportedSurface
+	) {
+		auto presentModesSupported = PresentModesSupported();
+
+		auto presentModes = physicalDevice.getSurfacePresentModesKHR(*supportedSurface);
+
+		for (auto& presentMode : presentModes) {
+			switch (presentMode) {
+			case vk::PresentModeKHR::eImmediate:
+				presentModesSupported.immediateModeSupported = true;
+				break;
+
+			case vk::PresentModeKHR::eFifo:
+				presentModesSupported.fifoModeSupported = true;
+				break;
+
+			case vk::PresentModeKHR::eMailbox:
+				presentModesSupported.mailboxModeSupported = true;
+				break;
+			}
+
+			if (presentModesSupported.supportsAll()) {
+				break;
+			}
+		}
+
+		return presentModesSupported;
 	}
 }

@@ -15,5 +15,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		Surface(const Instance& instance);
 
 		inline const vk::raii::SurfaceKHR& getSurface() const { return m_surface; }
+
+		inline const ISurfaceTarget& getSurfaceTarget() const { return m_surfaceTarget; }
 	};
 }

@@ -29,5 +29,15 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		static ExtensionsSupported queryExtensionsSupported(
 			const vk::raii::PhysicalDevice& physicalDevice
 		);
+
+		static SwapchainSupportDetails querySwapchainSupportDetails(
+			const vk::raii::PhysicalDevice& physicalDevice,
+			const vk::raii::SurfaceKHR& supportedSurface
+		);
+
+		static PresentModesSupported queryPresentModesSupported(
+			const vk::raii::PhysicalDevice& physicalDevice,
+			const vk::raii::SurfaceKHR& supportedSurface
+		);
 	};
 }

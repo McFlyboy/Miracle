@@ -13,6 +13,8 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		virtual std::vector<const char*> getRequiredInstanceExtensions() const = 0;
 
+		virtual vk::Extent2D getCurrentExtent() const = 0;
+
 		virtual std::variant<MiracleError, vk::raii::SurfaceKHR> createSurface(
 			const vk::raii::Instance& instance
 		) const = 0;

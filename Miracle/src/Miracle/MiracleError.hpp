@@ -15,6 +15,8 @@ namespace Miracle {
 		VulkanGraphicsEngineSurfaceCreationError,
 		VulkanGraphicsEnginePhysicalDeviceEnumerationError,
 		VulkanGraphicsEngineNoPhysicalDevicesSupportedError,
-		VulkanGraphicsEngineDeviceCreationError
+		VulkanGraphicsEngineDeviceCreationError,
+		VulkanGraphicsEngineSwapchainCreationError,
+		VulkanGraphicsEngineSwapchainImagesRetrievalError
 	};
 }

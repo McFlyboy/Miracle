@@ -8,7 +8,8 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 	GraphicsEngine::GraphicsEngine(const ISurfaceTarget& surfaceTarget) :
 		m_instance(m_context, surfaceTarget),
 		m_surface(m_instance),
-		m_device(m_instance, m_surface)
+		m_device(m_instance, m_surface),
+		m_swapchain(m_device, m_surface)
 	{
 		Logger::info("Vulkan graphics engine created");
 	}

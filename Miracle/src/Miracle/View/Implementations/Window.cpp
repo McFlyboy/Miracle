@@ -90,6 +90,18 @@ namespace Miracle::View::Implementations {
 		return std::move(extensions);
 	}
 
+	vk::Extent2D Window::getCurrentExtent() const {
+		int width;
+		int height;
+
+		glfwGetFramebufferSize(m_window, &width, &height);
+
+		return vk::Extent2D{
+			.width  = static_cast<uint32_t>(width),
+			.height = static_cast<uint32_t>(height)
+		};
+	}
+
 	std::variant<MiracleError, vk::raii::SurfaceKHR> Window::createSurface(
 		const vk::raii::Instance& instance
 	) const {

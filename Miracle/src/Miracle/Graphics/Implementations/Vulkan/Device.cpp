@@ -7,7 +7,6 @@
 #include "Instance.hpp"
 #include "PhysicalDeviceSelector.hpp"
 
-#include <Miracle/MiracleError.hpp>
 #include <Miracle/components/Miracle/Diagnostics/Logger.hpp>
 
 using namespace Miracle::Diagnostics;
@@ -37,10 +36,10 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		auto& selectedPhysicalDevice
 			= std::get<std::reference_wrapper<vk::raii::PhysicalDevice>>(selectedPhysicalDeviceResult).get();
 
-		m_supportDetails = std::move(PhysicalDeviceSelector::queryDeviceSupport(
+		m_supportDetails = PhysicalDeviceSelector::queryDeviceSupport(
 			selectedPhysicalDevice,
 			surface.getSurface()
-		));
+		);
 
 		auto uniqueQueueFamilyIndices = std::set{
 			m_supportDetails.queueFamilyIndices.graphicsFamilyIndex.value(),
@@ -94,5 +93,18 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			m_supportDetails.queueFamilyIndices.presentFamilyIndex.value(),
 			0
 		);
+	}
+
+	std::variant<MiracleError, vk::raii::SwapchainKHR> Device::createSwapchainKHR(
+		const vk::SwapchainCreateInfoKHR& createInfo
+	) const {
+		try {
+			return m_device.createSwapchainKHR(createInfo);
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to create Vulkan swapchain!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEngineSwapchainCreationError;
+		}
 	}
 }

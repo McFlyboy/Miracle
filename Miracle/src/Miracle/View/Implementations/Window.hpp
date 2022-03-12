@@ -27,6 +27,8 @@ namespace Miracle::View::Implementations {
 
 		virtual std::vector<const char*> getRequiredInstanceExtensions() const override;
 
+		virtual vk::Extent2D getCurrentExtent() const override;
+
 		virtual std::variant<MiracleError, vk::raii::SurfaceKHR> createSurface(
 			const vk::raii::Instance& instance
 		) const override;
