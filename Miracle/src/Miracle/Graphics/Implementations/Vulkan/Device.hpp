@@ -28,6 +28,10 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			const vk::SwapchainCreateInfoKHR& createInfo
 		) const;
 
+		std::variant<MiracleError, vk::raii::ImageView> createImageView(
+			const vk::ImageViewCreateInfo& createInfo
+		) const;
+
 		inline const DeviceSupportDetails& getSupportDetails() const { return m_supportDetails; }
 	};
 }

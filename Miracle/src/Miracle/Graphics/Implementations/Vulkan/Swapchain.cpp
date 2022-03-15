@@ -60,6 +60,9 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		m_swapchain = std::move(std::get<vk::raii::SwapchainKHR>(result));
 
+		m_imageFormat = format.format;
+		m_imageExtent = extent;
+
 		try {
 			auto images = m_swapchain.getImages();
 			m_images.reserve(images.size());
@@ -74,8 +77,17 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			throw MiracleError::VulkanGraphicsEngineSwapchainImagesRetrievalError;
 		}
 
-		m_imageFormat = format.format;
-		m_imageExtent = extent;
+		m_imageViews.reserve(m_images.size());
+
+		for (auto& image : m_images) {
+			auto result = createViewForImage(image);
+
+			if (result.index() == 0) {
+				throw std::get<MiracleError>(result);
+			}
+
+			m_imageViews.push_back(std::move(std::get<vk::raii::ImageView>(result)));
+		}
 	}
 
 	vk::Extent2D Swapchain::selectExtent(
@@ -137,5 +149,29 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 				? vk::PresentModeKHR::eMailbox
 				: vk::PresentModeKHR::eFifo
 			: vk::PresentModeKHR::eImmediate;
+	}
+
+	std::variant<MiracleError, vk::raii::ImageView> Swapchain::createViewForImage(
+		const vk::Image& image
+	) const {
+		return m_device.createImageView({
+			.flags            = {},
+			.image            = image,
+			.viewType         = vk::ImageViewType::e2D,
+			.format           = m_imageFormat,
+			.components       = vk::ComponentMapping{
+				.r = vk::ComponentSwizzle::eIdentity,
+				.g = vk::ComponentSwizzle::eIdentity,
+				.b = vk::ComponentSwizzle::eIdentity,
+				.a = vk::ComponentSwizzle::eIdentity
+			},
+			.subresourceRange = vk::ImageSubresourceRange{
+				.aspectMask     = vk::ImageAspectFlagBits::eColor,
+				.baseMipLevel   = 0,
+				.levelCount     = 1,
+				.baseArrayLayer = 0,
+				.layerCount     = 1,
+			}
+		});
 	}
 }

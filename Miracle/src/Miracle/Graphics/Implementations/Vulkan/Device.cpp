@@ -111,4 +111,17 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			return MiracleError::VulkanGraphicsEngineSwapchainCreationError;
 		}
 	}
+
+	std::variant<MiracleError, vk::raii::ImageView> Device::createImageView(
+		const vk::ImageViewCreateInfo& createInfo
+	) const {
+		try {
+			return m_device.createImageView(createInfo);
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to create Vulkan image view!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEngineImageViewCreationError;
+		}
+	}
 }
