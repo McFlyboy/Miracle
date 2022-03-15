@@ -26,7 +26,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		auto selectedPhysicalDeviceResult = PhysicalDeviceSelector::selectPhysicalDevice(
 			physicalDevices,
-			surface.getSurface()
+			surface.getRawSurface()
 		);
 
 		if (selectedPhysicalDeviceResult.index() == 0) {
@@ -38,7 +38,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		m_supportDetails = PhysicalDeviceSelector::queryDeviceSupport(
 			selectedPhysicalDevice,
-			surface.getSurface()
+			surface.getRawSurface()
 		);
 
 		auto uniqueQueueFamilyIndices = std::set{
@@ -84,18 +84,22 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			throw MiracleError::VulkanGraphicsEngineDeviceCreationError;
 		}
 
-		m_graphicsQueue = m_device.getQueue(
-			m_supportDetails.queueFamilyIndices.graphicsFamilyIndex.value(),
-			0
+		m_graphicsQueue = GraphicsQueue(
+			m_device.getQueue(
+				m_supportDetails.queueFamilyIndices.graphicsFamilyIndex.value(),
+				0
+			)
 		);
 
-		m_presentQueue = m_device.getQueue(
-			m_supportDetails.queueFamilyIndices.presentFamilyIndex.value(),
-			0
+		m_presentQueue = PresentQueue(
+			m_device.getQueue(
+				m_supportDetails.queueFamilyIndices.presentFamilyIndex.value(),
+				0
+			)
 		);
 	}
 
-	std::variant<MiracleError, vk::raii::SwapchainKHR> Device::createSwapchainKHR(
+	std::variant<MiracleError, vk::raii::SwapchainKHR> Device::createSwapchain(
 		const vk::SwapchainCreateInfoKHR& createInfo
 	) const {
 		try {

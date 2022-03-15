@@ -35,9 +35,9 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		bool isImagesShared = indices[0] != indices[1];
 
-		auto result = m_device.createSwapchainKHR({
+		auto result = m_device.createSwapchain({
 			.flags                 = {},
-			.surface               = *m_surface.getSurface(),
+			.surface               = *m_surface.getRawSurface(),
 			.minImageCount         = imageCount,
 			.imageFormat           = format.format,
 			.imageColorSpace       = format.colorSpace,

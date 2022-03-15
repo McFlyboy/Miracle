@@ -7,14 +7,16 @@
 #include "Instance.hpp"
 #include "Surface.hpp"
 #include "DeviceSupportDetails.hpp"
+#include "GraphicsQueue.hpp"
+#include "PresentQueue.hpp"
 
 namespace Miracle::Graphics::Implementations::Vulkan {
 	class Device {
 	private:
 		DeviceSupportDetails m_supportDetails;
 		vk::raii::Device m_device = nullptr;
-		vk::raii::Queue m_graphicsQueue = nullptr;
-		vk::raii::Queue m_presentQueue = nullptr;
+		GraphicsQueue m_graphicsQueue;
+		PresentQueue m_presentQueue;
 
 	public:
 		Device(
@@ -22,7 +24,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			const Surface& surface
 		);
 
-		std::variant<MiracleError, vk::raii::SwapchainKHR> createSwapchainKHR(
+		std::variant<MiracleError, vk::raii::SwapchainKHR> createSwapchain(
 			const vk::SwapchainCreateInfoKHR& createInfo
 		) const;
 
