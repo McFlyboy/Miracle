@@ -9,6 +9,9 @@ option(MIRACLE_BUILD_SHARED ON)
 # Main project
 add_subdirectory("Miracle")
 
+# Resources
+add_subdirectory("Shaders")
+
 # Demo projects
 if(MIRACLE_BUILD_DEMO_PROJECTS)
 	add_subdirectory("Demos/Demo1")

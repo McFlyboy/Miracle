@@ -56,6 +56,9 @@ target_precompile_headers(
 	PRIVATE "include/Miracle/components/ApiDefinition.hpp"
 )
 
+# Project dependencies
+add_dependencies(Miracle Shaders)
+
 # Install rules
 install(TARGETS Miracle)
 install(DIRECTORY "include/" DESTINATION "include")
