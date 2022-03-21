@@ -27,12 +27,13 @@ list(
 	PREPEND ${CMAKE_CURRENT_BINARY_DIR}/
 )
 
-# Project definition
+# Target definition
 add_custom_target(
 	Shaders
 	DEPENDS ${BINARY_FILENAMES}
 )
 
+# Target build commands
 foreach(SOURCE_FILENAME ${SOURCE_FILENAMES})
 	add_custom_command(
 		OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILENAME}${BINARY_SUFFIX}
