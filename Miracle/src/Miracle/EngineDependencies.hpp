@@ -2,6 +2,7 @@
 
 #include <Miracle/View/Implementations/Window.hpp>
 #include <Miracle/Input/Devices/Implementations/Keyboard.hpp>
+#include <Miracle/Io/ResourceLoader.hpp>
 #include <Miracle/Graphics/Implementations/Vulkan/GraphicsEngine.hpp>
 
 namespace Miracle {
@@ -9,6 +10,7 @@ namespace Miracle {
 	private:
 		View::Implementations::Window m_window;
 		Input::Devices::Implementations::Keyboard m_keyboard;
+		Io::ResourceLoader m_resourceLoader;
 		Graphics::Implementations::Vulkan::GraphicsEngine m_graphicsEngine;
 
 	public:

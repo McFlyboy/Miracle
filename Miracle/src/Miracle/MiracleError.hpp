@@ -9,8 +9,11 @@ namespace Miracle {
 		WindowInitializationError                           = 0x00010000,
 		WindowCreationError,
 
+		// Resource errors
+		ResourceFileReadError                               = 0x00020000,
+
 		// Vulkan graphics engine errors
-		VulkanGraphicsEngineInstanceCreationError           = 0x00020000,
+		VulkanGraphicsEngineInstanceCreationError           = 0x00030000,
 		VulkanGraphicsEngineDebugMessengerCreationError,
 		VulkanGraphicsEngineSurfaceCreationError,
 		VulkanGraphicsEnginePhysicalDeviceEnumerationError,

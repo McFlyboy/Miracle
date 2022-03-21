@@ -5,7 +5,11 @@
 using namespace Miracle::Diagnostics;
 
 namespace Miracle::Graphics::Implementations::Vulkan {
-	GraphicsEngine::GraphicsEngine(const ISurfaceTarget& surfaceTarget) :
+	GraphicsEngine::GraphicsEngine(
+		const ISurfaceTarget& surfaceTarget,
+		const Io::ResourceLoader& resourceLoader
+	) :
+		m_resourceLoader(resourceLoader),
 		m_instance(m_context, surfaceTarget),
 		m_surface(m_instance),
 		m_device(m_instance, m_surface),
