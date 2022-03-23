@@ -70,7 +70,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			.primitiveRestartEnable = false
 		};
 
-		auto extent = swapchain.getImageExtent();
+		auto& extent = swapchain.getImageExtent();
 
 		auto viewport = vk::Viewport{
 			.x        = 0.0f,
