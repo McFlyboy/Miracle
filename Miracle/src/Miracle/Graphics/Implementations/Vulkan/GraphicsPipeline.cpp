@@ -77,8 +77,8 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			.y        = 0.0f,
 			.width    = static_cast<float>(extent.width),
 			.height   = static_cast<float>(extent.height),
-			.minDepth = {},
-			.maxDepth = {},
+			.minDepth = 0.0f,
+			.maxDepth = 1.0f,
 		};
 	}
 
