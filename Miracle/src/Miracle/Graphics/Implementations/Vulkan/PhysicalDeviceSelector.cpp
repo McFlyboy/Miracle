@@ -73,14 +73,14 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		for (size_t i = 0; i < queueFamilyPropertiesList.size(); i++) {
 			if (queueFamilyPropertiesList[i].queueFlags & vk::QueueFlagBits::eGraphics) {
-				queueFamilyIndices.graphicsFamilyIndex = i;
+				queueFamilyIndices.graphicsFamilyIndex = static_cast<uint32_t>(i);
 			}
 
 			try {
 				auto isSurfaceSupported = physicalDevice.getSurfaceSupportKHR(i, *supportedSurface);
 
 				if (isSurfaceSupported) {
-					queueFamilyIndices.presentFamilyIndex = i;
+					queueFamilyIndices.presentFamilyIndex = static_cast<uint32_t>(i);
 				}
 			}
 			catch (const std::exception&) {}

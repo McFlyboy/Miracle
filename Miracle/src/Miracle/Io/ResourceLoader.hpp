@@ -8,6 +8,6 @@
 namespace Miracle::Io {
 	class ResourceLoader {
 	public:
-		std::variant<MiracleError, std::vector<char>> loadShaderBinary(const char* filename) const;
+		std::variant<MiracleError, std::vector<char>> loadFileBinary(const char* filename) const;
 	};
 }

@@ -10,8 +10,8 @@
 using namespace Miracle::Diagnostics;
 
 namespace Miracle::Io {
-	std::variant<MiracleError, std::vector<char>> ResourceLoader::loadShaderBinary(const char* filename) const {
-		auto filepath = fmt::format("resources/shaders/{}", filename);
+	std::variant<MiracleError, std::vector<char>> ResourceLoader::loadFileBinary(const char* filename) const {
+		auto filepath = fmt::format("resources/{}", filename);
 
 		auto file = std::ifstream(filepath, std::ios::binary | std::ios::ate);
 
