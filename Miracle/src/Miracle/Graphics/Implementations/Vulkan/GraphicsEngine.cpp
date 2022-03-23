@@ -13,7 +13,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		m_surface(m_instance),
 		m_device(m_instance, m_surface),
 		m_swapchain(m_device, m_surface),
-		m_graphicsPipeline(m_device, resourceLoader)
+		m_graphicsPipeline(m_device, m_swapchain, resourceLoader)
 	{
 		Logger::info("Vulkan graphics engine created");
 	}

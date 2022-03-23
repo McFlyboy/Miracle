@@ -26,6 +26,8 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			const Surface& surface
 		);
 
+		inline const vk::Extent2D& getImageExtent() const { return m_imageExtent; }
+
 	private:
 		vk::Extent2D selectExtent(
 			const vk::SurfaceCapabilitiesKHR& capabilities

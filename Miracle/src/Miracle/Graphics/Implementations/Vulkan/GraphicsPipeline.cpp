@@ -5,6 +5,7 @@
 namespace Miracle::Graphics::Implementations::Vulkan {
 	GraphicsPipeline::GraphicsPipeline(
 		const Device& device,
+		const Swapchain& swapchain,
 		const Io::ResourceLoader& resourceLoader
 	) :
 		m_device(device)
@@ -53,6 +54,31 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 				.pName               = "main",
 				.pSpecializationInfo = nullptr
 			}
+		};
+
+		auto vertexInputStateCreateInfo = vk::PipelineVertexInputStateCreateInfo{
+			.flags                           = {},
+			.vertexBindingDescriptionCount   = 0,
+			.pVertexBindingDescriptions      = nullptr,
+			.vertexAttributeDescriptionCount = 0,
+			.pVertexAttributeDescriptions    = nullptr
+		};
+
+		auto inputAssemblyStateCreateInfo = vk::PipelineInputAssemblyStateCreateInfo{
+			.flags                  = {},
+			.topology               = vk::PrimitiveTopology::eTriangleList,
+			.primitiveRestartEnable = false
+		};
+
+		auto extent = swapchain.getImageExtent();
+
+		auto viewport = vk::Viewport{
+			.x        = 0.0f,
+			.y        = 0.0f,
+			.width    = static_cast<float>(extent.width),
+			.height   = static_cast<float>(extent.height),
+			.minDepth = {},
+			.maxDepth = {},
 		};
 	}
 
