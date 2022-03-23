@@ -19,6 +19,6 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 	}
 
 	GraphicsEngine::~GraphicsEngine() {
-		Logger::info("Vulkan graphics engine destroyed");
+		Logger::info("Destroying Vulkan graphics engine...");
 	}
 }
