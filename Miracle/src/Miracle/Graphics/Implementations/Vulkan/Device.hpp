@@ -32,6 +32,10 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			const vk::ImageViewCreateInfo& createInfo
 		) const;
 
+		std::variant<MiracleError, vk::raii::ShaderModule> createShaderModule(
+			const vk::ShaderModuleCreateInfo& createInfo
+		) const;
+
 		inline const DeviceSupportDetails& getSupportDetails() const { return m_supportDetails; }
 	};
 }

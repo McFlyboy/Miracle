@@ -9,11 +9,11 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		const ISurfaceTarget& surfaceTarget,
 		const Io::ResourceLoader& resourceLoader
 	) :
-		m_resourceLoader(resourceLoader),
 		m_instance(m_context, surfaceTarget),
 		m_surface(m_instance),
 		m_device(m_instance, m_surface),
-		m_swapchain(m_device, m_surface)
+		m_swapchain(m_device, m_surface),
+		m_graphicsPipeline(m_device, resourceLoader)
 	{
 		Logger::info("Vulkan graphics engine created");
 	}

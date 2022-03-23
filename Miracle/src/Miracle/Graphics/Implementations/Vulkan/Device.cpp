@@ -124,4 +124,17 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			return MiracleError::VulkanGraphicsEngineImageViewCreationError;
 		}
 	}
+
+	std::variant<MiracleError, vk::raii::ShaderModule> Device::createShaderModule(
+		const vk::ShaderModuleCreateInfo& createInfo
+	) const {
+		try {
+			return m_device.createShaderModule(createInfo);
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to create Vulkan shader module!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEngineShaderModuleCreationError;
+		}
+	}
 }

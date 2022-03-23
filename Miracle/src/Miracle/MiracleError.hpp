@@ -21,6 +21,7 @@ namespace Miracle {
 		VulkanGraphicsEngineDeviceCreationError,
 		VulkanGraphicsEngineSwapchainCreationError,
 		VulkanGraphicsEngineSwapchainImagesRetrievalError,
-		VulkanGraphicsEngineImageViewCreationError
+		VulkanGraphicsEngineImageViewCreationError,
+		VulkanGraphicsEngineShaderModuleCreationError
 	};
 }

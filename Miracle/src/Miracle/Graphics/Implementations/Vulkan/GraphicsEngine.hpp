@@ -7,17 +7,17 @@
 #include "Surface.hpp"
 #include "Device.hpp"
 #include "Swapchain.hpp"
+#include "GraphicsPipeline.hpp"
 
 namespace Miracle::Graphics::Implementations::Vulkan {
 	class GraphicsEngine {
 	private:
-		const Io::ResourceLoader& m_resourceLoader;
-
 		vk::raii::Context m_context;
 		Instance m_instance;
 		Surface m_surface;
 		Device m_device;
 		Swapchain m_swapchain;
+		GraphicsPipeline m_graphicsPipeline;
 
 	public:
 		GraphicsEngine(
