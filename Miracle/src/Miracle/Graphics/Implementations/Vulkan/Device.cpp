@@ -125,6 +125,19 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		}
 	}
 
+	std::variant<MiracleError, vk::raii::RenderPass> Device::createRenderPass(
+		const vk::RenderPassCreateInfo& createInfo
+	) const {
+		try {
+			return m_device.createRenderPass(createInfo);
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to create Vulkan render pass!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEngineRenderPassCreationError;
+		}
+	}
+
 	std::variant<MiracleError, vk::raii::ShaderModule> Device::createShaderModule(
 		const vk::ShaderModuleCreateInfo& createInfo
 	) const {
@@ -148,6 +161,19 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			Logger::error("Failed to create Vulkan pipeline layout!");
 			Logger::error(e.what());
 			return MiracleError::VulkanGraphicsEnginePipelineLayoutCreationError;
+		}
+	}
+
+	std::variant<MiracleError, vk::raii::Pipeline> Device::createGraphicsPipeline(
+		const vk::GraphicsPipelineCreateInfo& createInfo
+	) const {
+		try {
+			return m_device.createGraphicsPipeline(nullptr, createInfo);
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to create Vulkan graphics pipeline!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEngineGraphicsPipelineCreationError;
 		}
 	}
 }

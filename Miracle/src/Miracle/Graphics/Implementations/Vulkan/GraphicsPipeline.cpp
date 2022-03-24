@@ -152,6 +152,32 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		}
 
 		m_pipelineLayout = std::move(std::get<vk::raii::PipelineLayout>(pipelineLayoutCreateResult));
+
+		auto graphicsPipelineCreateResult = m_device.createGraphicsPipeline({
+			.flags               = {},
+			.stageCount          = static_cast<uint32_t>(shaderStageCreateInfos.size()),
+			.pStages             = shaderStageCreateInfos.data(),
+			.pVertexInputState   = &vertexInputStateCreateInfo,
+			.pInputAssemblyState = &inputAssemblyStateCreateInfo,
+			.pTessellationState  = nullptr,
+			.pViewportState      = &viewportStateCreateInfo,
+			.pRasterizationState = &rasterizationStateCreateInfo,
+			.pMultisampleState   = &multisampleStateCreateInfo,
+			.pDepthStencilState  = nullptr,
+			.pColorBlendState    = &colorBlendStateCreateInfo,
+			.pDynamicState       = nullptr,
+			.layout              = *m_pipelineLayout,
+			.renderPass          = *swapchain.getRenderPass().getRawRenderPass(),
+			.subpass             = 0,
+			.basePipelineHandle  = {},
+			.basePipelineIndex   = {}
+		});
+
+		if (graphicsPipelineCreateResult.index() == 0) {
+			throw std::get<MiracleError>(graphicsPipelineCreateResult);
+		}
+
+		m_graphicsPipeline = std::move(std::get<vk::raii::Pipeline>(graphicsPipelineCreateResult));
 	}
 
 	std::variant<MiracleError, vk::raii::ShaderModule> GraphicsPipeline::createShaderModule(

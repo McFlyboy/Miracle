@@ -32,12 +32,20 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			const vk::ImageViewCreateInfo& createInfo
 		) const;
 
+		std::variant<MiracleError, vk::raii::RenderPass> createRenderPass(
+			const vk::RenderPassCreateInfo& createInfo
+		) const;
+
 		std::variant<MiracleError, vk::raii::ShaderModule> createShaderModule(
 			const vk::ShaderModuleCreateInfo& createInfo
 		) const;
 
 		std::variant<MiracleError, vk::raii::PipelineLayout> createPipelineLayout(
 			const vk::PipelineLayoutCreateInfo& createInfo
+		) const;
+
+		std::variant<MiracleError, vk::raii::Pipeline> createGraphicsPipeline(
+			const vk::GraphicsPipelineCreateInfo& createInfo
 		) const;
 
 		inline const DeviceSupportDetails& getSupportDetails() const { return m_supportDetails; }

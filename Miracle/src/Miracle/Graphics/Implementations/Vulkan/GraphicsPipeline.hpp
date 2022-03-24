@@ -15,6 +15,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		const Device& m_device;
 
 		vk::raii::PipelineLayout m_pipelineLayout = nullptr;
+		vk::raii::Pipeline m_graphicsPipeline = nullptr;
 
 	public:
 		GraphicsPipeline(

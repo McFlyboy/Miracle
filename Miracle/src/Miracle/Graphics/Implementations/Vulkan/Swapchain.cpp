@@ -88,6 +88,8 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 			m_imageViews.push_back(std::move(std::get<vk::raii::ImageView>(result)));
 		}
+
+		m_renderPass = RenderPass(m_device, m_imageFormat);
 	}
 
 	vk::Extent2D Swapchain::selectExtent(

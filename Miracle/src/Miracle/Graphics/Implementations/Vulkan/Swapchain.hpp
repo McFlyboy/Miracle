@@ -7,6 +7,7 @@
 #include "Vulkan.hpp"
 #include "Device.hpp"
 #include "Surface.hpp"
+#include "RenderPass.hpp"
 
 namespace Miracle::Graphics::Implementations::Vulkan {
 	class Swapchain {
@@ -19,6 +20,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		vk::Extent2D m_imageExtent;
 		std::vector<vk::Image> m_images;
 		std::vector<vk::raii::ImageView> m_imageViews;
+		RenderPass m_renderPass;
 
 	public:
 		Swapchain(
@@ -27,6 +29,8 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		);
 
 		inline const vk::Extent2D& getImageExtent() const { return m_imageExtent; }
+
+		inline const RenderPass& getRenderPass() const { return m_renderPass; }
 
 	private:
 		vk::Extent2D selectExtent(
