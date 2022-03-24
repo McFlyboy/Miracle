@@ -137,4 +137,17 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			return MiracleError::VulkanGraphicsEngineShaderModuleCreationError;
 		}
 	}
+
+	std::variant<MiracleError, vk::raii::PipelineLayout> Device::createPipelineLayout(
+		const vk::PipelineLayoutCreateInfo& createInfo
+	) const {
+		try {
+			return m_device.createPipelineLayout(createInfo);
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to create Vulkan pipeline layout!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEnginePipelineLayoutCreationError;
+		}
+	}
 }

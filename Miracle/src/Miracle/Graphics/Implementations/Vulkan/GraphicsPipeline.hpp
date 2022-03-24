@@ -14,6 +14,8 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 	private:
 		const Device& m_device;
 
+		vk::raii::PipelineLayout m_pipelineLayout = nullptr;
+
 	public:
 		GraphicsPipeline(
 			const Device& device,
@@ -25,5 +27,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		std::variant<MiracleError, vk::raii::ShaderModule> createShaderModule(
 			const std::vector<char>& shaderByteCode
 		) const;
+
+		std::variant<MiracleError, vk::raii::PipelineLayout> createPipelineLayout() const;
 	};
 }

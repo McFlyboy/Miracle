@@ -36,6 +36,10 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			const vk::ShaderModuleCreateInfo& createInfo
 		) const;
 
+		std::variant<MiracleError, vk::raii::PipelineLayout> createPipelineLayout(
+			const vk::PipelineLayoutCreateInfo& createInfo
+		) const;
+
 		inline const DeviceSupportDetails& getSupportDetails() const { return m_supportDetails; }
 	};
 }

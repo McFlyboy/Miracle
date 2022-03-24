@@ -1,6 +1,7 @@
 #include "GraphicsPipeline.hpp"
 
 #include <array>
+#include <utility>
 
 namespace Miracle::Graphics::Implementations::Vulkan {
 	GraphicsPipeline::GraphicsPipeline(
@@ -70,16 +71,87 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			.primitiveRestartEnable = false
 		};
 
-		auto& extent = swapchain.getImageExtent();
+		auto& imageExtent = swapchain.getImageExtent();
 
 		auto viewport = vk::Viewport{
 			.x        = 0.0f,
 			.y        = 0.0f,
-			.width    = static_cast<float>(extent.width),
-			.height   = static_cast<float>(extent.height),
+			.width    = static_cast<float>(imageExtent.width),
+			.height   = static_cast<float>(imageExtent.height),
 			.minDepth = 0.0f,
-			.maxDepth = 1.0f,
+			.maxDepth = 1.0f
 		};
+
+		auto scissor = vk::Rect2D{
+			.offset = vk::Offset2D{
+				.x = 0,
+				.y = 0
+			},
+			.extent = imageExtent
+		};
+
+		auto viewportStateCreateInfo = vk::PipelineViewportStateCreateInfo{
+			.flags         = {},
+			.viewportCount = 1,
+			.pViewports    = &viewport,
+			.scissorCount  = 1,
+			.pScissors     = &scissor
+		};
+
+		auto rasterizationStateCreateInfo = vk::PipelineRasterizationStateCreateInfo{
+			.flags                   = {},
+			.depthClampEnable        = false,
+			.rasterizerDiscardEnable = false,
+			.polygonMode             = vk::PolygonMode::eFill,
+			.cullMode                = vk::CullModeFlagBits::eBack,
+			.frontFace               = vk::FrontFace::eClockwise,
+			.depthBiasEnable         = false,
+			.depthBiasConstantFactor = {},
+			.depthBiasClamp          = {},
+			.depthBiasSlopeFactor    = {},
+			.lineWidth               = 1.0f
+		};
+
+		auto multisampleStateCreateInfo = vk::PipelineMultisampleStateCreateInfo{
+			.flags                 = {},
+			.rasterizationSamples  = vk::SampleCountFlagBits::e1,
+			.sampleShadingEnable   = false,
+			.minSampleShading      = {},
+			.pSampleMask           = {},
+			.alphaToCoverageEnable = {},
+			.alphaToOneEnable      = {}
+		};
+
+		auto colorBlendAttachmentState = vk::PipelineColorBlendAttachmentState{
+			.blendEnable         = false,
+			.srcColorBlendFactor = {},
+			.dstColorBlendFactor = {},
+			.colorBlendOp        = {},
+			.srcAlphaBlendFactor = {},
+			.dstAlphaBlendFactor = {},
+			.alphaBlendOp        = {},
+			.colorWriteMask      = vk::ColorComponentFlagBits::eR
+				| vk::ColorComponentFlagBits::eG
+				| vk::ColorComponentFlagBits::eB
+				| vk::ColorComponentFlagBits::eA
+		};
+
+		auto colorBlendStateCreateInfo = vk::PipelineColorBlendStateCreateInfo{
+			.flags           = {},
+			.logicOpEnable   = false,
+			.logicOp         = {},
+			.attachmentCount = 1,
+			.pAttachments    = &colorBlendAttachmentState,
+			.blendConstants  = {}
+		};
+
+		auto pipelineLayoutCreateResult = createPipelineLayout();
+
+		if (pipelineLayoutCreateResult.index() == 0) {
+			throw std::get<MiracleError>(pipelineLayoutCreateResult);
+		}
+
+		m_pipelineLayout = std::move(std::get<vk::raii::PipelineLayout>(pipelineLayoutCreateResult));
 	}
 
 	std::variant<MiracleError, vk::raii::ShaderModule> GraphicsPipeline::createShaderModule(
@@ -89,6 +161,16 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			.flags    = {},
 			.codeSize = shaderByteCode.size(),
 			.pCode    = reinterpret_cast<const uint32_t*>(shaderByteCode.data())
+		});
+	}
+
+	std::variant<MiracleError, vk::raii::PipelineLayout> GraphicsPipeline::createPipelineLayout() const {
+		return m_device.createPipelineLayout({
+			.flags                  = {},
+			.setLayoutCount         = 0,
+			.pSetLayouts            = nullptr,
+			.pushConstantRangeCount = 0,
+			.pPushConstantRanges    = nullptr
 		});
 	}
 }
