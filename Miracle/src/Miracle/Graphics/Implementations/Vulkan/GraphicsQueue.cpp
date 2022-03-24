@@ -39,7 +39,9 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		}
 	}
 
-	std::optional<MiracleError> GraphicsQueue::recordCommands(std::function<void ()> recording) {
+	std::optional<MiracleError> GraphicsQueue::recordCommands(
+		std::function<void (const vk::raii::CommandBuffer&)> recording
+	) const {
 		try {
 			m_commandBuffer.reset();
 		}
@@ -61,7 +63,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			return MiracleError::VulkanGraphicsEngineCommandRecordBeginError;
 		}
 
-		recording();
+		recording(m_commandBuffer);
 
 		try {
 			m_commandBuffer.end();

@@ -20,5 +20,7 @@ namespace Miracle {
 		inline View::IWindow& getWindow() { return m_window; }
 
 		inline Input::Devices::IKeyboard& getKeyboard() { return m_keyboard; }
+
+		inline Graphics::IGraphicsEngine& getGraphicsEngine() { return m_graphicsEngine; }
 	};
 }

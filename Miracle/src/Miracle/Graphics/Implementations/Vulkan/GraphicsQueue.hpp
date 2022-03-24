@@ -28,6 +28,8 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			return *this;
 		}
 
-		std::optional<MiracleError> recordCommands(std::function<void ()> recording);
+		std::optional<MiracleError> recordCommands(
+			std::function<void (const vk::raii::CommandBuffer&)> recording
+		) const;
 	};
 }

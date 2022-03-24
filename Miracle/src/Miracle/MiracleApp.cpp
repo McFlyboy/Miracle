@@ -57,6 +57,7 @@ namespace Miracle {
 
 		m_window = &dependencies->getWindow();
 		m_keyboard = &dependencies->getKeyboard();
+		auto& graphicsEngine = dependencies->getGraphicsEngine();
 
 		m_window->show();
 

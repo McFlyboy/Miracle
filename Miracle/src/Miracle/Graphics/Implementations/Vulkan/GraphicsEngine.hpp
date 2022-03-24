@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Miracle/Graphics/IGraphicsEngine.hpp>
 #include <Miracle/Io/ResourceLoader.hpp>
 #include "Vulkan.hpp"
 #include "ISurfaceTarget.hpp"
@@ -10,7 +11,7 @@
 #include "GraphicsPipeline.hpp"
 
 namespace Miracle::Graphics::Implementations::Vulkan {
-	class GraphicsEngine {
+	class GraphicsEngine : public IGraphicsEngine {
 	private:
 		vk::raii::Context m_context;
 		Instance m_instance;
@@ -24,8 +25,6 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			const ISurfaceTarget& surfaceTarget,
 			const Io::ResourceLoader& resourceLoader
 		);
-
-		GraphicsEngine(const GraphicsEngine&) = delete;
 
 		~GraphicsEngine();
 	};
