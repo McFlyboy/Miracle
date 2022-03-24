@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #include "Vulkan.hpp"
 
 namespace Miracle::Graphics::Implementations::Vulkan {
@@ -9,8 +11,14 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		Queue() : m_queue(nullptr) {}
 
-		Queue(vk::raii::Queue&& queue) : m_queue(std::move(queue)) {}
+		Queue(
+			const vk::raii::Device& device,
+			uint32_t queueFamilyIndex
+		) :
+			m_queue(device.getQueue(queueFamilyIndex, 0))
+		{}
 
+	public:
 		virtual ~Queue() = default;
 	};
 }

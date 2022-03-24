@@ -85,17 +85,13 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		}
 
 		m_graphicsQueue = GraphicsQueue(
-			m_device.getQueue(
-				m_supportDetails.queueFamilyIndices.graphicsFamilyIndex.value(),
-				0
-			)
+			m_device,
+			m_supportDetails.queueFamilyIndices.graphicsFamilyIndex.value()
 		);
 
 		m_presentQueue = PresentQueue(
-			m_device.getQueue(
-				m_supportDetails.queueFamilyIndices.presentFamilyIndex.value(),
-				0
-			)
+			m_device,
+			m_supportDetails.queueFamilyIndices.presentFamilyIndex.value()
 		);
 	}
 
@@ -135,6 +131,19 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			Logger::error("Failed to create Vulkan render pass!");
 			Logger::error(e.what());
 			return MiracleError::VulkanGraphicsEngineRenderPassCreationError;
+		}
+	}
+
+	std::variant<MiracleError, vk::raii::Framebuffer> Device::createFramebuffer(
+		const vk::FramebufferCreateInfo& createInfo
+	) const {
+		try {
+			return m_device.createFramebuffer(createInfo);
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to create Vulkan framebuffer!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEngineFramebufferCreationError;
 		}
 	}
 

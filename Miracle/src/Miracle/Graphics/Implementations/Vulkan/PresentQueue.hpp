@@ -10,7 +10,12 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 	public:
 		PresentQueue() = default;
 
-		PresentQueue(vk::raii::Queue&& queue) : Queue(std::move(queue)) {}
+		PresentQueue(
+			const vk::raii::Device& device,
+			uint32_t queueFamilyIndex
+		) :
+			Queue(device, queueFamilyIndex)
+		{}
 
 		PresentQueue& operator=(PresentQueue&& right) {
 			m_queue = std::move(right.m_queue);

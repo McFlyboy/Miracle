@@ -21,6 +21,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		std::vector<vk::Image> m_images;
 		std::vector<vk::raii::ImageView> m_imageViews;
 		RenderPass m_renderPass;
+		std::vector<vk::raii::Framebuffer> m_framebuffers;
 
 	public:
 		Swapchain(

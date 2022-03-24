@@ -36,6 +36,10 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			const vk::RenderPassCreateInfo& createInfo
 		) const;
 
+		std::variant<MiracleError, vk::raii::Framebuffer> createFramebuffer(
+			const vk::FramebufferCreateInfo& createInfo
+		) const;
+
 		std::variant<MiracleError, vk::raii::ShaderModule> createShaderModule(
 			const vk::ShaderModuleCreateInfo& createInfo
 		) const;

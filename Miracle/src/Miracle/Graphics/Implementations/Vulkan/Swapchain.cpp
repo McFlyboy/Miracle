@@ -90,6 +90,26 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		}
 
 		m_renderPass = RenderPass(m_device, m_imageFormat);
+
+		m_framebuffers.reserve(m_imageViews.size());
+
+		for (auto& imageView : m_imageViews) {
+			auto result = m_device.createFramebuffer({
+				.flags           = {},
+				.renderPass      = *m_renderPass.getRawRenderPass(),
+				.attachmentCount = 1,
+				.pAttachments    = &*imageView,
+				.width           = m_imageExtent.width,
+				.height          = m_imageExtent.height,
+				.layers          = 1
+			});
+
+			if (result.index() == 0) {
+				throw std::get<MiracleError>(result);
+			}
+
+			m_framebuffers.push_back(std::move(std::get<vk::raii::Framebuffer>(result)));
+		}
 	}
 
 	vk::Extent2D Swapchain::selectExtent(
