@@ -1,5 +1,7 @@
 #include "Window.hpp"
 
+#include <utility>
+
 #include <fmt/format.h>
 
 #include <Miracle/components/Miracle/Diagnostics/Logger.hpp>
@@ -26,11 +28,6 @@ namespace Miracle::View::Implementations {
 		glfwWindowHint(GLFW_RESIZABLE, false);
 		glfwWindowHint(GLFW_VISIBLE, false);
 
-		uint32_t extensionCount = 0;
-		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-
-		Logger::info(fmt::format("Vulkan extensions supported: {}", extensionCount));
-
 		m_window = glfwCreateWindow(
 			props.width,
 			props.height,
@@ -52,10 +49,6 @@ namespace Miracle::View::Implementations {
 			(monitorVideoMode->width - props.width) / 2,
 			(monitorVideoMode->height - props.height) / 2
 		);
-
-		glfwShowWindow(m_window);
-
-		Logger::info("Showing application window");
 	}
 
 	Window::~Window() {
@@ -63,6 +56,12 @@ namespace Miracle::View::Implementations {
 		glfwTerminate();
 
 		Logger::info("Terminated GLFW");
+	}
+
+	void Window::show() {
+		glfwShowWindow(m_window);
+
+		Logger::info("Showing application window");
 	}
 
 	void Window::update() {
@@ -75,6 +74,47 @@ namespace Miracle::View::Implementations {
 
 	void Window::close() {
 		glfwSetWindowShouldClose(m_window, true);
+	}
+
+	std::vector<const char*> Window::getRequiredInstanceExtensions() const {
+		uint32_t extensionCount;
+		auto extensionNames = glfwGetRequiredInstanceExtensions(&extensionCount);
+
+		auto extensions = std::vector<const char*>();
+		extensions.reserve(extensionCount);
+
+		for (uint32_t i = 0; i < extensionCount; i++) {
+			extensions.push_back(extensionNames[i]);
+		}
+
+		return std::move(extensions);
+	}
+
+	vk::Extent2D Window::getCurrentExtent() const {
+		int width;
+		int height;
+
+		glfwGetFramebufferSize(m_window, &width, &height);
+
+		return vk::Extent2D{
+			.width  = static_cast<uint32_t>(width),
+			.height = static_cast<uint32_t>(height)
+		};
+	}
+
+	std::variant<MiracleError, vk::raii::SurfaceKHR> Window::createSurface(
+		const vk::raii::Instance& instance
+	) const {
+		VkSurfaceKHR surface;
+		auto result = vk::Result(glfwCreateWindowSurface(*instance, m_window, nullptr, &surface));
+
+		if (result != vk::Result::eSuccess) {
+			Logger::error("Failed to create Vulkan Surface from GLFW window!");
+			Logger::error(vk::to_string(result));
+			return MiracleError::VulkanGraphicsEngineSurfaceCreationError;
+		}
+
+		return vk::raii::SurfaceKHR(instance, surface);
 	}
 
 	std::optional<MiracleError> Window::initializeGlfw() const {

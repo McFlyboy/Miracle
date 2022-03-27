@@ -17,6 +17,7 @@ namespace Miracle::View {
 		IWindow(const IWindow&) = delete;
 		virtual ~IWindow() = default;
 
+		virtual void show() = 0;
 		virtual void update() = 0;
 		virtual bool shouldClose() const = 0;
 		virtual void close() = 0;

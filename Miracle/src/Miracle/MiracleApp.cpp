@@ -57,16 +57,31 @@ namespace Miracle {
 
 		m_window = &dependencies->getWindow();
 		m_keyboard = &dependencies->getKeyboard();
+		auto& graphicsEngine = dependencies->getGraphicsEngine();
+
+		m_window->show();
 
 		m_startScript();
 
 		while (!m_window->shouldClose()) {
+			m_window->update();
+
 			m_updateScript();
 
-			m_window->update();
+			auto renderError = graphicsEngine.render();
+
+			if (renderError.has_value()) {
+				m_exitCode = static_cast<int>(renderError.value());
+			}
 		}
 
 		Logger::info("Closing Miracle");
+
+		auto waitError = graphicsEngine.waitForExecutionToFinish();
+
+		if (waitError.has_value()) {
+			m_exitCode = static_cast<int>(waitError.value());
+		}
 
 		m_window = nullptr;
 		m_keyboard = nullptr;
