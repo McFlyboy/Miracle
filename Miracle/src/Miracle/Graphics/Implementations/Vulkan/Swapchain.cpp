@@ -149,6 +149,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			auto result = m_swapchain.acquireNextImage(UINT64_MAX, *signalSemaphore);
 
 			if (result.first != vk::Result::eSuccess) {
+				Logger::error("Failed to acquire next image from Vulkan swapchain!");
 				return MiracleError::VulkanGraphicsEngineImageAcquisitionError;
 			}
 

@@ -16,7 +16,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		uint32_t imageIndex
 	) const {
 		try {
-			m_queue.presentKHR({
+			auto result = m_queue.presentKHR({
 				.waitSemaphoreCount = 1,
 				.pWaitSemaphores    = &*waitSemaphore,
 				.swapchainCount     = 1,
@@ -24,6 +24,11 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 				.pImageIndices      = &imageIndex,
 				.pResults           = nullptr
 			});
+
+			if (result != vk::Result::eSuccess) {
+				Logger::error("Failed to present Vulkan swapchain image!");
+				return MiracleError::VulkanGraphicsEnginePresentError;
+			}
 		}
 		catch (const std::exception& e) {
 			Logger::error("Failed to present Vulkan swapchain image!");
