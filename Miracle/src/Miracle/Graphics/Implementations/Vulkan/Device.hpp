@@ -1,6 +1,7 @@
 #pragma once
 
 #include <variant>
+#include <optional>
 
 #include <Miracle/MiracleError.hpp>
 #include "Vulkan.hpp"
@@ -52,6 +53,30 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			const vk::GraphicsPipelineCreateInfo& createInfo
 		) const;
 
+		std::variant<MiracleError, vk::raii::Semaphore> createSemaphore(
+			const vk::SemaphoreCreateInfo& createInfo
+		) const;
+
+		std::variant<MiracleError, vk::raii::Fence> createFence(
+			const vk::FenceCreateInfo& createInfo
+		) const;
+
+		std::optional<MiracleError> waitForFences(
+			const vk::ArrayProxy<const vk::Fence>& fences,
+			bool waitForAll,
+			uint64_t timeout
+		) const;
+
+		std::optional<MiracleError> resetFences(
+			const vk::ArrayProxy<const vk::Fence>& fences
+		) const;
+
+		std::optional<MiracleError> waitIdle() const;
+
 		inline const DeviceSupportDetails& getSupportDetails() const { return m_supportDetails; }
+
+		inline const GraphicsQueue& getGraphicsQueue() const { return m_graphicsQueue; }
+
+		inline const PresentQueue& getPresentQueue() const { return m_presentQueue; }
 	};
 }

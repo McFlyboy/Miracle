@@ -151,7 +151,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			throw std::get<MiracleError>(pipelineLayoutCreateResult);
 		}
 
-		m_pipelineLayout = std::move(std::get<vk::raii::PipelineLayout>(pipelineLayoutCreateResult));
+		m_layout = std::move(std::get<vk::raii::PipelineLayout>(pipelineLayoutCreateResult));
 
 		auto graphicsPipelineCreateResult = m_device.createGraphicsPipeline({
 			.flags               = {},
@@ -166,7 +166,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			.pDepthStencilState  = nullptr,
 			.pColorBlendState    = &colorBlendStateCreateInfo,
 			.pDynamicState       = nullptr,
-			.layout              = *m_pipelineLayout,
+			.layout              = *m_layout,
 			.renderPass          = *swapchain.getRenderPass().getRawRenderPass(),
 			.subpass             = 0,
 			.basePipelineHandle  = {},
@@ -177,7 +177,14 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			throw std::get<MiracleError>(graphicsPipelineCreateResult);
 		}
 
-		m_graphicsPipeline = std::move(std::get<vk::raii::Pipeline>(graphicsPipelineCreateResult));
+		m_pipeline = std::move(std::get<vk::raii::Pipeline>(graphicsPipelineCreateResult));
+	}
+
+	void GraphicsPipeline::bind(const vk::raii::CommandBuffer& commandBuffer) const {
+		commandBuffer.bindPipeline(
+			vk::PipelineBindPoint::eGraphics,
+			*m_pipeline
+		);
 	}
 
 	std::variant<MiracleError, vk::raii::ShaderModule> GraphicsPipeline::createShaderModule(

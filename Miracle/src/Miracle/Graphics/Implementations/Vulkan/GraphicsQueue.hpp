@@ -25,11 +25,18 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		GraphicsQueue& operator=(GraphicsQueue&& right) {
 			m_queue = std::move(right.m_queue);
 			m_commandPool = std::move(right.m_commandPool);
+			m_commandBuffer = std::move(right.m_commandBuffer);
 			return *this;
 		}
 
 		std::optional<MiracleError> recordCommands(
 			std::function<void (const vk::raii::CommandBuffer&)> recording
+		) const;
+
+		std::optional<MiracleError> submitRecorded(
+			const vk::raii::Semaphore& waitSemaphore,
+			const vk::raii::Semaphore& signalSemaphore,
+			const vk::raii::Fence& signalFence
 		) const;
 	};
 }

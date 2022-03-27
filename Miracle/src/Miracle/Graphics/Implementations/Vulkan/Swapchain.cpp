@@ -112,6 +112,55 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		}
 	}
 
+	void Swapchain::executeRenderPass(
+		const vk::raii::CommandBuffer& commandBuffer,
+		uint32_t imageIndex,
+		const vk::ClearColorValue& clearColor,
+		std::function<void()> commands
+	) {
+		auto clearValue = vk::ClearValue(clearColor);
+
+		commandBuffer.beginRenderPass(
+			vk::RenderPassBeginInfo{
+				.renderPass      = *m_renderPass.getRawRenderPass(),
+				.framebuffer     = *m_framebuffers[imageIndex],
+				.renderArea      = vk::Rect2D{
+					.offset = vk::Offset2D{
+						.x = 0,
+						.y = 0
+					},
+					.extent = m_imageExtent
+				},
+				.clearValueCount = 1,
+				.pClearValues    = &clearValue
+			},
+			vk::SubpassContents::eInline
+		);
+
+		commands();
+
+		commandBuffer.endRenderPass();
+	}
+
+	std::variant<MiracleError, uint32_t> Swapchain::acquireNextImage(
+		const vk::raii::Semaphore& signalSemaphore
+	) const {
+		try {
+			auto result = m_swapchain.acquireNextImage(UINT64_MAX, *signalSemaphore);
+
+			if (result.first != vk::Result::eSuccess) {
+				return MiracleError::VulkanGraphicsEngineImageAcquisitionError;
+			}
+
+			return result.second;
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to acquire next image from Vulkan swapchain!");
+			Logger::error(e.what());
+			throw MiracleError::VulkanGraphicsEngineImageAcquisitionError;
+		}
+	}
+
 	vk::Extent2D Swapchain::selectExtent(
 		const vk::SurfaceCapabilitiesKHR& capabilities
 	) const {

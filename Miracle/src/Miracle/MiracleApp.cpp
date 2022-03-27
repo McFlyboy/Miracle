@@ -64,12 +64,24 @@ namespace Miracle {
 		m_startScript();
 
 		while (!m_window->shouldClose()) {
+			m_window->update();
+
 			m_updateScript();
 
-			m_window->update();
+			auto renderError = graphicsEngine.render();
+
+			if (renderError.has_value()) {
+				m_exitCode = static_cast<int>(renderError.value());
+			}
 		}
 
 		Logger::info("Closing Miracle");
+
+		auto waitError = graphicsEngine.waitForExecutionToFinish();
+
+		if (waitError.has_value()) {
+			m_exitCode = static_cast<int>(waitError.value());
+		}
 
 		m_window = nullptr;
 		m_keyboard = nullptr;

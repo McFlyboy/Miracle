@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <variant>
+#include <functional>
 
 #include <Miracle/MiracleError.hpp>
 #include "Vulkan.hpp"
@@ -28,6 +29,19 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			const Device& device,
 			const Surface& surface
 		);
+
+		void executeRenderPass(
+			const vk::raii::CommandBuffer& commandBuffer,
+			uint32_t imageIndex,
+			const vk::ClearColorValue& clearColor,
+			std::function<void ()> commands
+		);
+
+		std::variant<MiracleError, uint32_t> acquireNextImage(
+			const vk::raii::Semaphore& signalSemaphore
+		) const;
+
+		inline const vk::raii::SwapchainKHR& getRawSwapchain() const { return m_swapchain; }
 
 		inline const vk::Extent2D& getImageExtent() const { return m_imageExtent; }
 

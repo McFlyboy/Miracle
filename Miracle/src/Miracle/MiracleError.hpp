@@ -31,6 +31,14 @@ namespace Miracle {
 		VulkanGraphicsEngineFramebufferCreationError,
 		VulkanGraphicsEngineShaderModuleCreationError,
 		VulkanGraphicsEnginePipelineLayoutCreationError,
-		VulkanGraphicsEngineGraphicsPipelineCreationError
+		VulkanGraphicsEngineGraphicsPipelineCreationError,
+		VulkanGraphicsEngineSemaphoreCreationError,
+		VulkanGraphicsEngineFenceCreationError,
+		VulkanGraphicsEngineSyncError,
+		VulkanGraphicsEngineFenceResetError,
+		VulkanGraphicsEngineImageAcquisitionError,
+		VulkanGraphicsEngineCommandBufferSubmissionError,
+		VulkanGraphicsEnginePresentError,
+		VulkanGraphicsEngineDeviceExecutionWaitError
 	};
 }

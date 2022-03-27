@@ -35,14 +35,24 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			.pPreserveAttachments    = nullptr
 		};
 
+		auto dependency = vk::SubpassDependency{
+			.srcSubpass      = VK_SUBPASS_EXTERNAL,
+			.dstSubpass      = 0,
+			.srcStageMask    = vk::PipelineStageFlagBits::eColorAttachmentOutput,
+			.dstStageMask    = vk::PipelineStageFlagBits::eColorAttachmentOutput,
+			.srcAccessMask   = vk::AccessFlags{},
+			.dstAccessMask   = vk::AccessFlagBits::eColorAttachmentWrite,
+			.dependencyFlags = {}
+		};
+
 		auto result = device.createRenderPass({
 			.flags           = {},
 			.attachmentCount = 1,
 			.pAttachments    = &colorAttachment,
 			.subpassCount    = 1,
 			.pSubpasses      = &subpass,
-			.dependencyCount = 0,
-			.pDependencies   = nullptr
+			.dependencyCount = 1,
+			.pDependencies   = &dependency
 		});
 
 		if (result.index() == 0) {

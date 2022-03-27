@@ -185,4 +185,79 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			return MiracleError::VulkanGraphicsEngineGraphicsPipelineCreationError;
 		}
 	}
+
+	std::variant<MiracleError, vk::raii::Semaphore> Device::createSemaphore(
+		const vk::SemaphoreCreateInfo& createInfo
+	) const {
+		try {
+			return m_device.createSemaphore(createInfo);
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to create Vulkan semaphore!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEngineSemaphoreCreationError;
+		}
+	}
+
+	std::variant<MiracleError, vk::raii::Fence> Device::createFence(
+		const vk::FenceCreateInfo& createInfo
+	) const {
+		try {
+			return m_device.createFence(createInfo);
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to create Vulkan fence!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEngineFenceCreationError;
+		}
+	}
+
+	std::optional<MiracleError> Device::waitForFences(
+		const vk::ArrayProxy<const vk::Fence>& fences,
+		bool waitForAll,
+		uint64_t timeout
+	) const {
+		try {
+			auto result = m_device.waitForFences(fences, waitForAll, timeout);
+
+			if (result == vk::Result::eTimeout) {
+				Logger::warning("Timeout on wait for Vulkan fences!");
+			}
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to wait for Vulkan fences!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEngineSyncError;
+		}
+		
+		return std::nullopt;
+	}
+
+	std::optional<MiracleError> Device::resetFences(
+		const vk::ArrayProxy<const vk::Fence>& fences
+	) const {
+		try {
+			m_device.resetFences(fences);
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to reset Vulkan fences!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEngineFenceResetError;
+		}
+
+		return std::nullopt;
+	}
+
+	std::optional<MiracleError> Device::waitIdle() const {
+		try {
+			m_device.waitIdle();
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to wait for Vulkan device to finish execution!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEngineDeviceExecutionWaitError;
+		}
+
+		return std::nullopt;
+	}
 }

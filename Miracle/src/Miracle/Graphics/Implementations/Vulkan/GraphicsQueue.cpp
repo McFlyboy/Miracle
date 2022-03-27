@@ -74,6 +74,36 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			return MiracleError::VulkanGraphicsEngineCommandRecordEndError;
 		}
 
-		std::nullopt;
+		return std::nullopt;
+	}
+
+	std::optional<MiracleError> GraphicsQueue::submitRecorded(
+		const vk::raii::Semaphore& waitSemaphore,
+		const vk::raii::Semaphore& signalSemaphore,
+		const vk::raii::Fence& signalFence
+	) const {
+		vk::PipelineStageFlags waitStage = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+
+		try {
+			m_queue.submit(
+				vk::SubmitInfo{
+					.waitSemaphoreCount = 1,
+					.pWaitSemaphores = &*waitSemaphore,
+					.pWaitDstStageMask = &waitStage,
+					.commandBufferCount = 1,
+					.pCommandBuffers = &*m_commandBuffer,
+					.signalSemaphoreCount = 1,
+					.pSignalSemaphores = &*signalSemaphore
+				},
+				*signalFence
+			);
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to submit Vulkan command buffer to graphics queue!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEngineCommandBufferSubmissionError;
+		}
+
+		return std::nullopt;
 	}
 }

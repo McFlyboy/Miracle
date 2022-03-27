@@ -1,5 +1,9 @@
 #pragma once
 
+#include <optional>
+
+#include <Miracle/MiracleError.hpp>
+
 namespace Miracle::Graphics {
 	class IGraphicsEngine {
 	protected:
@@ -9,5 +13,9 @@ namespace Miracle::Graphics {
 		IGraphicsEngine(const IGraphicsEngine&) = delete;
 
 		virtual ~IGraphicsEngine() = default;
+
+		virtual std::optional<MiracleError> render() = 0;
+
+		virtual std::optional<MiracleError> waitForExecutionToFinish() = 0;
 	};
 }

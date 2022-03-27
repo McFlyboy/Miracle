@@ -14,8 +14,8 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 	private:
 		const Device& m_device;
 
-		vk::raii::PipelineLayout m_pipelineLayout = nullptr;
-		vk::raii::Pipeline m_graphicsPipeline = nullptr;
+		vk::raii::PipelineLayout m_layout = nullptr;
+		vk::raii::Pipeline m_pipeline = nullptr;
 
 	public:
 		GraphicsPipeline(
@@ -23,6 +23,8 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			const Swapchain& swapchain,
 			const Io::ResourceLoader& resourceLoader
 		);
+
+		void bind(const vk::raii::CommandBuffer& commandBuffer) const;
 
 	private:
 		std::variant<MiracleError, vk::raii::ShaderModule> createShaderModule(
