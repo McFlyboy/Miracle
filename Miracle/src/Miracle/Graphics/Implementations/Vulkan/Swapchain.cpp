@@ -158,7 +158,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		catch (const std::exception& e) {
 			Logger::error("Failed to acquire next image from Vulkan swapchain!");
 			Logger::error(e.what());
-			throw MiracleError::VulkanGraphicsEngineImageAcquisitionError;
+			return MiracleError::VulkanGraphicsEngineImageAcquisitionError;
 		}
 	}
 
