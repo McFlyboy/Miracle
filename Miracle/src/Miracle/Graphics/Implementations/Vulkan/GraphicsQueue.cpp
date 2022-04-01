@@ -27,23 +27,26 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			auto commandBuffers = device.allocateCommandBuffers({
 				.commandPool        = *m_commandPool,
 				.level              = vk::CommandBufferLevel::ePrimary,
-				.commandBufferCount = 1
+				.commandBufferCount = static_cast<uint32_t>(m_commandBuffers.size())
 			});
 
-			m_commandBuffer = std::move(commandBuffers.front());
+			for (int i = 0; i < m_commandBuffers.size(); i++) {
+				m_commandBuffers[i] = std::move(commandBuffers[i]);
+			}
 		}
 		catch (const std::exception& e) {
-			Logger::error("Failed to allocate Vulkan command buffer!");
+			Logger::error("Failed to allocate Vulkan command buffers!");
 			Logger::error(e.what());
 			throw MiracleError::VulkanGraphicsEngineCommandBufferAllocationError;
 		}
 	}
 
 	std::optional<MiracleError> GraphicsQueue::recordCommands(
+		int bufferIndex,
 		std::function<void (const vk::raii::CommandBuffer&)> recording
 	) const {
 		try {
-			m_commandBuffer.reset();
+			m_commandBuffers[bufferIndex].reset();
 		}
 		catch (const std::exception& e) {
 			Logger::error("Failed to reset Vulkan command buffer!");
@@ -52,7 +55,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		}
 
 		try {
-			m_commandBuffer.begin({
+			m_commandBuffers[bufferIndex].begin({
 				.flags            = {},
 				.pInheritanceInfo = {}
 			});
@@ -63,10 +66,10 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			return MiracleError::VulkanGraphicsEngineCommandRecordBeginError;
 		}
 
-		recording(m_commandBuffer);
+		recording(m_commandBuffers[bufferIndex]);
 
 		try {
-			m_commandBuffer.end();
+			m_commandBuffers[bufferIndex].end();
 		}
 		catch (const std::exception& e) {
 			Logger::error("Failed to end Vulkan command recording!");
@@ -78,6 +81,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 	}
 
 	std::optional<MiracleError> GraphicsQueue::submitRecorded(
+		int bufferIndex,
 		const vk::raii::Semaphore& waitSemaphore,
 		const vk::raii::Semaphore& signalSemaphore,
 		const vk::raii::Fence& signalFence
@@ -91,7 +95,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 					.pWaitSemaphores = &*waitSemaphore,
 					.pWaitDstStageMask = &waitStage,
 					.commandBufferCount = 1,
-					.pCommandBuffers = &*m_commandBuffer,
+					.pCommandBuffers = &*m_commandBuffers[bufferIndex],
 					.signalSemaphoreCount = 1,
 					.pSignalSemaphores = &*signalSemaphore
 				},

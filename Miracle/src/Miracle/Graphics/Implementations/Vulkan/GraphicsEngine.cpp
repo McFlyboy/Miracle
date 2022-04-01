@@ -14,7 +14,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		m_device(m_instance, m_surface),
 		m_swapchain(m_device, m_surface),
 		m_graphicsPipeline(m_device, m_swapchain, resourceLoader),
-		m_syncObjects(m_device)
+		m_framesInFlight(m_device)
 	{
 		Logger::info("Vulkan graphics engine created");
 	}
@@ -24,19 +24,23 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 	}
 
 	std::optional<MiracleError> GraphicsEngine::render() {
-		auto fencesWaitResult = m_syncObjects.waitForFences(true);
+		m_framesInFlight.nextTarget();
 
-		if (fencesWaitResult.has_value()) {
-			return fencesWaitResult.value();
+		auto& targetFrameInFlight = m_framesInFlight.getTargetFrameInFlight();
+
+		auto endOfFlightWaitResult = targetFrameInFlight.waitForEndOfFlight();
+
+		if (endOfFlightWaitResult.has_value()) {
+			return endOfFlightWaitResult.value();
 		}
 
-		auto fencesResetResult = m_syncObjects.resetAllFences();
+		auto beginFlightResult = targetFrameInFlight.beginFlight();
 
-		if (fencesResetResult.has_value()) {
-			return fencesResetResult.value();
+		if (beginFlightResult.has_value()) {
+			return beginFlightResult.value();
 		}
 
-		auto imageAcquireResult = m_swapchain.acquireNextImage(m_syncObjects.imageAvailable);
+		auto imageAcquireResult = m_swapchain.acquireNextImage(targetFrameInFlight.imageAvailable);
 
 		if (imageAcquireResult.index() == 0) {
 			return std::get<MiracleError>(imageAcquireResult);
@@ -44,7 +48,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		auto& imageIndex = std::get<uint32_t>(imageAcquireResult);
 
-		auto recordError = recordDrawCommands(imageIndex);
+		auto recordError = recordDrawCommands(m_framesInFlight.getTargetFrameInFlightIndex(), imageIndex);
 
 		if (recordError.has_value()) {
 			return recordError.value();
@@ -52,9 +56,10 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		auto submitError = m_device.getGraphicsQueue()
 			.submitRecorded(
-				m_syncObjects.imageAvailable,
-				m_syncObjects.renderingFinished,
-				m_syncObjects.frameInFlight
+				m_framesInFlight.getTargetFrameInFlightIndex(),
+				targetFrameInFlight.imageAvailable,
+				targetFrameInFlight.renderingFinished,
+				targetFrameInFlight.flightEnded
 			);
 
 		if (submitError.has_value()) {
@@ -63,7 +68,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		auto presentError = m_device.getPresentQueue()
 			.present(
-				m_syncObjects.renderingFinished,
+				targetFrameInFlight.renderingFinished,
 				m_swapchain.getRawSwapchain(),
 				imageIndex
 			);
@@ -79,9 +84,13 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		return m_device.waitIdle();
 	}
 
-	std::optional<MiracleError> GraphicsEngine::recordDrawCommands(uint32_t imageIndex) {
+	std::optional<MiracleError> GraphicsEngine::recordDrawCommands(
+		int bufferIndex,
+		uint32_t imageIndex
+	) {
 		return m_device.getGraphicsQueue()
 			.recordCommands(
+				bufferIndex,
 				[this, &imageIndex](const vk::raii::CommandBuffer& commandBuffer) {
 					m_swapchain.executeRenderPass(
 						commandBuffer,

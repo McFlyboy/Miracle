@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include <Miracle/Graphics/IGraphicsEngine.hpp>
 #include <Miracle/Io/ResourceLoader.hpp>
 #include "Vulkan.hpp"
@@ -9,7 +11,7 @@
 #include "Device.hpp"
 #include "Swapchain.hpp"
 #include "GraphicsPipeline.hpp"
-#include "EngineSyncObjects.hpp"
+#include "FramesInFlight.hpp"
 
 namespace Miracle::Graphics::Implementations::Vulkan {
 	class GraphicsEngine : public IGraphicsEngine {
@@ -20,7 +22,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		Device m_device;
 		Swapchain m_swapchain;
 		GraphicsPipeline m_graphicsPipeline;
-		EngineSyncObjects m_syncObjects;
+		FramesInFlight m_framesInFlight;
 
 	public:
 		GraphicsEngine(
@@ -35,6 +37,9 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		virtual std::optional<MiracleError> waitForExecutionToFinish() override;
 
 	private:
-		std::optional<MiracleError> recordDrawCommands(uint32_t imageIndex);
+		std::optional<MiracleError> recordDrawCommands(
+			int bufferIndex,
+			uint32_t imageIndex
+		);
 	};
 }

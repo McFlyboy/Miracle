@@ -1,13 +1,13 @@
-#include "EngineSyncObjects.hpp"
+#include "FrameInFlight.hpp"
 
 #include <utility>
 
 namespace Miracle::Graphics::Implementations::Vulkan {
-	EngineSyncObjects::EngineSyncObjects(const Device& device) :
+	FrameInFlight::FrameInFlight(const Device& device) :
 		m_device(device),
 		imageAvailable(nullptr),
 		renderingFinished(nullptr),
-		frameInFlight(nullptr)
+		flightEnded(nullptr)
 	{
 		auto imageAvailableCreateResult = device.createSemaphore({
 			.flags = {}
@@ -21,7 +21,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		auto renderingFinishedCreateResult = device.createSemaphore({
 			.flags = {}
-			});
+		});
 
 		if (renderingFinishedCreateResult.index() == 0) {
 			throw std::get<MiracleError>(renderingFinishedCreateResult);
@@ -29,14 +29,14 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		renderingFinished = std::move(std::get<vk::raii::Semaphore>(renderingFinishedCreateResult));
 
-		auto frameInFlightCreateResult = device.createFence({
+		auto flightEndedCreateResult = device.createFence({
 			.flags = vk::FenceCreateFlagBits::eSignaled
 		});
 
-		if (frameInFlightCreateResult.index() == 0) {
-			throw std::get<MiracleError>(frameInFlightCreateResult);
+		if (flightEndedCreateResult.index() == 0) {
+			throw std::get<MiracleError>(flightEndedCreateResult);
 		}
 
-		frameInFlight = std::move(std::get<vk::raii::Fence>(frameInFlightCreateResult));
+		flightEnded = std::move(std::get<vk::raii::Fence>(flightEndedCreateResult));
 	}
 }

@@ -3,6 +3,7 @@
 #include <utility>
 #include <functional>
 #include <optional>
+#include <array>
 
 #include <Miracle/MiracleError.hpp>
 #include "Vulkan.hpp"
@@ -12,7 +13,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 	class GraphicsQueue : public Queue {
 	private:
 		vk::raii::CommandPool m_commandPool = nullptr;
-		vk::raii::CommandBuffer m_commandBuffer = nullptr;
+		std::array<vk::raii::CommandBuffer, 2> m_commandBuffers = { nullptr, nullptr };
 
 	public:
 		GraphicsQueue() = default;
@@ -25,15 +26,17 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		GraphicsQueue& operator=(GraphicsQueue&& right) {
 			m_queue = std::move(right.m_queue);
 			m_commandPool = std::move(right.m_commandPool);
-			m_commandBuffer = std::move(right.m_commandBuffer);
+			m_commandBuffers = std::move(right.m_commandBuffers);
 			return *this;
 		}
 
 		std::optional<MiracleError> recordCommands(
+			int bufferIndex,
 			std::function<void (const vk::raii::CommandBuffer&)> recording
 		) const;
 
 		std::optional<MiracleError> submitRecorded(
+			int bufferIndex,
 			const vk::raii::Semaphore& waitSemaphore,
 			const vk::raii::Semaphore& signalSemaphore,
 			const vk::raii::Fence& signalFence
