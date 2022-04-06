@@ -25,7 +25,7 @@ namespace Miracle::View::Implementations {
 		auto monitorVideoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, false);
+		glfwWindowHint(GLFW_RESIZABLE, true);
 		glfwWindowHint(GLFW_VISIBLE, false);
 
 		m_window = glfwCreateWindow(

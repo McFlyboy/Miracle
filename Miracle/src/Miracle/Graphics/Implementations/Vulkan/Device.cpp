@@ -15,7 +15,9 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 	Device::Device(
 		const Instance& instance,
 		const Surface& surface
-	) {
+	) :
+		m_surface(surface)
+	{
 		auto physicalDevicesResult = instance.enumeratePhysicalDevices();
 
 		if (physicalDevicesResult.index() == 0) {
@@ -26,19 +28,20 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		auto selectedPhysicalDeviceResult = PhysicalDeviceSelector::selectPhysicalDevice(
 			physicalDevices,
-			surface.getRawSurface()
+			m_surface.getRawSurface()
 		);
 
 		if (selectedPhysicalDeviceResult.index() == 0) {
 			throw std::get<MiracleError>(selectedPhysicalDeviceResult);
 		}
 
-		auto& selectedPhysicalDevice
-			= std::get<std::reference_wrapper<vk::raii::PhysicalDevice>>(selectedPhysicalDeviceResult).get();
+		m_physicalDevice = std::move(
+			std::get<std::reference_wrapper<vk::raii::PhysicalDevice>>(selectedPhysicalDeviceResult).get()
+		);
 
 		m_supportDetails = PhysicalDeviceSelector::queryDeviceSupport(
-			selectedPhysicalDevice,
-			surface.getRawSurface()
+			m_physicalDevice,
+			m_surface.getRawSurface()
 		);
 
 		auto uniqueQueueFamilyIndices = std::set{
@@ -67,7 +70,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		auto extensions = std::array{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 		try {
-			m_device = selectedPhysicalDevice.createDevice({
+			m_device = m_physicalDevice.createDevice({
 				.flags                   = {},
 				.queueCreateInfoCount    = static_cast<uint32_t>(queueCreateInfos.size()),
 				.pQueueCreateInfos       = queueCreateInfos.data(),
@@ -259,5 +262,11 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		}
 
 		return std::nullopt;
+	}
+
+	void Device::refreshSupportDetails() {
+		m_supportDetails = std::move(
+			PhysicalDeviceSelector::queryDeviceSupport(m_physicalDevice, m_surface.getRawSurface())
+		);
 	}
 }

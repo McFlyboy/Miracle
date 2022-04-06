@@ -3,6 +3,7 @@
 #include <vector>
 #include <variant>
 #include <functional>
+#include <optional>
 
 #include <Miracle/MiracleError.hpp>
 #include "Vulkan.hpp"
@@ -16,9 +17,10 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		const Device& m_device;
 		const Surface& m_surface;
 
-		vk::raii::SwapchainKHR m_swapchain = nullptr;
-		vk::Format m_imageFormat;
 		vk::Extent2D m_imageExtent;
+		uint32_t m_imageCount;
+		vk::SurfaceFormatKHR m_surfaceFormat;
+		vk::raii::SwapchainKHR m_swapchain = nullptr;
 		std::vector<vk::Image> m_images;
 		std::vector<vk::raii::ImageView> m_imageViews;
 		RenderPass m_renderPass;
@@ -40,6 +42,8 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		std::variant<MiracleError, uint32_t> acquireNextImage(
 			const vk::raii::Semaphore& signalSemaphore
 		) const;
+
+		std::optional<MiracleError> recreate();
 
 		inline const vk::raii::SwapchainKHR& getRawSwapchain() const { return m_swapchain; }
 
@@ -65,8 +69,16 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			bool useVsync
 		) const;
 
+		std::variant<MiracleError, vk::raii::SwapchainKHR> createSwapchain() const;
+
+		std::optional<MiracleError> fillImageList();
+
+		std::optional<MiracleError> fillImageViewList();
+
 		std::variant<MiracleError, vk::raii::ImageView> createViewForImage(
 			const vk::Image& image
 		) const;
+
+		std::optional<MiracleError> fillFramebufferList();
 	};
 }

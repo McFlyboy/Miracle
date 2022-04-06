@@ -34,19 +34,25 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			return endOfFlightWaitResult.value();
 		}
 
+		auto imageAcquireResult = m_swapchain.acquireNextImage(targetFrameInFlight.imageAvailable);
+
+		if (imageAcquireResult.index() == 0) {
+			auto& error = std::get<MiracleError>(imageAcquireResult);
+
+			if (error == MiracleError::VulkanGraphicsEngineSwapchainOutOfDateError) {
+				recreateSwapchainAndDependents();
+			}
+
+			return error;
+		}
+
+		auto& imageIndex = std::get<uint32_t>(imageAcquireResult);
+
 		auto beginFlightResult = targetFrameInFlight.beginFlight();
 
 		if (beginFlightResult.has_value()) {
 			return beginFlightResult.value();
 		}
-
-		auto imageAcquireResult = m_swapchain.acquireNextImage(targetFrameInFlight.imageAvailable);
-
-		if (imageAcquireResult.index() == 0) {
-			return std::get<MiracleError>(imageAcquireResult);
-		}
-
-		auto& imageIndex = std::get<uint32_t>(imageAcquireResult);
 
 		auto recordError = recordDrawCommands(m_framesInFlight.getTargetFrameInFlightIndex(), imageIndex);
 
@@ -74,6 +80,10 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			);
 
 		if (presentError.has_value()) {
+			if (presentError.value() == MiracleError::VulkanGraphicsEngineSwapchainOutOfDateError) {
+				recreateSwapchainAndDependents();
+			}
+
 			return presentError.value();
 		}
 
@@ -104,5 +114,27 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 					);
 				}
 			);
+	}
+
+	std::optional<MiracleError> GraphicsEngine::recreateSwapchainAndDependents() {
+		m_device.waitIdle();
+		m_device.refreshSupportDetails();
+
+		auto swapchainRecreateError = m_swapchain.recreate();
+
+		if (swapchainRecreateError.has_value()) {
+			Logger::error("Failed to rebuild Vulkan swapchain!");
+			return swapchainRecreateError.value();
+		}
+
+		auto graphicsPipelineRecreateError = m_graphicsPipeline.recreate();
+
+		if (graphicsPipelineRecreateError.has_value()) {
+			Logger::error("Failed to rebuild Vulkan graphics pipeline!");
+			return graphicsPipelineRecreateError.value();
+		}
+
+		Logger::info("Vulkan swapchain and dependents rebuilt");
+		return std::nullopt;
 	}
 }

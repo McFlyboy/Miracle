@@ -14,6 +14,9 @@
 namespace Miracle::Graphics::Implementations::Vulkan {
 	class Device {
 	private:
+		const Surface& m_surface;
+
+		vk::raii::PhysicalDevice m_physicalDevice = nullptr;
 		DeviceSupportDetails m_supportDetails;
 		vk::raii::Device m_device = nullptr;
 		GraphicsQueue m_graphicsQueue;
@@ -72,6 +75,8 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		) const;
 
 		std::optional<MiracleError> waitIdle() const;
+
+		void refreshSupportDetails();
 
 		inline const DeviceSupportDetails& getSupportDetails() const { return m_supportDetails; }
 

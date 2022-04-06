@@ -25,10 +25,14 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 				.pResults           = nullptr
 			});
 
-			if (result != vk::Result::eSuccess) {
+			if (result != vk::Result::eSuccess && result != vk::Result::eSuboptimalKHR) {
 				Logger::error("Failed to present Vulkan swapchain image!");
 				return MiracleError::VulkanGraphicsEnginePresentError;
 			}
+		}
+		catch (const vk::OutOfDateKHRError&) {
+			Logger::warning("Vulkan swapchain out of date. Rebuild required...");
+			return MiracleError::VulkanGraphicsEngineSwapchainOutOfDateError;
 		}
 		catch (const std::exception& e) {
 			Logger::error("Failed to present Vulkan swapchain image!");

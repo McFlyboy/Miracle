@@ -21,94 +21,36 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 	{
 		auto& supportDetails = m_device.getSupportDetails().swapchainSupportDetails;
 
-		auto extent = selectExtent(supportDetails.capabilities);
-		auto imageCount = selectImageCount(supportDetails.capabilities);
-		auto format = selectFormat(supportDetails.formats);
-		auto presentMode = selectPresentMode(supportDetails.presentModesSupported, false);
+		m_imageExtent = selectExtent(supportDetails.capabilities);
+		m_imageCount = selectImageCount(supportDetails.capabilities);
+		m_surfaceFormat = selectFormat(supportDetails.formats);
 
-		auto& queueFamilyIndices = m_device.getSupportDetails().queueFamilyIndices;
+		auto createSwapchainResult = createSwapchain();
 
-		auto indices = std::array{
-			queueFamilyIndices.graphicsFamilyIndex.value(),
-			queueFamilyIndices.presentFamilyIndex.value()
-		};
-
-		bool isImagesShared = indices[0] != indices[1];
-
-		auto result = m_device.createSwapchain({
-			.flags                 = {},
-			.surface               = *m_surface.getRawSurface(),
-			.minImageCount         = imageCount,
-			.imageFormat           = format.format,
-			.imageColorSpace       = format.colorSpace,
-			.imageExtent           = extent,
-			.imageArrayLayers      = 1,
-			.imageUsage            = vk::ImageUsageFlagBits::eColorAttachment,
-			.imageSharingMode      = isImagesShared ? vk::SharingMode::eConcurrent          : vk::SharingMode::eExclusive,
-			.queueFamilyIndexCount = isImagesShared ? static_cast<uint32_t>(indices.size()) : 0,
-			.pQueueFamilyIndices   = isImagesShared ? indices.data()                        : nullptr,
-			.preTransform          = supportDetails.capabilities.currentTransform,
-			.compositeAlpha        = vk::CompositeAlphaFlagBitsKHR::eOpaque,
-			.presentMode           = presentMode,
-			.clipped               = true,
-			.oldSwapchain          = nullptr
-		});
-
-		if (result.index() == 0) {
-			throw std::get<MiracleError>(result);
+		if (createSwapchainResult.index() == 0) {
+			throw std::get<MiracleError>(createSwapchainResult);
 		}
 
-		m_swapchain = std::move(std::get<vk::raii::SwapchainKHR>(result));
+		m_swapchain = std::move(std::get<vk::raii::SwapchainKHR>(createSwapchainResult));
 
-		m_imageFormat = format.format;
-		m_imageExtent = extent;
+		auto fillImageListResult = fillImageList();
 
-		try {
-			auto images = m_swapchain.getImages();
-			m_images.reserve(images.size());
-
-			for (auto& image : images) {
-				m_images.emplace_back(image);
-			}
-		}
-		catch (const std::exception& e) {
-			Logger::error("Failed to retrieve images from Vulkan swapchain!");
-			Logger::error(e.what());
-			throw MiracleError::VulkanGraphicsEngineSwapchainImagesRetrievalError;
+		if (fillImageListResult.has_value()) {
+			throw fillImageListResult.value();
 		}
 
-		m_imageViews.reserve(m_images.size());
+		auto fillImageViewListResult = fillImageViewList();
 
-		for (auto& image : m_images) {
-			auto result = createViewForImage(image);
-
-			if (result.index() == 0) {
-				throw std::get<MiracleError>(result);
-			}
-
-			m_imageViews.push_back(std::move(std::get<vk::raii::ImageView>(result)));
+		if (fillImageViewListResult.has_value()) {
+			throw fillImageViewListResult.value();
 		}
 
-		m_renderPass = RenderPass(m_device, m_imageFormat);
+		m_renderPass = RenderPass(m_device, m_surfaceFormat.format);
 
-		m_framebuffers.reserve(m_imageViews.size());
+		auto fillFramebufferListResult = fillFramebufferList();
 
-		for (auto& imageView : m_imageViews) {
-			auto result = m_device.createFramebuffer({
-				.flags           = {},
-				.renderPass      = *m_renderPass.getRawRenderPass(),
-				.attachmentCount = 1,
-				.pAttachments    = &*imageView,
-				.width           = m_imageExtent.width,
-				.height          = m_imageExtent.height,
-				.layers          = 1
-			});
-
-			if (result.index() == 0) {
-				throw std::get<MiracleError>(result);
-			}
-
-			m_framebuffers.push_back(std::move(std::get<vk::raii::Framebuffer>(result)));
+		if (fillFramebufferListResult.has_value()) {
+			throw fillFramebufferListResult.value();
 		}
 	}
 
@@ -148,18 +90,59 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		try {
 			auto result = m_swapchain.acquireNextImage(UINT64_MAX, *signalSemaphore);
 
-			if (result.first != vk::Result::eSuccess) {
+			if (result.first != vk::Result::eSuccess && result.first != vk::Result::eSuboptimalKHR) {
 				Logger::error("Failed to acquire next image from Vulkan swapchain!");
 				return MiracleError::VulkanGraphicsEngineImageAcquisitionError;
 			}
 
 			return result.second;
 		}
+		catch (const vk::OutOfDateKHRError&) {
+			Logger::warning("Vulkan swapchain out of date. Rebuild required...");
+			return MiracleError::VulkanGraphicsEngineSwapchainOutOfDateError;
+		}
 		catch (const std::exception& e) {
 			Logger::error("Failed to acquire next image from Vulkan swapchain!");
 			Logger::error(e.what());
 			return MiracleError::VulkanGraphicsEngineImageAcquisitionError;
 		}
+	}
+
+	std::optional<MiracleError> Swapchain::recreate() {
+		m_framebuffers.clear();
+		m_imageViews.clear();
+		m_images.clear();
+		m_swapchain.~SwapchainKHR();
+
+		m_imageExtent = selectExtent(m_device.getSupportDetails().swapchainSupportDetails.capabilities);
+
+		auto createSwapchainResult = createSwapchain();
+
+		if (createSwapchainResult.index() == 0) {
+			return std::get<MiracleError>(createSwapchainResult);
+		}
+
+		m_swapchain = std::move(std::get<vk::raii::SwapchainKHR>(createSwapchainResult));
+
+		auto fillImageListResult = fillImageList();
+
+		if (fillImageListResult.has_value()) {
+			return fillImageListResult.value();
+		}
+
+		auto fillImageViewListResult = fillImageViewList();
+
+		if (fillImageViewListResult.has_value()) {
+			return fillImageViewListResult.value();
+		}
+
+		auto fillFramebufferListResult = fillFramebufferList();
+
+		if (fillFramebufferListResult.has_value()) {
+			return fillFramebufferListResult.value();
+		}
+
+		return std::nullopt;
 	}
 
 	vk::Extent2D Swapchain::selectExtent(
@@ -223,6 +206,79 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			: vk::PresentModeKHR::eImmediate;
 	}
 
+	std::variant<MiracleError, vk::raii::SwapchainKHR> Swapchain::createSwapchain() const {
+		auto& supportDetails = m_device.getSupportDetails().swapchainSupportDetails;
+		auto presentMode = selectPresentMode(supportDetails.presentModesSupported, false);
+
+		auto& queueFamilyIndices = m_device.getSupportDetails().queueFamilyIndices;
+
+		auto indices = std::array{
+			queueFamilyIndices.graphicsFamilyIndex.value(),
+			queueFamilyIndices.presentFamilyIndex.value()
+		};
+
+		bool isImagesShared = indices[0] != indices[1];
+
+		return m_device.createSwapchain({
+			.flags                 = {},
+			.surface               = *m_surface.getRawSurface(),
+			.minImageCount         = m_imageCount,
+			.imageFormat           = m_surfaceFormat.format,
+			.imageColorSpace       = m_surfaceFormat.colorSpace,
+			.imageExtent           = m_imageExtent,
+			.imageArrayLayers      = 1,
+			.imageUsage            = vk::ImageUsageFlagBits::eColorAttachment,
+			.imageSharingMode      = isImagesShared
+				? vk::SharingMode::eConcurrent
+				: vk::SharingMode::eExclusive,
+			.queueFamilyIndexCount = isImagesShared
+				? static_cast<uint32_t>(indices.size())
+				: 0,
+			.pQueueFamilyIndices   = isImagesShared
+				? indices.data()
+				: nullptr,
+			.preTransform          = supportDetails.capabilities.currentTransform,
+			.compositeAlpha        = vk::CompositeAlphaFlagBitsKHR::eOpaque,
+			.presentMode           = presentMode,
+			.clipped               = true,
+			.oldSwapchain          = nullptr
+		});
+	}
+
+	std::optional<MiracleError> Swapchain::fillImageList() {
+		try {
+			auto images = m_swapchain.getImages();
+			m_images.reserve(images.size());
+
+			for (auto& image : images) {
+				m_images.emplace_back(image);
+			}
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to retrieve images from Vulkan swapchain!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEngineSwapchainImagesRetrievalError;
+		}
+
+		return std::nullopt;
+	}
+
+	std::optional<MiracleError> Swapchain::fillImageViewList() {
+		m_imageViews.reserve(m_images.size());
+
+		for (auto& image : m_images) {
+			auto result = createViewForImage(image);
+
+			if (result.index() == 0) {
+				return std::get<MiracleError>(result);
+			}
+
+			m_imageViews.push_back(std::move(std::get<vk::raii::ImageView>(result)));
+		}
+
+		return std::nullopt;
+	}
+
 	std::variant<MiracleError, vk::raii::ImageView> Swapchain::createViewForImage(
 		const vk::Image& image
 	) const {
@@ -230,7 +286,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			.flags            = {},
 			.image            = image,
 			.viewType         = vk::ImageViewType::e2D,
-			.format           = m_imageFormat,
+			.format           = m_surfaceFormat.format,
 			.components       = vk::ComponentMapping{
 				.r = vk::ComponentSwizzle::eIdentity,
 				.g = vk::ComponentSwizzle::eIdentity,
@@ -245,5 +301,29 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 				.layerCount     = 1,
 			}
 		});
+	}
+
+	std::optional<MiracleError> Swapchain::fillFramebufferList() {
+		m_framebuffers.reserve(m_imageViews.size());
+
+		for (auto& imageView : m_imageViews) {
+			auto result = m_device.createFramebuffer({
+				.flags = {},
+				.renderPass = *m_renderPass.getRawRenderPass(),
+				.attachmentCount = 1,
+				.pAttachments = &*imageView,
+				.width = m_imageExtent.width,
+				.height = m_imageExtent.height,
+				.layers = 1
+				});
+
+			if (result.index() == 0) {
+				return std::get<MiracleError>(result);
+			}
+
+			m_framebuffers.push_back(std::move(std::get<vk::raii::Framebuffer>(result)));
+		}
+
+		return std::nullopt;
 	}
 }

@@ -2,9 +2,9 @@
 
 namespace Miracle {
 	enum class MiracleError : int {
-		// No error
+		// No error (should not be used as success value unless casted to type int first)
 		NoError                                             = 0x00000000,
-								                  
+		
 		// Window errors		                  
 		WindowInitializationError                           = 0x00010000,
 		WindowCreationError,
@@ -39,6 +39,7 @@ namespace Miracle {
 		VulkanGraphicsEngineImageAcquisitionError,
 		VulkanGraphicsEngineCommandBufferSubmissionError,
 		VulkanGraphicsEnginePresentError,
-		VulkanGraphicsEngineDeviceExecutionWaitError
+		VulkanGraphicsEngineDeviceExecutionWaitError,
+		VulkanGraphicsEngineSwapchainOutOfDateError
 	};
 }

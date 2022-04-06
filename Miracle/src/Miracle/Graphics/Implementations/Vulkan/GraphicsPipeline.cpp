@@ -9,10 +9,80 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		const Swapchain& swapchain,
 		const Io::ResourceLoader& resourceLoader
 	) :
-		m_device(device)
+		m_device(device),
+		m_swapchain(swapchain),
+		m_resourceLoader(resourceLoader)
 	{
-		auto vertexShaderByteCodeLoadResult = resourceLoader.loadFileBinary("shaders/default.vert.spv");
-		auto fragmentShaderByteCodeLoadResult = resourceLoader.loadFileBinary("shaders/default.frag.spv");
+		auto pipelineLayoutCreateResult = createPipelineLayout();
+
+		if (pipelineLayoutCreateResult.index() == 0) {
+			throw std::get<MiracleError>(pipelineLayoutCreateResult);
+		}
+
+		m_layout = std::move(std::get<vk::raii::PipelineLayout>(pipelineLayoutCreateResult));
+
+		auto pipelineCreateResult = createPipeline();
+
+		if (pipelineCreateResult.index() == 0) {
+			throw std::get<MiracleError>(pipelineCreateResult);
+		}
+
+		m_pipeline = std::move(std::get<vk::raii::Pipeline>(pipelineCreateResult));
+	}
+
+	void GraphicsPipeline::bind(const vk::raii::CommandBuffer& commandBuffer) const {
+		commandBuffer.bindPipeline(
+			vk::PipelineBindPoint::eGraphics,
+			*m_pipeline
+		);
+	}
+
+	std::optional<MiracleError> GraphicsPipeline::recreate() {
+		m_pipeline.~Pipeline();
+		m_layout.~PipelineLayout();
+
+		auto pipelineLayoutCreateResult = createPipelineLayout();
+
+		if (pipelineLayoutCreateResult.index() == 0) {
+			return std::get<MiracleError>(pipelineLayoutCreateResult);
+		}
+
+		m_layout = std::move(std::get<vk::raii::PipelineLayout>(pipelineLayoutCreateResult));
+
+		auto pipelineCreateResult = createPipeline();
+
+		if (pipelineCreateResult.index() == 0) {
+			return std::get<MiracleError>(pipelineCreateResult);
+		}
+
+		m_pipeline = std::move(std::get<vk::raii::Pipeline>(pipelineCreateResult));
+
+		return std::nullopt;
+	}
+
+	std::variant<MiracleError, vk::raii::ShaderModule> GraphicsPipeline::createShaderModule(
+		const std::vector<char>& shaderByteCode
+	) const {
+		return m_device.createShaderModule({
+			.flags    = {},
+			.codeSize = shaderByteCode.size(),
+			.pCode    = reinterpret_cast<const uint32_t*>(shaderByteCode.data())
+		});
+	}
+
+	std::variant<MiracleError, vk::raii::PipelineLayout> GraphicsPipeline::createPipelineLayout() const {
+		return m_device.createPipelineLayout({
+			.flags                  = {},
+			.setLayoutCount         = 0,
+			.pSetLayouts            = nullptr,
+			.pushConstantRangeCount = 0,
+			.pPushConstantRanges    = nullptr
+		});
+	}
+
+	std::variant<MiracleError, vk::raii::Pipeline> GraphicsPipeline::createPipeline() const {
+		auto vertexShaderByteCodeLoadResult = m_resourceLoader.loadFileBinary("shaders/default.vert.spv");
+		auto fragmentShaderByteCodeLoadResult = m_resourceLoader.loadFileBinary("shaders/default.frag.spv");
 
 		if (vertexShaderByteCodeLoadResult.index() == 0) {
 			throw std::get<MiracleError>(vertexShaderByteCodeLoadResult);
@@ -71,7 +141,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			.primitiveRestartEnable = false
 		};
 
-		auto& imageExtent = swapchain.getImageExtent();
+		auto& imageExtent = m_swapchain.getImageExtent();
 
 		auto viewport = vk::Viewport{
 			.x        = 0.0f,
@@ -145,15 +215,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			.blendConstants  = {}
 		};
 
-		auto pipelineLayoutCreateResult = createPipelineLayout();
-
-		if (pipelineLayoutCreateResult.index() == 0) {
-			throw std::get<MiracleError>(pipelineLayoutCreateResult);
-		}
-
-		m_layout = std::move(std::get<vk::raii::PipelineLayout>(pipelineLayoutCreateResult));
-
-		auto graphicsPipelineCreateResult = m_device.createGraphicsPipeline({
+		return m_device.createGraphicsPipeline({
 			.flags               = {},
 			.stageCount          = static_cast<uint32_t>(shaderStageCreateInfos.size()),
 			.pStages             = shaderStageCreateInfos.data(),
@@ -167,43 +229,10 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			.pColorBlendState    = &colorBlendStateCreateInfo,
 			.pDynamicState       = nullptr,
 			.layout              = *m_layout,
-			.renderPass          = *swapchain.getRenderPass().getRawRenderPass(),
+			.renderPass          = *m_swapchain.getRenderPass().getRawRenderPass(),
 			.subpass             = 0,
 			.basePipelineHandle  = {},
 			.basePipelineIndex   = {}
-		});
-
-		if (graphicsPipelineCreateResult.index() == 0) {
-			throw std::get<MiracleError>(graphicsPipelineCreateResult);
-		}
-
-		m_pipeline = std::move(std::get<vk::raii::Pipeline>(graphicsPipelineCreateResult));
-	}
-
-	void GraphicsPipeline::bind(const vk::raii::CommandBuffer& commandBuffer) const {
-		commandBuffer.bindPipeline(
-			vk::PipelineBindPoint::eGraphics,
-			*m_pipeline
-		);
-	}
-
-	std::variant<MiracleError, vk::raii::ShaderModule> GraphicsPipeline::createShaderModule(
-		const std::vector<char>& shaderByteCode
-	) const {
-		return m_device.createShaderModule({
-			.flags    = {},
-			.codeSize = shaderByteCode.size(),
-			.pCode    = reinterpret_cast<const uint32_t*>(shaderByteCode.data())
-		});
-	}
-
-	std::variant<MiracleError, vk::raii::PipelineLayout> GraphicsPipeline::createPipelineLayout() const {
-		return m_device.createPipelineLayout({
-			.flags                  = {},
-			.setLayoutCount         = 0,
-			.pSetLayouts            = nullptr,
-			.pushConstantRangeCount = 0,
-			.pPushConstantRanges    = nullptr
 		});
 	}
 }
