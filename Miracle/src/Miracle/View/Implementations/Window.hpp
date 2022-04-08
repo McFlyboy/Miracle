@@ -19,9 +19,16 @@ namespace Miracle::View::Implementations {
 		~Window() override;
 
 		virtual void show() override;
+
 		virtual void update() override;
+
 		virtual bool shouldClose() const override;
+
 		virtual void close() override;
+
+		virtual bool isResizable() const override;
+
+		virtual void setResizable(bool resizable) override;
 
 		inline GLFWwindow* getGlfwWindow() const { return m_window; }
 
