@@ -11,6 +11,9 @@ int main() {
 		.configureWindow(
 			[](View::WindowProps& props) {
 				props.title = u8"Demo 1";
+				props.width = 800;
+				props.height = 600;
+				props.resizable = true;
 			}
 		).setStartScript(
 			[]() {
@@ -22,6 +25,10 @@ int main() {
 			[]() {
 				if (keyboard->keyPressed(Input::Devices::IKeyboard::Key::Escape)) {
 					currentApp->close();
+				}
+
+				if (keyboard->keyPressed(Input::Devices::IKeyboard::Key::R)) {
+					window->setResizable(!window->isResizable());
 				}
 
 				if (keyboard->keyIsDown(Input::Devices::IKeyboard::Key::Space)) {

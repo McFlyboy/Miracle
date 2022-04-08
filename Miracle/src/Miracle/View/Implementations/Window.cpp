@@ -25,7 +25,7 @@ namespace Miracle::View::Implementations {
 		auto monitorVideoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, false);
+		glfwWindowHint(GLFW_RESIZABLE, props.resizable);
 		glfwWindowHint(GLFW_VISIBLE, false);
 
 		m_window = glfwCreateWindow(
@@ -84,6 +84,14 @@ namespace Miracle::View::Implementations {
 
 	void Window::close() {
 		glfwSetWindowShouldClose(m_window, true);
+	}
+
+	bool Window::isResizable() const {
+		return glfwGetWindowAttrib(m_window, GLFW_RESIZABLE);
+	}
+
+	void Window::setResizable(bool resizable) {
+		glfwSetWindowAttrib(m_window, GLFW_RESIZABLE, resizable);
 	}
 
 	std::vector<const char*> Window::getRequiredInstanceExtensions() const {

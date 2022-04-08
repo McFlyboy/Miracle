@@ -7,6 +7,7 @@ namespace Miracle::View {
 		std::u8string title = u8"Miracle Application";
 		int width = 640;
 		int height = 480;
+		bool resizable = false;
 	};
 
 	class MIRACLE_API IWindow {
@@ -18,8 +19,15 @@ namespace Miracle::View {
 		virtual ~IWindow() = default;
 
 		virtual void show() = 0;
+
 		virtual void update() = 0;
+
 		virtual bool shouldClose() const = 0;
+
 		virtual void close() = 0;
+
+		virtual bool isResizable() const = 0;
+
+		virtual void setResizable(bool resizable) = 0;
 	};
 }
