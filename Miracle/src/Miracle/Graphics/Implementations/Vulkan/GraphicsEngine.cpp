@@ -6,7 +6,7 @@ using namespace Miracle::Diagnostics;
 
 namespace Miracle::Graphics::Implementations::Vulkan {
 	GraphicsEngine::GraphicsEngine(
-		const ISurfaceTarget& surfaceTarget,
+		ISurfaceTarget& surfaceTarget,
 		const Io::ResourceLoader& resourceLoader
 	) :
 		m_instance(m_context, surfaceTarget),
@@ -24,7 +24,25 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 	}
 
 	std::optional<MiracleError> GraphicsEngine::render() {
-		m_framesInFlight.nextTarget();
+		if (m_surface.getSurfaceTarget().isExtentChanged()) {
+			m_swapchain.setOutdated(true);
+		}
+
+		if (m_swapchain.isOutdated()) {
+			if (m_swapchain.getImageExtent() != m_surface.getSurfaceTarget().getCurrentExtent()) {
+				auto error = recreateSwapchainAndDependents();
+
+				if (
+					error.has_value()
+					&& error.value() == MiracleError::VulkanGraphicsEngineSurfaceAreaEqualsZeroError
+				) {
+					return std::nullopt;
+				}
+			}
+			else {
+				m_swapchain.setOutdated(false);
+			}
+		}
 
 		auto& targetFrameInFlight = m_framesInFlight.getTargetFrameInFlight();
 
@@ -34,19 +52,25 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			return endOfFlightWaitResult.value();
 		}
 
+		auto imageAcquireResult = m_swapchain.acquireNextImage(targetFrameInFlight.imageAvailable);
+
+		if (imageAcquireResult.index() == 0) {
+			auto& error = std::get<MiracleError>(imageAcquireResult);
+
+			if (error == MiracleError::VulkanGraphicsEngineSwapchainOutOfDateError) {
+				m_swapchain.setOutdated(true);
+			}
+
+			return error;
+		}
+
+		auto& imageIndex = std::get<uint32_t>(imageAcquireResult);
+
 		auto beginFlightResult = targetFrameInFlight.beginFlight();
 
 		if (beginFlightResult.has_value()) {
 			return beginFlightResult.value();
 		}
-
-		auto imageAcquireResult = m_swapchain.acquireNextImage(targetFrameInFlight.imageAvailable);
-
-		if (imageAcquireResult.index() == 0) {
-			return std::get<MiracleError>(imageAcquireResult);
-		}
-
-		auto& imageIndex = std::get<uint32_t>(imageAcquireResult);
 
 		auto recordError = recordDrawCommands(m_framesInFlight.getTargetFrameInFlightIndex(), imageIndex);
 
@@ -74,8 +98,14 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			);
 
 		if (presentError.has_value()) {
+			if (presentError.value() == MiracleError::VulkanGraphicsEngineSwapchainOutOfDateError) {
+				m_swapchain.setOutdated(true);
+			}
+
 			return presentError.value();
 		}
+
+		m_framesInFlight.nextTarget();
 
 		return std::nullopt;
 	}
@@ -104,5 +134,33 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 					);
 				}
 			);
+	}
+
+	std::optional<MiracleError> GraphicsEngine::recreateSwapchainAndDependents() {
+		auto currentExtent = m_surface.getSurfaceTarget().getCurrentExtent();
+
+		if (currentExtent.width * currentExtent.height == 0) {
+			return MiracleError::VulkanGraphicsEngineSurfaceAreaEqualsZeroError;
+		}
+
+		m_device.waitIdle();
+		m_device.refreshSupportDetails();
+
+		auto swapchainRecreateError = m_swapchain.recreate();
+
+		if (swapchainRecreateError.has_value()) {
+			Logger::error("Failed to rebuild Vulkan swapchain!");
+			return swapchainRecreateError.value();
+		}
+
+		auto graphicsPipelineRecreateError = m_graphicsPipeline.recreate();
+
+		if (graphicsPipelineRecreateError.has_value()) {
+			Logger::error("Failed to rebuild Vulkan graphics pipeline!");
+			return graphicsPipelineRecreateError.value();
+		}
+
+		Logger::info("Vulkan swapchain and dependents rebuilt");
+		return std::nullopt;
 	}
 }

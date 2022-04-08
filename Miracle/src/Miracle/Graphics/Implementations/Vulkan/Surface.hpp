@@ -7,7 +7,7 @@
 namespace Miracle::Graphics::Implementations::Vulkan {
 	class Surface {
 	private:
-		const ISurfaceTarget& m_surfaceTarget;
+		ISurfaceTarget& m_surfaceTarget;
 
 		vk::raii::SurfaceKHR m_surface = nullptr;
 
@@ -16,6 +16,6 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		inline const vk::raii::SurfaceKHR& getRawSurface() const { return m_surface; }
 
-		inline const ISurfaceTarget& getSurfaceTarget() const { return m_surfaceTarget; }
+		inline ISurfaceTarget& getSurfaceTarget() const { return m_surfaceTarget; }
 	};
 }

@@ -26,7 +26,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 	public:
 		GraphicsEngine(
-			const ISurfaceTarget& surfaceTarget,
+			ISurfaceTarget& surfaceTarget,
 			const Io::ResourceLoader& resourceLoader
 		);
 
@@ -41,5 +41,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			int bufferIndex,
 			uint32_t imageIndex
 		);
+
+		std::optional<MiracleError> recreateSwapchainAndDependents();
 	};
 }

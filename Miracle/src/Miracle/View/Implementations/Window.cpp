@@ -42,13 +42,23 @@ namespace Miracle::View::Implementations {
 			throw MiracleError::WindowCreationError;
 		}
 
-		Logger::info("Application window created");
+		glfwSetWindowUserPointer(m_window, this);
+
+		glfwSetFramebufferSizeCallback(
+			m_window,
+			[](GLFWwindow* window, int width, int height) {
+				auto thisWindow = (Window*)glfwGetWindowUserPointer(window);
+				thisWindow->markExtentChanged();
+			}
+		);
 
 		glfwSetWindowPos(
 			m_window,
 			(monitorVideoMode->width - props.width) / 2,
 			(monitorVideoMode->height - props.height) / 2
 		);
+
+		Logger::info("Application window created");
 	}
 
 	Window::~Window() {

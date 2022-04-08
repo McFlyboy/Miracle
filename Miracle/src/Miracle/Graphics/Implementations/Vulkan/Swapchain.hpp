@@ -3,6 +3,7 @@
 #include <vector>
 #include <variant>
 #include <functional>
+#include <optional>
 
 #include <Miracle/MiracleError.hpp>
 #include "Vulkan.hpp"
@@ -16,13 +17,15 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		const Device& m_device;
 		const Surface& m_surface;
 
-		vk::raii::SwapchainKHR m_swapchain = nullptr;
-		vk::Format m_imageFormat;
 		vk::Extent2D m_imageExtent;
+		uint32_t m_imageCount;
+		vk::SurfaceFormatKHR m_surfaceFormat;
+		vk::raii::SwapchainKHR m_swapchain = nullptr;
 		std::vector<vk::Image> m_images;
 		std::vector<vk::raii::ImageView> m_imageViews;
 		RenderPass m_renderPass;
 		std::vector<vk::raii::Framebuffer> m_framebuffers;
+		bool m_outdated = false;
 
 	public:
 		Swapchain(
@@ -41,11 +44,17 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			const vk::raii::Semaphore& signalSemaphore
 		) const;
 
+		std::optional<MiracleError> recreate();
+
 		inline const vk::raii::SwapchainKHR& getRawSwapchain() const { return m_swapchain; }
 
 		inline const vk::Extent2D& getImageExtent() const { return m_imageExtent; }
 
 		inline const RenderPass& getRenderPass() const { return m_renderPass; }
+
+		inline bool isOutdated() const { return m_outdated; }
+
+		inline void setOutdated(bool outdated) { m_outdated = outdated; }
 
 	private:
 		vk::Extent2D selectExtent(
@@ -65,8 +74,16 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			bool useVsync
 		) const;
 
+		std::variant<MiracleError, vk::raii::SwapchainKHR> createSwapchain() const;
+
+		std::optional<MiracleError> fillImageList();
+
+		std::optional<MiracleError> fillImageViewList();
+
 		std::variant<MiracleError, vk::raii::ImageView> createViewForImage(
 			const vk::Image& image
 		) const;
+
+		std::optional<MiracleError> fillFramebufferList();
 	};
 }

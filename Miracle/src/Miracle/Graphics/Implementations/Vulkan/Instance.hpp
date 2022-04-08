@@ -10,7 +10,7 @@
 namespace Miracle::Graphics::Implementations::Vulkan {
 	class Instance {
 	private:
-		const ISurfaceTarget& m_surfaceTarget;
+		ISurfaceTarget& m_surfaceTarget;
 
 		vk::raii::Instance m_instance = nullptr;
 #ifndef NDEBUG
@@ -18,13 +18,13 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 #endif
 
 	public:
-		Instance(const vk::raii::Context& context, const ISurfaceTarget& surfaceTarget);
+		Instance(const vk::raii::Context& context, ISurfaceTarget& surfaceTarget);
 
 		std::variant<MiracleError, vk::raii::SurfaceKHR> createSurface() const;
 
 		std::variant<MiracleError, std::vector<vk::raii::PhysicalDevice>> enumeratePhysicalDevices() const;
 
-		inline const ISurfaceTarget& getSurfaceTarget() const { return m_surfaceTarget; }
+		inline ISurfaceTarget& getSurfaceTarget() const { return m_surfaceTarget; }
 
 		static inline auto getValidationLayers() {
 			return

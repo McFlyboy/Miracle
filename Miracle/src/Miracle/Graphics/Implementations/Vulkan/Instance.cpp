@@ -8,7 +8,7 @@
 using namespace Miracle::Diagnostics;
 
 namespace Miracle::Graphics::Implementations::Vulkan {
-	Instance::Instance(const vk::raii::Context& context, const ISurfaceTarget& surfaceTarget) :
+	Instance::Instance(const vk::raii::Context& context, ISurfaceTarget& surfaceTarget) :
 		m_surfaceTarget(surfaceTarget)
 	{
 		auto appInfo = vk::ApplicationInfo{
