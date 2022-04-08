@@ -6,7 +6,7 @@ using namespace Miracle::Diagnostics;
 
 namespace Miracle::Graphics::Implementations::Vulkan {
 	GraphicsEngine::GraphicsEngine(
-		const ISurfaceTarget& surfaceTarget,
+		ISurfaceTarget& surfaceTarget,
 		const Io::ResourceLoader& resourceLoader
 	) :
 		m_instance(m_context, surfaceTarget),
@@ -24,7 +24,25 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 	}
 
 	std::optional<MiracleError> GraphicsEngine::render() {
-		m_framesInFlight.nextTarget();
+		if (m_surface.getSurfaceTarget().isExtentChanged()) {
+			m_swapchain.setOutdated(true);
+		}
+
+		if (m_swapchain.isOutdated()) {
+			if (m_swapchain.getImageExtent() != m_surface.getSurfaceTarget().getCurrentExtent()) {
+				auto error = recreateSwapchainAndDependents();
+
+				if (
+					error.has_value()
+					&& error.value() == MiracleError::VulkanGraphicsEngineSurfaceAreaEqualsZeroError
+				) {
+					return std::nullopt;
+				}
+			}
+			else {
+				m_swapchain.setOutdated(false);
+			}
+		}
 
 		auto& targetFrameInFlight = m_framesInFlight.getTargetFrameInFlight();
 
@@ -40,7 +58,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			auto& error = std::get<MiracleError>(imageAcquireResult);
 
 			if (error == MiracleError::VulkanGraphicsEngineSwapchainOutOfDateError) {
-				recreateSwapchainAndDependents();
+				m_swapchain.setOutdated(true);
 			}
 
 			return error;
@@ -81,11 +99,13 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		if (presentError.has_value()) {
 			if (presentError.value() == MiracleError::VulkanGraphicsEngineSwapchainOutOfDateError) {
-				recreateSwapchainAndDependents();
+				m_swapchain.setOutdated(true);
 			}
 
 			return presentError.value();
 		}
+
+		m_framesInFlight.nextTarget();
 
 		return std::nullopt;
 	}
@@ -117,6 +137,12 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 	}
 
 	std::optional<MiracleError> GraphicsEngine::recreateSwapchainAndDependents() {
+		auto currentExtent = m_surface.getSurfaceTarget().getCurrentExtent();
+
+		if (currentExtent.width * currentExtent.height == 0) {
+			return MiracleError::VulkanGraphicsEngineSurfaceAreaEqualsZeroError;
+		}
+
 		m_device.waitIdle();
 		m_device.refreshSupportDetails();
 

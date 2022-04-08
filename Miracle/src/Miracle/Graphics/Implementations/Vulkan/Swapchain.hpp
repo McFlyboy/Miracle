@@ -25,6 +25,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		std::vector<vk::raii::ImageView> m_imageViews;
 		RenderPass m_renderPass;
 		std::vector<vk::raii::Framebuffer> m_framebuffers;
+		bool m_outdated = false;
 
 	public:
 		Swapchain(
@@ -50,6 +51,10 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		inline const vk::Extent2D& getImageExtent() const { return m_imageExtent; }
 
 		inline const RenderPass& getRenderPass() const { return m_renderPass; }
+
+		inline bool isOutdated() const { return m_outdated; }
+
+		inline void setOutdated(bool outdated) { m_outdated = outdated; }
 
 	private:
 		vk::Extent2D selectExtent(

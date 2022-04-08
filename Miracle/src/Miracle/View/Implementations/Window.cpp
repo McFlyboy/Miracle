@@ -25,7 +25,7 @@ namespace Miracle::View::Implementations {
 		auto monitorVideoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, true);
+		glfwWindowHint(GLFW_RESIZABLE, false);
 		glfwWindowHint(GLFW_VISIBLE, false);
 
 		m_window = glfwCreateWindow(
@@ -42,13 +42,23 @@ namespace Miracle::View::Implementations {
 			throw MiracleError::WindowCreationError;
 		}
 
-		Logger::info("Application window created");
+		glfwSetWindowUserPointer(m_window, this);
+
+		glfwSetFramebufferSizeCallback(
+			m_window,
+			[](GLFWwindow* window, int width, int height) {
+				auto thisWindow = (Window*)glfwGetWindowUserPointer(window);
+				thisWindow->markExtentChanged();
+			}
+		);
 
 		glfwSetWindowPos(
 			m_window,
 			(monitorVideoMode->width - props.width) / 2,
 			(monitorVideoMode->height - props.height) / 2
 		);
+
+		Logger::info("Application window created");
 	}
 
 	Window::~Window() {

@@ -26,7 +26,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 	public:
 		GraphicsEngine(
-			const ISurfaceTarget& surfaceTarget,
+			ISurfaceTarget& surfaceTarget,
 			const Io::ResourceLoader& resourceLoader
 		);
 

@@ -6,7 +6,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 	class FramesInFlight {
 	private:
 		std::array<FrameInFlight, 2> m_framesInFlight;
-		int m_targetFrameInFlightIndex;
+		int m_targetFrameInFlightIndex = 0;
 
 	public:
 		FramesInFlight(const Device& device) :

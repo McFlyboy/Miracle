@@ -142,6 +142,8 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			return fillFramebufferListResult.value();
 		}
 
+		m_outdated = false;
+
 		return std::nullopt;
 	}
 
