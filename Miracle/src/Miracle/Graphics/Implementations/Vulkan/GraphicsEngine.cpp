@@ -29,18 +29,14 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		}
 
 		if (m_swapchain.isOutdated()) {
-			if (m_swapchain.getImageExtent() != m_surface.getSurfaceTarget().getCurrentExtent()) {
-				auto error = recreateSwapchainAndDependents();
+			auto currentExtent = m_surface.getSurfaceTarget().getCurrentExtent();
 
-				if (
-					error.has_value()
-					&& error.value() == MiracleError::VulkanGraphicsEngineSurfaceAreaEqualsZeroError
-				) {
-					return std::nullopt;
-				}
+			if (currentExtent.width * currentExtent.height == 0) {
+				return std::nullopt;
 			}
-			else {
-				m_swapchain.setOutdated(false);
+
+			if (m_swapchain.getImageExtent() != currentExtent) {
+				recreateSwapchainAndDependents();
 			}
 		}
 
@@ -137,12 +133,6 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 	}
 
 	std::optional<MiracleError> GraphicsEngine::recreateSwapchainAndDependents() {
-		auto currentExtent = m_surface.getSurfaceTarget().getCurrentExtent();
-
-		if (currentExtent.width * currentExtent.height == 0) {
-			return MiracleError::VulkanGraphicsEngineSurfaceAreaEqualsZeroError;
-		}
-
 		m_device.waitIdle();
 		m_device.refreshSupportDetails();
 

@@ -40,7 +40,6 @@ namespace Miracle {
 		VulkanGraphicsEngineCommandBufferSubmissionError,
 		VulkanGraphicsEnginePresentError,
 		VulkanGraphicsEngineDeviceExecutionWaitError,
-		VulkanGraphicsEngineSwapchainOutOfDateError,
-		VulkanGraphicsEngineSurfaceAreaEqualsZeroError
+		VulkanGraphicsEngineSwapchainOutOfDateError
 	};
 }
