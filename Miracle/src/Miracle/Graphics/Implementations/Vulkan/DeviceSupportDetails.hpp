@@ -79,11 +79,13 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 	struct DeviceSupportDetails {
 		QueueFamilyIndices queueFamilyIndices;
 		ExtensionsSupported extensionsSupported;
+		vk::PhysicalDeviceMemoryProperties memoryProperties;
 		SwapchainSupportDetails swapchainSupportDetails;
 
 		DeviceSupportDetails& operator=(DeviceSupportDetails&& right) {
 			queueFamilyIndices = std::move(right.queueFamilyIndices);
 			extensionsSupported = std::move(right.extensionsSupported);
+			memoryProperties = std::move(right.memoryProperties),
 			swapchainSupportDetails = std::move(right.swapchainSupportDetails);
 			return *this;
 		}

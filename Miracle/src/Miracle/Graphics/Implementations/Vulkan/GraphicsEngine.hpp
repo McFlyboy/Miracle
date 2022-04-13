@@ -12,6 +12,7 @@
 #include "Swapchain.hpp"
 #include "GraphicsPipeline.hpp"
 #include "FramesInFlight.hpp"
+#include "VertexBuffer.hpp"
 
 namespace Miracle::Graphics::Implementations::Vulkan {
 	class GraphicsEngine : public IGraphicsEngine {
@@ -23,6 +24,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		Swapchain m_swapchain;
 		GraphicsPipeline m_graphicsPipeline;
 		FramesInFlight m_framesInFlight;
+		VertexBuffer m_vertexBuffer;
 
 	public:
 		GraphicsEngine(

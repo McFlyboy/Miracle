@@ -64,6 +64,14 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			const vk::FenceCreateInfo& createInfo
 		) const;
 
+		std::variant<MiracleError, vk::raii::Buffer> createBuffer(
+			const vk::BufferCreateInfo& createInfo
+		) const;
+
+		std::variant<MiracleError, vk::raii::DeviceMemory> allocateMemory(
+			const vk::MemoryAllocateInfo allocateInfo
+		) const;
+
 		std::optional<MiracleError> waitForFences(
 			const vk::ArrayProxy<const vk::Fence>& fences,
 			bool waitForAll,

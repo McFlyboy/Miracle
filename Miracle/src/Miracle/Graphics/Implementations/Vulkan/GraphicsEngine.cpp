@@ -14,7 +14,24 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		m_device(m_instance, m_surface),
 		m_swapchain(m_device, m_surface),
 		m_graphicsPipeline(m_device, m_swapchain, resourceLoader),
-		m_framesInFlight(m_device)
+		m_framesInFlight(m_device),
+		m_vertexBuffer(
+			m_device,
+			std::vector{
+				Vertex{
+					.position = { .x = -0.5f, .y =  0.5f },
+					.color    = { .r =  0.0f, .g =  0.0f, .b = 1.0f }
+				},
+				Vertex{
+					.position = { .x =  0.5f, .y =  0.5f },
+					.color    = { .r =  0.0f, .g =  1.0f, .b = 0.0f }
+				},
+				Vertex{
+					.position = { .x =  0.0f, .y = -0.5f },
+					.color    = { .r =  1.0f, .g =  0.0f, .b = 0.0f }
+				}
+			}
+		)
 	{
 		Logger::info("Vulkan graphics engine created");
 	}
@@ -124,8 +141,9 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 						vk::ClearColorValue(std::array{ 0.0f, 0.0f, 0.0f, 1.0f }),
 						[this, &commandBuffer]() {
 							m_graphicsPipeline.bind(commandBuffer);
+							m_vertexBuffer.bind(commandBuffer);
 
-							commandBuffer.draw(3, 1, 0, 0);
+							commandBuffer.draw(m_vertexBuffer.getVertexCount(), 1, 0, 0);
 						}
 					);
 				}

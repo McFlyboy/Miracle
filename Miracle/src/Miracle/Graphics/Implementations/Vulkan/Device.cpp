@@ -215,6 +215,32 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		}
 	}
 
+	std::variant<MiracleError, vk::raii::Buffer> Device::createBuffer(
+		const vk::BufferCreateInfo& createInfo
+	) const {
+		try {
+			return m_device.createBuffer(createInfo);
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to create Vulkan buffer!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEngineBufferCreationError;
+		}
+	}
+
+	std::variant<MiracleError, vk::raii::DeviceMemory> Device::allocateMemory(
+		const vk::MemoryAllocateInfo allocateInfo
+	) const {
+		try {
+			return m_device.allocateMemory(allocateInfo);
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to allocate Vulkan memory!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEngineMemoryAllocationError;
+		}
+	}
+
 	std::optional<MiracleError> Device::waitForFences(
 		const vk::ArrayProxy<const vk::Fence>& fences,
 		bool waitForAll,
