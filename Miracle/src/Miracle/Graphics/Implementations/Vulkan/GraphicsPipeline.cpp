@@ -3,6 +3,8 @@
 #include <array>
 #include <utility>
 
+#include <Miracle/Graphics/Vertex.hpp>
+
 namespace Miracle::Graphics::Implementations::Vulkan {
 	GraphicsPipeline::GraphicsPipeline(
 		const Device& device,
@@ -127,12 +129,33 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			}
 		};
 
+		auto vertexInputBindingDescription = vk::VertexInputBindingDescription{
+			.binding   = 0,
+			.stride    = sizeof(Vertex),
+			.inputRate = vk::VertexInputRate::eVertex
+		};
+
+		auto vertexInputAttributeDescriptions = std::array{
+			vk::VertexInputAttributeDescription{
+				.location = 0,
+				.binding  = 0,
+				.format   = vk::Format::eR32G32Sfloat,
+				.offset   = offsetof(Vertex, position)
+			},
+			vk::VertexInputAttributeDescription{
+				.location = 1,
+				.binding  = 0,
+				.format   = vk::Format::eR32G32B32Sfloat,
+				.offset   = offsetof(Vertex, color)
+			}
+		};
+
 		auto vertexInputStateCreateInfo = vk::PipelineVertexInputStateCreateInfo{
 			.flags                           = {},
-			.vertexBindingDescriptionCount   = 0,
-			.pVertexBindingDescriptions      = nullptr,
-			.vertexAttributeDescriptionCount = 0,
-			.pVertexAttributeDescriptions    = nullptr
+			.vertexBindingDescriptionCount   = 1,
+			.pVertexBindingDescriptions      = &vertexInputBindingDescription,
+			.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexInputAttributeDescriptions.size()),
+			.pVertexAttributeDescriptions    = vertexInputAttributeDescriptions.data()
 		};
 
 		auto inputAssemblyStateCreateInfo = vk::PipelineInputAssemblyStateCreateInfo{
@@ -174,7 +197,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			.rasterizerDiscardEnable = false,
 			.polygonMode             = vk::PolygonMode::eFill,
 			.cullMode                = vk::CullModeFlagBits::eBack,
-			.frontFace               = vk::FrontFace::eClockwise,
+			.frontFace               = vk::FrontFace::eCounterClockwise,
 			.depthBiasEnable         = false,
 			.depthBiasConstantFactor = {},
 			.depthBiasClamp          = {},

@@ -3,17 +3,17 @@
 namespace Miracle {
 	enum class MiracleError : int {
 		// No error (should not be used as success value unless casted to type int first)
-		NoError                                             = 0x00000000,
+		NoError                                                  = 0x00000000,
 		
 		// Window errors		                  
-		WindowInitializationError                           = 0x00010000,
+		WindowInitializationError                                = 0x00010000,
 		WindowCreationError,
 
 		// Resource errors
-		ResourceFileReadError                               = 0x00020000,
+		ResourceFileReadError                                    = 0x00020000,
 
 		// Vulkan graphics engine errors
-		VulkanGraphicsEngineInstanceCreationError           = 0x00030000,
+		VulkanGraphicsEngineInstanceCreationError                = 0x00030000,
 		VulkanGraphicsEngineDebugMessengerCreationError,
 		VulkanGraphicsEngineSurfaceCreationError,
 		VulkanGraphicsEnginePhysicalDeviceEnumerationError,
@@ -34,12 +34,15 @@ namespace Miracle {
 		VulkanGraphicsEngineGraphicsPipelineCreationError,
 		VulkanGraphicsEngineSemaphoreCreationError,
 		VulkanGraphicsEngineFenceCreationError,
+		VulkanGraphicsEngineBufferCreationError,
+		VulkanGraphicsEngineMemoryAllocationError,
 		VulkanGraphicsEngineSyncError,
 		VulkanGraphicsEngineFenceResetError,
 		VulkanGraphicsEngineImageAcquisitionError,
 		VulkanGraphicsEngineCommandBufferSubmissionError,
 		VulkanGraphicsEnginePresentError,
 		VulkanGraphicsEngineDeviceExecutionWaitError,
-		VulkanGraphicsEngineSwapchainOutOfDateError
+		VulkanGraphicsEngineSwapchainOutOfDateError,
+		VulkanGraphicsEngineVertexBufferMemoryTypeSelectionError
 	};
 }
