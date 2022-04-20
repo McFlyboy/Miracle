@@ -1,21 +1,16 @@
 #pragma once
 
 #include <vector>
-#include <variant>
 
-#include <Miracle/MiracleError.hpp>
 #include <Miracle/Graphics/Vertex.hpp>
 #include "Vulkan.hpp"
 #include "Device.hpp"
+#include "Buffer.hpp"
 
 namespace Miracle::Graphics::Implementations::Vulkan {
-	class VertexBuffer {
+	class VertexBuffer : public Buffer {
 	private:
-		const Device& m_device;
-
-		vk::raii::DeviceMemory m_bufferMemory = nullptr;
-		vk::raii::Buffer m_buffer = nullptr;
-		uint32_t m_vertexCount = 0;
+		const uint32_t m_vertexCount;
 
 	public:
 		VertexBuffer(
@@ -26,11 +21,5 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		void bind(const vk::raii::CommandBuffer& commandBuffer) const;
 
 		inline uint32_t getVertexCount() const { return m_vertexCount; }
-
-	private:
-		std::variant<MiracleError, uint32_t> selectMemoryType(
-			uint32_t filter,
-			vk::MemoryPropertyFlags properties
-		) const;
 	};
 }
