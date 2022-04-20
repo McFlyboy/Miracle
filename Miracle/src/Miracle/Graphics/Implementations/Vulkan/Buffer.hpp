@@ -12,7 +12,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		const Device& m_device;
 
 		vk::DeviceSize m_size;
-		vk::raii::DeviceMemory m_bufferMemory = nullptr;
+		vk::raii::DeviceMemory m_memory = nullptr;
 		vk::raii::Buffer m_buffer = nullptr;
 
 	public:

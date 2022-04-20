@@ -53,9 +53,9 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			throw std::get<MiracleError>(memoryAllocateResult);
 		}
 
-		m_bufferMemory = std::move(std::get<vk::raii::DeviceMemory>(memoryAllocateResult));
+		m_memory = std::move(std::get<vk::raii::DeviceMemory>(memoryAllocateResult));
 
-		m_buffer.bindMemory(*m_bufferMemory, 0);
+		m_buffer.bindMemory(*m_memory, 0);
 	}
 
 	std::variant<MiracleError, uint32_t> Buffer::selectMemoryType(

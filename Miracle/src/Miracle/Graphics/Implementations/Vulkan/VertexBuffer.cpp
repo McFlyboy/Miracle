@@ -15,9 +15,9 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		),
 		m_vertexCount(vertices.size())
 	{
-		auto bufferData = m_bufferMemory.mapMemory(0, m_size);
+		auto bufferData = m_memory.mapMemory(0, m_size);
 		std::memcpy(bufferData, vertices.data(), m_size);
-		m_bufferMemory.unmapMemory();
+		m_memory.unmapMemory();
 	}
 
 	void VertexBuffer::bind(const vk::raii::CommandBuffer& commandBuffer) const {
