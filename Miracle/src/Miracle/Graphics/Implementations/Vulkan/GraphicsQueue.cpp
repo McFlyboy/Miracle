@@ -110,4 +110,27 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		return std::nullopt;
 	}
+
+	std::optional<MiracleError> GraphicsQueue::submitRecordedWithoutSync(int bufferIndex) const {
+		try {
+			m_queue.submit(
+				vk::SubmitInfo{
+					.waitSemaphoreCount   = 0,
+					.pWaitSemaphores      = nullptr,
+					.pWaitDstStageMask    = nullptr,
+					.commandBufferCount   = 1,
+					.pCommandBuffers      = &*m_commandBuffers[bufferIndex],
+					.signalSemaphoreCount = 0,
+					.pSignalSemaphores    = nullptr
+				}
+			);
+		}
+		catch (const std::exception& e) {
+			Logger::error("Failed to submit Vulkan command buffer to graphics queue!");
+			Logger::error(e.what());
+			return MiracleError::VulkanGraphicsEngineCommandBufferSubmissionError;
+		}
+
+		return std::nullopt;
+	}
 }

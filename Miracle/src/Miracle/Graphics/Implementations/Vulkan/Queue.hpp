@@ -20,5 +20,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 	public:
 		virtual ~Queue() = default;
+
+		inline void waitIdle() const { m_queue.waitIdle(); }
 	};
 }

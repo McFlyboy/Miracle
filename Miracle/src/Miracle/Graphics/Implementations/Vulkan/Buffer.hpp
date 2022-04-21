@@ -25,6 +25,10 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		virtual ~Buffer() = default;
 
+		inline const vk::raii::DeviceMemory& getAllocatedMemory() const { return m_memory; }
+
+		inline const vk::raii::Buffer& getRawBuffer() const { return m_buffer; }
+
 	private:
 		std::variant<MiracleError, uint32_t> selectMemoryType(
 			uint32_t filter,

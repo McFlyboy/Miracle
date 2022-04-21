@@ -41,5 +41,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			const vk::raii::Semaphore& signalSemaphore,
 			const vk::raii::Fence& signalFence
 		) const;
+
+		std::optional<MiracleError> submitRecordedWithoutSync(int bufferIndex) const;
 	};
 }
