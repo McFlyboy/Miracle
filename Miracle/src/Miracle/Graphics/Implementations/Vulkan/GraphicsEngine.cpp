@@ -27,9 +27,20 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 					.color    = { .r =  0.0f, .g =  1.0f, .b = 0.0f }
 				},
 				Vertex{
-					.position = { .x =  0.0f, .y = -0.5f },
+					.position = { .x =  0.5f, .y = -0.5f },
 					.color    = { .r =  1.0f, .g =  0.0f, .b = 0.0f }
+				},
+				Vertex{
+					.position = { .x = -0.5f, .y = -0.5f },
+					.color    = { .r =  0.0f, .g =  0.0f, .b = 0.0f }
 				}
+			}
+		),
+		m_indexBuffer(
+			m_device,
+			std::vector<uint32_t>{
+				0, 1, 2,
+				0, 2, 3
 			}
 		)
 	{
@@ -142,8 +153,9 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 						[this, &commandBuffer]() {
 							m_graphicsPipeline.bind(commandBuffer);
 							m_vertexBuffer.bind(commandBuffer);
+							m_indexBuffer.bind(commandBuffer);
 
-							commandBuffer.draw(m_vertexBuffer.getVertexCount(), 1, 0, 0);
+							commandBuffer.drawIndexed(m_indexBuffer.getIndexCount(), 1, 0, 0, 0);
 						}
 					);
 				}

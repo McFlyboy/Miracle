@@ -13,6 +13,7 @@
 #include "GraphicsPipeline.hpp"
 #include "FramesInFlight.hpp"
 #include "VertexBuffer.hpp"
+#include "IndexBuffer.hpp"
 
 namespace Miracle::Graphics::Implementations::Vulkan {
 	class GraphicsEngine : public IGraphicsEngine {
@@ -25,6 +26,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		GraphicsPipeline m_graphicsPipeline;
 		FramesInFlight m_framesInFlight;
 		VertexBuffer m_vertexBuffer;
+		IndexBuffer m_indexBuffer;
 
 	public:
 		GraphicsEngine(
