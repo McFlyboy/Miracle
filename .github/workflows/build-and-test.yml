@@ -99,9 +99,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Download vcpkg
-      run: git clone https://github.com/microsoft/vcpkg.git
-
     - name: Install platform-specific dependencies
       run: |
         sudo apt update
@@ -117,7 +114,6 @@ jobs:
         mkdir VulkanSDK
         cd VulkanSDK
         tar xf ../vulkan_sdk.tar.gz
-        cd ..
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -125,7 +121,7 @@ jobs:
       run: |
         SDK_VERSION=`cat vulkan_sdk_version.txt`
         source VulkanSDK/${SDK_VERSION}/setup-env.sh
-        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMIRACLE_BUILD_DEMO_PROJECTS=ON -DMIRACLE_BUILD_SHARED=ON -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-linux
+        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMIRACLE_BUILD_DEMO_PROJECTS=ON -DMIRACLE_BUILD_SHARED=ON -DCMAKE_TOOLCHAIN_FILE="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-linux
 
     - name: Build
       # Build your program with the given configuration
