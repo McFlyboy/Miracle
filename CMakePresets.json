@@ -2,33 +2,33 @@
   "version": 3,
   "configurePresets": [
     {
-      "name": "windows-base",
+      "name": "base",
       "hidden": true,
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "installDir": "${sourceDir}/out/install/${presetName}",
       "toolchainFile": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x64-windows-static",
-        "MIRACLE_BUILD_DEMO_PROJECTS": true,
-        "MIRACLE_BUILD_SHARED": false
-      },
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
+        "MIRACLE_BUILD_SHARED": false,
+        "MIRACLE_BUILD_DEMO_PROJECTS": true
       }
     },
     {
       "name": "x64-debug",
       "displayName": "x64 Debug",
-      "inherits": "windows-base",
+      "inherits": "base",
       "architecture": {
         "value": "x64",
         "strategy": "external"
       },
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
       }
     },
     {
@@ -47,6 +47,22 @@
       "cacheVariables": {
         "MIRACLE_BUILD_SHARED": true
       }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "windows-ci-build",
+      "displayName": "Windows CI Build",
+      "configurePreset": "windows-ci",
+      "configuration": "Release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "windows-ci-tests",
+      "displayName": "Windows CI Tests",
+      "configurePreset": "windows-ci",
+      "configuration": "Release"
     }
   ]
 }
