@@ -9,8 +9,6 @@
       "installDir": "${sourceDir}/out/install/${presetName}",
       "toolchainFile": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
-        "CMAKE_C_COMPILER": "cl.exe",
-        "CMAKE_CXX_COMPILER": "cl.exe",
         "VCPKG_TARGET_TRIPLET": "x64-windows-static",
         "MIRACLE_BUILD_DEMO_PROJECTS": true,
         "MIRACLE_BUILD_SHARED": false
@@ -39,6 +37,15 @@
       "inherits": "x64-debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "windows-ci",
+      "displayName": "Windows CI",
+      "inherits": "x64-release",
+      "generator": "Visual Studio 17 2022",
+      "cacheVariables": {
+        "MIRACLE_BUILD_SHARED": true
       }
     }
   ]
