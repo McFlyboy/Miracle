@@ -40,10 +40,41 @@
       }
     },
     {
+      "name": "linux-debug",
+      "displayName": "Linux Debug",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "x64-linux"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "linux-release",
+      "displayName": "Linux Release",
+      "inherits": "linux-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
       "name": "windows-ci",
       "displayName": "Windows CI",
       "inherits": "x64-release",
       "generator": "Visual Studio 17 2022",
+      "cacheVariables": {
+        "MIRACLE_BUILD_SHARED": true
+      }
+    },
+    {
+      "name": "linux-ci",
+      "displayName": "Linux CI",
+      "inherits": "linux-release",
+      "generator": "Unix Makefiles",
       "cacheVariables": {
         "MIRACLE_BUILD_SHARED": true
       }
@@ -55,6 +86,12 @@
       "displayName": "Windows CI Build",
       "configurePreset": "windows-ci",
       "configuration": "Release"
+    },
+    {
+      "name": "linux-ci-build",
+      "displayName": "Linux CI Build",
+      "configurePreset": "linux-ci",
+      "configuration": "Release"
     }
   ],
   "testPresets": [
@@ -62,6 +99,12 @@
       "name": "windows-ci-tests",
       "displayName": "Windows CI Tests",
       "configurePreset": "windows-ci",
+      "configuration": "Release"
+    },
+    {
+      "name": "linux-ci-tests",
+      "displayName": "Linux CI Tests",
+      "configurePreset": "linux-ci",
       "configuration": "Release"
     }
   ]
