@@ -40,6 +40,28 @@
       }
     },
     {
+      "name": "macos-debug",
+      "displayName": "Mac OS Debug",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "x64-osx"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    },
+    {
+      "name": "macos-release",
+      "displayName": "Mac OS Release",
+      "inherits": "macos-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
       "name": "linux-debug",
       "displayName": "Linux Debug",
       "inherits": "base",
@@ -71,6 +93,15 @@
       }
     },
     {
+      "name": "macos-ci",
+      "displayName": "Mac OS CI",
+      "inherits": "macos-release",
+      "generator": "Xcode",
+      "cacheVariables": {
+        "MIRACLE_BUILD_SHARED": true
+      }
+    },
+    {
       "name": "linux-ci",
       "displayName": "Linux CI",
       "inherits": "linux-release",
@@ -88,6 +119,12 @@
       "configuration": "Release"
     },
     {
+      "name": "macos-ci-build",
+      "displayName": "Mac OS CI Build",
+      "configurePreset": "macos-ci",
+      "configuration": "Release"
+    },
+    {
       "name": "linux-ci-build",
       "displayName": "Linux CI Build",
       "configurePreset": "linux-ci",
@@ -99,6 +136,12 @@
       "name": "windows-ci-tests",
       "displayName": "Windows CI Tests",
       "configurePreset": "windows-ci",
+      "configuration": "Release"
+    },
+    {
+      "name": "macos-ci-tests",
+      "displayName": "Mac OS CI Tests",
+      "configurePreset": "macos-ci",
       "configuration": "Release"
     },
     {
