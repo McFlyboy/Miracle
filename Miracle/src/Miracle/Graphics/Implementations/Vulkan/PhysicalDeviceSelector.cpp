@@ -2,7 +2,6 @@
 
 #include <cstring>
 #include <optional>
-#include <utility>
 
 #include <fmt/format.h>
 
@@ -99,7 +98,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			}
 		}
 
-		return std::move(queueFamilyIndices);
+		return queueFamilyIndices;
 	}
 
 	ExtensionsSupported PhysicalDeviceSelector::queryExtensionsSupported(

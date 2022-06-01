@@ -14,7 +14,6 @@ set_target_properties(
 	PROPERTIES
 		CXX_STANDARD 20
 		CXX_STANDARD_REQUIRED ON
-		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
 )
 
 # Find 3rd-party packages
