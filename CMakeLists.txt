@@ -3,8 +3,8 @@
 project("Miracle")
 
 # Options
+option(BUILD_SHARED_LIBS ON)
 option(MIRACLE_BUILD_DEMO_PROJECTS OFF)
-option(MIRACLE_BUILD_SHARED ON)
 
 # Main project
 add_subdirectory("Miracle")
