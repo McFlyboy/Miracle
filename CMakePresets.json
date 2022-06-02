@@ -9,7 +9,7 @@
       "installDir": "${sourceDir}/out/install/${presetName}",
       "toolchainFile": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
-        "MIRACLE_BUILD_SHARED": false,
+        "BUILD_SHARED_LIBS": false,
         "MIRACLE_BUILD_DEMO_PROJECTS": true
       }
     },
@@ -22,6 +22,8 @@
         "strategy": "external"
       },
       "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe",
         "CMAKE_BUILD_TYPE": "Debug",
         "VCPKG_TARGET_TRIPLET": "x64-windows-static-md"
       },
@@ -87,27 +89,24 @@
       "name": "windows-ci",
       "displayName": "Windows CI",
       "inherits": "x64-release",
-      "generator": "Visual Studio 17 2022",
       "cacheVariables": {
-        "MIRACLE_BUILD_SHARED": true
+        "BUILD_SHARED_LIBS": true
       }
     },
     {
       "name": "macos-ci",
       "displayName": "Mac OS CI",
       "inherits": "macos-release",
-      "generator": "Xcode",
       "cacheVariables": {
-        "MIRACLE_BUILD_SHARED": true
+        "BUILD_SHARED_LIBS": true
       }
     },
     {
       "name": "linux-ci",
       "displayName": "Linux CI",
       "inherits": "linux-release",
-      "generator": "Unix Makefiles",
       "cacheVariables": {
-        "MIRACLE_BUILD_SHARED": true
+        "BUILD_SHARED_LIBS": true
       }
     }
   ],

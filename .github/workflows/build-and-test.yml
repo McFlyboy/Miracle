@@ -15,6 +15,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Setup MSVC dev environment
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Install ninja-build tool
+      uses: seanmiddleditch/gha-setup-ninja@v3
+
     - name: Download and install Vulkan SDK
       run: |
         Write-Output "Downloading Vulkan SDK"
@@ -40,6 +46,9 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+
+    - name: Install ninja-build tool
+      uses: seanmiddleditch/gha-setup-ninja@v3
 
     - name: Download and install Vulkan SDK
       run: |
@@ -69,6 +78,9 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+
+    - name: Install ninja-build tool
+      uses: seanmiddleditch/gha-setup-ninja@v3
 
     - name: Install platform-specific dependencies
       run: |
