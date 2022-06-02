@@ -24,7 +24,7 @@ list(
 # Set binary output directory
 set(CMAKE_CURRENT_BINARY_DIR "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources/shaders")
 
-# Add path to binary filenames 
+# Add path to binary filenames
 list(
 	TRANSFORM BINARY_FILENAMES
 	PREPEND "${CMAKE_CURRENT_BINARY_DIR}/"
