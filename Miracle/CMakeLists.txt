@@ -24,15 +24,10 @@ target_link_libraries(
 
 # Include directories
 target_include_directories(Miracle PRIVATE "src")
-target_include_directories(
-	Miracle
-	PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-	INTERFACE "$<INSTALL_INTERFACE:include>"
-)
+target_include_directories(Miracle PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 # Usage macros
 target_compile_definitions(Miracle PRIVATE "MIRACLE_USAGE_BUILD")
-target_compile_definitions(Miracle INTERFACE "MIRACLE_USAGE_CONSUME")
 
 # Linkage macro
 if(BUILD_SHARED_LIBS)
@@ -50,14 +45,3 @@ target_precompile_headers(
 
 # Target resource dependencies
 add_dependencies(Miracle Shaders)
-
-# Include resource related scripts
-include("${PROJECT_SOURCE_DIR}/Shaders/CopyShaders.cmake")
-
-# Copy shader binaries to resources
-copy_shaders(Miracle "$<TARGET_FILE_DIR:Miracle>/resources/shaders")
-
-# Install rules
-install(TARGETS Miracle)
-install(DIRECTORY "include/" DESTINATION "include")
-install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/resources/" DESTINATION "bin/resources")

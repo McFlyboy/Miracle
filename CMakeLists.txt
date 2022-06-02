@@ -6,6 +6,11 @@ project("Miracle")
 option(BUILD_SHARED_LIBS ON)
 option(MIRACLE_BUILD_DEMO_PROJECTS OFF)
 
+# Use top-level binary output
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/out/lib")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/out/lib")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/out/bin")
+
 # Main project
 add_subdirectory("Miracle")
 
