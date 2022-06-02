@@ -87,7 +87,6 @@
       "name": "windows-ci",
       "displayName": "Windows CI",
       "inherits": "x64-release",
-      "generator": "Visual Studio 17 2022",
       "cacheVariables": {
         "BUILD_SHARED_LIBS": true
       }
@@ -96,7 +95,6 @@
       "name": "macos-ci",
       "displayName": "Mac OS CI",
       "inherits": "macos-release",
-      "generator": "Xcode",
       "cacheVariables": {
         "BUILD_SHARED_LIBS": true
       }
@@ -105,7 +103,6 @@
       "name": "linux-ci",
       "displayName": "Linux CI",
       "inherits": "linux-release",
-      "generator": "Unix Makefiles",
       "cacheVariables": {
         "BUILD_SHARED_LIBS": true
       }
