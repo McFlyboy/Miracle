@@ -15,8 +15,8 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Add msbuild to path
-      uses: microsoft/setup-msbuild@v1.1
+    - name: Setup MSVC dev environment
+      uses: ilammy/msvc-dev-cmd@v1
 
     - name: Install ninja-build tool
       uses: seanmiddleditch/gha-setup-ninja@v3
