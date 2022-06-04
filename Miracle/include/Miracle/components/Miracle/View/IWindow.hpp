@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <Miracle/components/Definitions.hpp>
+
 namespace Miracle::View {
 	struct MIRACLE_API WindowProps {
 		std::u8string title = u8"Miracle Application";
