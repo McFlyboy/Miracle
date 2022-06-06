@@ -84,7 +84,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 			if (!queueFamilyIndices.presentFamilyIndex.has_value()) {
 				try {
-					auto isSurfaceSupported = physicalDevice.getSurfaceSupportKHR(i, *supportedSurface);
+					auto isSurfaceSupported = physicalDevice.getSurfaceSupportKHR(static_cast<uint32_t>(i), *supportedSurface);
 
 					if (isSurfaceSupported) {
 						queueFamilyIndices.presentFamilyIndex = static_cast<uint32_t>(i);

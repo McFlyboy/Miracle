@@ -13,7 +13,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eTransferDst,
 			vk::MemoryPropertyFlagBits::eDeviceLocal
 		),
-		m_vertexCount(vertices.size())
+		m_vertexCount(static_cast<uint32_t>(vertices.size()))
 	{
 		auto stagingBuffer = Buffer(
 			m_device,
