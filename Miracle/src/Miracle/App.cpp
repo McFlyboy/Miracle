@@ -1,9 +1,9 @@
-﻿#include <Miracle/components/Miracle/App.hpp>
+﻿#include <Miracle/App.hpp>
 
 #include <memory>
 
 #include "EngineDependencies.hpp"
-#include <Miracle/components/Miracle/Diagnostics/Logger.hpp>
+#include <Miracle/Diagnostics/Logger.hpp>
 #include "MiracleError.hpp"
 
 using namespace Miracle::Diagnostics;

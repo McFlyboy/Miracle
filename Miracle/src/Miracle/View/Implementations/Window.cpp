@@ -1,10 +1,9 @@
 #include "Window.hpp"
 
 #include <utility>
+#include <format>
 
-#include <fmt/format.h>
-
-#include <Miracle/components/Miracle/Diagnostics/Logger.hpp>
+#include <Miracle/Diagnostics/Logger.hpp>
 
 using namespace Miracle::Diagnostics;
 
@@ -136,7 +135,7 @@ namespace Miracle::View::Implementations {
 	}
 
 	std::optional<MiracleError> Window::initializeGlfw() const {
-		Logger::info(fmt::format("Initializing GLFW version: {}", glfwGetVersionString()));
+		Logger::info(std::format("Initializing GLFW version: {}", glfwGetVersionString()));
 
 		bool initialized = glfwInit();
 

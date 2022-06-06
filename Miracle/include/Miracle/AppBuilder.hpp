@@ -2,7 +2,7 @@
 
 #include <functional>
 
-#include <Miracle/components/Miracle/View/IWindow.hpp>
+#include <Miracle/View/IWindow.hpp>
 #include "App.hpp"
 
 namespace Miracle {

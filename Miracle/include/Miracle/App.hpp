@@ -2,9 +2,9 @@
 
 #include <functional>
 
-#include <Miracle/components/Definitions.hpp>
-#include <Miracle/components/Miracle/View/IWindow.hpp>
-#include <Miracle/components/Miracle/Input/Devices/IKeyboard.hpp>
+#include <Miracle/Definitions.hpp>
+#include <Miracle/View/IWindow.hpp>
+#include <Miracle/Input/Devices/IKeyboard.hpp>
 
 namespace Miracle {
 	struct AppProps {

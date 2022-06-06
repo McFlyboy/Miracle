@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include <Miracle/components/Definitions.hpp>
+#include <Miracle/Definitions.hpp>
 
 namespace Miracle::Input::Devices {
 	class MIRACLE_API IKeyboard {

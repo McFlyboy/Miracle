@@ -5,7 +5,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#include <Miracle/components/Miracle/View/IWindow.hpp>
+#include <Miracle/View/IWindow.hpp>
 #include <Miracle/MiracleError.hpp>
 #include <Miracle/Graphics/Implementations/Vulkan/ISurfaceTarget.hpp>
 

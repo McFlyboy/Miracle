@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <Miracle/components/Definitions.hpp>
+#include <Miracle/Definitions.hpp>
 
 namespace Miracle::View {
 	struct WindowProps {
