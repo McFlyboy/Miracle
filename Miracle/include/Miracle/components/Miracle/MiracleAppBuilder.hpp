@@ -3,6 +3,7 @@
 #include <functional>
 
 #include "MiracleApp.hpp"
+#include <Miracle/components/Definitions.hpp>
 #include <Miracle/components/Miracle/View/IWindow.hpp>
 
 namespace Miracle {

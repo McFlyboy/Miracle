@@ -2,6 +2,7 @@
 
 #include <functional>
 
+#include <Miracle/components/Definitions.hpp>
 #include <Miracle/components/Miracle/View/IWindow.hpp>
 #include <Miracle/components/Miracle/Input/Devices/IKeyboard.hpp>
 

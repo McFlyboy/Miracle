@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <Miracle/components/Definitions.hpp>
+
 namespace Miracle::Diagnostics {
 	class MIRACLE_API Logger {
 	public:

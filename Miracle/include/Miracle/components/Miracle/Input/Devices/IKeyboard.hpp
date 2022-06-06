@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#include <Miracle/components/Definitions.hpp>
+
 namespace Miracle::Input::Devices {
 	class MIRACLE_API IKeyboard {
 	protected:
