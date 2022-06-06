@@ -11,7 +11,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			vk::BufferUsageFlagBits::eIndexBuffer | vk::BufferUsageFlagBits::eTransferDst,
 			vk::MemoryPropertyFlagBits::eDeviceLocal
 		),
-		m_indexCount(indices.size())
+		m_indexCount(static_cast<uint32_t>(indices.size()))
 	{
 		auto stagingBuffer = Buffer(
 			m_device,
