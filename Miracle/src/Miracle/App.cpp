@@ -1,4 +1,4 @@
-﻿#include <Miracle/components/Miracle/MiracleApp.hpp>
+﻿#include <Miracle/components/Miracle/App.hpp>
 
 #include <memory>
 
@@ -10,21 +10,15 @@ using namespace Miracle::Diagnostics;
 using namespace Miracle::View;
 
 namespace Miracle {
-	MiracleApp* MiracleApp::s_currentApp = nullptr;
+	App* App::s_currentApp = nullptr;
 
-	MiracleApp::MiracleApp(
-		const WindowProps& windowProps,
-		const std::function<void()>& startScript,
-		const std::function<void()>& updateScript
-	) :
-		m_windowProps(windowProps),
-		m_startScript(startScript),
-		m_updateScript(updateScript)
+	App::App(const AppProps& props) :
+		m_props(props)
 	{
 		Logger::initialize();
 	}
 
-	int MiracleApp::run() {
+	int App::run() {
 		Logger::info("Starting Miracle");
 
 		s_currentApp = this;
@@ -39,16 +33,16 @@ namespace Miracle {
 		return m_exitCode;
 	}
 
-	void MiracleApp::close(int exitCode) {
+	void App::close(int exitCode) {
 		m_exitCode = exitCode;
 		m_window->close();
 	}
 
-	void MiracleApp::runEngine() {
+	void App::runEngine() {
 		std::unique_ptr<EngineDependencies> dependencies = nullptr;
 
 		try {
-			dependencies = std::make_unique<EngineDependencies>(m_windowProps);
+			dependencies = std::make_unique<EngineDependencies>(m_props.windowProps);
 		}
 		catch (const MiracleError& error) {
 			m_exitCode = static_cast<int>(error);
@@ -61,12 +55,12 @@ namespace Miracle {
 
 		m_window->show();
 
-		m_startScript();
+		m_props.startScript();
 
 		while (!m_window->shouldClose()) {
 			m_window->update();
 
-			m_updateScript();
+			m_props.updateScript();
 
 			auto renderError = graphicsEngine.render();
 

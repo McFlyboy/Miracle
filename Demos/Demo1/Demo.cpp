@@ -2,12 +2,12 @@
 
 using namespace Miracle;
 
-MiracleApp* currentApp = nullptr;
+App* currentApp = nullptr;
 View::IWindow* window = nullptr;
 Input::Devices::IKeyboard* keyboard = nullptr;
 
 int main() {
-	auto app = MiracleAppBuilder()
+	auto app = AppBuilder()
 		.configureWindow(
 			[](View::WindowProps& props) {
 				props.title = u8"Demo 1";
@@ -17,7 +17,7 @@ int main() {
 			}
 		).setStartScript(
 			[]() {
-				currentApp = MiracleApp::getCurrentApp();
+				currentApp = App::getCurrentApp();
 				window = currentApp->getWindow();
 				keyboard = currentApp->getKeyboard();
 			}

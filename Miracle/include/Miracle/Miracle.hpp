@@ -2,8 +2,8 @@
 
 #include "components/Definitions.hpp"
 
-#include "components/Miracle/MiracleAppBuilder.hpp"
-#include "components/Miracle/MiracleApp.hpp"
+#include "components/Miracle/AppBuilder.hpp"
+#include "components/Miracle/App.hpp"
 
 #include "components/Miracle/Diagnostics/Logger.hpp"
 
