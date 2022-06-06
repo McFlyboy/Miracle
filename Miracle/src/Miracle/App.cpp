@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include "EngineDependencies.hpp"
 #include <Miracle/Diagnostics/Logger.hpp>
+#include "EngineDependencies.hpp"
 #include "MiracleError.hpp"
 
 using namespace Miracle::Diagnostics;

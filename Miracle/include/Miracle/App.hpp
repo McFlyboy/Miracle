@@ -9,8 +9,8 @@
 namespace Miracle {
 	struct AppProps {
 		View::WindowProps windowProps;
-		std::function<void()> startScript;
-		std::function<void()> updateScript;
+		std::function<void()> startScript = []() {};
+		std::function<void()> updateScript = []() {};
 	};
 
 	class MIRACLE_API App {
@@ -24,7 +24,7 @@ namespace Miracle {
 		int m_exitCode = 0;
 
 	public:
-		App(const AppProps& props);
+		App(const AppProps& props = {});
 
 		inline View::IWindow* getWindow() { return m_window; }
 		inline Input::Devices::IKeyboard* getKeyboard() { return m_keyboard; }
