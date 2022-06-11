@@ -1,6 +1,7 @@
 ﻿#include <Miracle/App.hpp>
 
 #include <memory>
+#include <utility>
 
 #include <Miracle/Diagnostics/Logger.hpp>
 #include "EngineDependencies.hpp"
@@ -14,6 +15,12 @@ namespace Miracle {
 
 	App::App(const AppProps& props) :
 		m_props(props)
+	{
+		Logger::initialize();
+	}
+
+	App::App(AppProps&& props) :
+		m_props(std::move(props))
 	{
 		Logger::initialize();
 	}

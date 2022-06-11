@@ -7,8 +7,8 @@
 
 namespace Miracle {
 	struct AppProps {
-		std::function<void ()> startScript = []() {};
-		std::function<void ()> updateScript = []() {};
+		std::function<void()> startScript = []() {};
+		std::function<void()> updateScript = []() {};
 		View::WindowProps windowProps;
 	};
 
@@ -23,7 +23,9 @@ namespace Miracle {
 		int m_exitCode = 0;
 
 	public:
-		App(const AppProps& props = {});
+		App(const AppProps& props);
+
+		App(AppProps&& props = {});
 
 		inline View::IWindow* getWindow() { return m_window; }
 

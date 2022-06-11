@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <utility>
 
 #include <Miracle/View/IWindow.hpp>
 #include "App.hpp"
@@ -11,18 +12,18 @@ namespace Miracle {
 		AppProps m_props;
 
 	public:
-		AppBuilder& configureWindow(std::function<void (View::WindowProps&)> configurer) {
-			configurer(m_props.windowProps);
+		AppBuilder& setStartScript(std::function<void()>&& startScript) {
+			m_props.startScript = std::move(startScript);
 			return *this;
 		}
 
-		AppBuilder& setStartScript(std::function<void ()> startScript) {
-			m_props.startScript = startScript;
+		AppBuilder& setUpdateScript(std::function<void()>&& updateScript) {
+			m_props.updateScript = std::move(updateScript);
 			return *this;
 		}
 
-		AppBuilder& setUpdateScript(std::function<void ()> updateScript) {
-			m_props.updateScript = updateScript;
+		AppBuilder& configureWindow(const std::function<void(View::WindowProps*)>& configurer) {
+			configurer(&m_props.windowProps);
 			return *this;
 		}
 
