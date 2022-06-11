@@ -31,13 +31,13 @@ jobs:
     - name: Configure CMake
       run: |
         $env:VULKAN_SDK = [System.Environment]::GetEnvironmentVariable("VULKAN_SDK", "Machine")
-        cmake --preset windows-ci
+        cmake --preset x64-release
 
     - name: Build
-      run: cmake --build --preset windows-ci-build
+      run: cmake --build --preset x64-release-build
 
     - name: Test
-      run: ctest --preset windows-ci-tests
+      run: ctest --preset x64-release-tests
       
   # Mac OS
   macos-build-and-test:
@@ -63,13 +63,13 @@ jobs:
     - name: Configure CMake
       run: |
         source ~/VulkanSDK/setup-env.sh
-        cmake --preset macos-ci
+        cmake --preset macos-release
 
     - name: Build
-      run: cmake --build --preset macos-ci-build
+      run: cmake --build --preset macos-release-build
 
     - name: Test
-      run: ctest --preset macos-ci-tests
+      run: ctest --preset macos-release-tests
       
   # Ubuntu
   ubuntu-build-and-test:
@@ -102,10 +102,10 @@ jobs:
       run: |
         SDK_VERSION=`cat vulkan_sdk_version.txt`
         source VulkanSDK/${SDK_VERSION}/setup-env.sh
-        cmake --preset linux-ci
+        cmake --preset linux-release
 
     - name: Build
-      run: cmake --build --preset linux-ci-build
+      run: cmake --build --preset linux-release-build
 
     - name: Test
-      run: ctest --preset linux-ci-tests
+      run: ctest --preset linux-release-tests

@@ -11,13 +11,9 @@
 #error Miracle does not support this platform! Platforms supported: Windows, MacOS, Linux
 #endif
 
-// ----- API definition -----
-#if defined(MIRACLE_PLATFORM_WINDOWS) && defined(MIRACLE_LINKAGE_DYNAMIC)
-#if defined(MIRACLE_BUILD)
-#define MIRACLE_API __declspec(dllexport)
+// ----- Configuration definitions -----
+#ifdef NDEBUG
+#define MIRACLE_CONFIG_RELEASE 1
 #else
-#define MIRACLE_API __declspec(dllimport)
-#endif
-#else
-#define MIRACLE_API
+#define MIRACLE_CONFIG_DEBUG 1
 #endif

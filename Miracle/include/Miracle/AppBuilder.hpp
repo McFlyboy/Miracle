@@ -11,17 +11,17 @@ namespace Miracle {
 		AppProps m_props;
 
 	public:
-		AppBuilder& configureWindow(std::function<void(View::WindowProps&)> configurer) {
+		AppBuilder& configureWindow(std::function<void (View::WindowProps&)> configurer) {
 			configurer(m_props.windowProps);
 			return *this;
 		}
 
-		AppBuilder& setStartScript(std::function<void()> startScript) {
+		AppBuilder& setStartScript(std::function<void ()> startScript) {
 			m_props.startScript = startScript;
 			return *this;
 		}
 
-		AppBuilder& setUpdateScript(std::function<void()> updateScript) {
+		AppBuilder& setUpdateScript(std::function<void ()> updateScript) {
 			m_props.updateScript = updateScript;
 			return *this;
 		}

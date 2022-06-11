@@ -9,7 +9,6 @@
       "installDir": "${sourceDir}/out/install/${presetName}",
       "toolchainFile": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
-        "BUILD_SHARED_LIBS": false,
         "MIRACLE_BUILD_DEMO_PROJECTS": true
       }
     },
@@ -84,69 +83,45 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
-    },
-    {
-      "name": "windows-ci",
-      "displayName": "Windows CI",
-      "inherits": "x64-release",
-      "cacheVariables": {
-        "BUILD_SHARED_LIBS": true
-      }
-    },
-    {
-      "name": "macos-ci",
-      "displayName": "Mac OS CI",
-      "inherits": "macos-release",
-      "cacheVariables": {
-        "BUILD_SHARED_LIBS": true
-      }
-    },
-    {
-      "name": "linux-ci",
-      "displayName": "Linux CI",
-      "inherits": "linux-release",
-      "cacheVariables": {
-        "BUILD_SHARED_LIBS": true
-      }
     }
   ],
   "buildPresets": [
     {
-      "name": "windows-ci-build",
-      "displayName": "Windows CI Build",
-      "configurePreset": "windows-ci",
+      "name": "x64-release-build",
+      "displayName": "x64 Release Build",
+      "configurePreset": "x64-release",
       "configuration": "Release"
     },
     {
-      "name": "macos-ci-build",
-      "displayName": "Mac OS CI Build",
-      "configurePreset": "macos-ci",
+      "name": "macos-release-build",
+      "displayName": "Mac OS Release Build",
+      "configurePreset": "macos-release",
       "configuration": "Release"
     },
     {
-      "name": "linux-ci-build",
-      "displayName": "Linux CI Build",
-      "configurePreset": "linux-ci",
+      "name": "linux-release-build",
+      "displayName": "Linux Release Build",
+      "configurePreset": "linux-release",
       "configuration": "Release"
     }
   ],
   "testPresets": [
     {
-      "name": "windows-ci-tests",
-      "displayName": "Windows CI Tests",
-      "configurePreset": "windows-ci",
+      "name": "x64-release-tests",
+      "displayName": "Windows Release Tests",
+      "configurePreset": "x64-release",
       "configuration": "Release"
     },
     {
-      "name": "macos-ci-tests",
-      "displayName": "Mac OS CI Tests",
-      "configurePreset": "macos-ci",
+      "name": "macos-release-tests",
+      "displayName": "Mac OS Release Tests",
+      "configurePreset": "macos-release",
       "configuration": "Release"
     },
     {
-      "name": "linux-ci-tests",
-      "displayName": "Linux CI Tests",
-      "configurePreset": "linux-ci",
+      "name": "linux-release-tests",
+      "displayName": "Linux Release Tests",
+      "configurePreset": "linux-release",
       "configuration": "Release"
     }
   ]

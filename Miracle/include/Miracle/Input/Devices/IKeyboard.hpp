@@ -2,15 +2,13 @@
 
 #include <cstdint>
 
-#include <Miracle/Definitions.hpp>
-
 namespace Miracle::Input::Devices {
-	class MIRACLE_API IKeyboard {
+	class IKeyboard {
 	protected:
 		IKeyboard() = default;
 
 	public:
-		enum class MIRACLE_API Key : int16_t;
+		enum class Key : int16_t;
 
 		IKeyboard(const IKeyboard&) = delete;
 		virtual ~IKeyboard() = default;
@@ -19,7 +17,7 @@ namespace Miracle::Input::Devices {
 		virtual bool keyPressedContinuously(const Key& key) = 0;
 		virtual bool keyIsDown(const Key& key) = 0;
 
-		enum class MIRACLE_API Key : int16_t {
+		enum class Key : int16_t {
 			/* Printable keys */
 			Space          =  32,
 			Apostrophe     =  39,  /* ' */

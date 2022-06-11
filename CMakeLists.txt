@@ -3,8 +3,7 @@
 project("Miracle")
 
 # Options
-option(BUILD_SHARED_LIBS ON)
-option(MIRACLE_BUILD_DEMO_PROJECTS OFF)
+option(MIRACLE_BUILD_DEMO_PROJECTS false)
 
 # Use top-level binary output
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/out/lib")

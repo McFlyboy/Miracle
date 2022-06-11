@@ -6,7 +6,7 @@ set_target_properties(
 	Demo1
 	PROPERTIES
 		CXX_STANDARD 20
-		CXX_STANDARD_REQUIRED ON
+		CXX_STANDARD_REQUIRED true
 )
 
 # Linking

@@ -2,10 +2,8 @@
 
 #include <string>
 
-#include <Miracle/Definitions.hpp>
-
 namespace Miracle::Diagnostics {
-	class MIRACLE_API Logger {
+	class Logger {
 	public:
 		Logger() = delete;
 

@@ -17,7 +17,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			uint32_t queueFamilyIndex
 		);
 
-		PresentQueue& operator=(PresentQueue&& right) {
+		PresentQueue& operator=(PresentQueue&& right) noexcept {
 			m_queue = std::move(right.m_queue);
 			return *this;
 		}

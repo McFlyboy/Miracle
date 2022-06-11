@@ -13,12 +13,12 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		QueueFamilyIndices() = default;
 
-		QueueFamilyIndices(QueueFamilyIndices&& right) :
+		QueueFamilyIndices(QueueFamilyIndices&& right) noexcept :
 			graphicsFamilyIndex(std::move(right.graphicsFamilyIndex)),
 			presentFamilyIndex(std::move(right.presentFamilyIndex))
 		{}
 
-		QueueFamilyIndices& operator=(QueueFamilyIndices&& right) {
+		QueueFamilyIndices& operator=(QueueFamilyIndices&& right) noexcept {
 			graphicsFamilyIndex = std::move(right.graphicsFamilyIndex);
 			presentFamilyIndex = std::move(right.presentFamilyIndex);
 			return *this;
@@ -63,7 +63,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		std::vector<vk::SurfaceFormatKHR> formats;
 		PresentModesSupported presentModesSupported;
 
-		SwapchainSupportDetails& operator=(SwapchainSupportDetails&& right) {
+		SwapchainSupportDetails& operator=(SwapchainSupportDetails&& right) noexcept {
 			capabilities = right.capabilities;
 			formats = std::move(right.formats);
 			presentModesSupported = right.presentModesSupported;
@@ -82,7 +82,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		vk::PhysicalDeviceMemoryProperties memoryProperties;
 		SwapchainSupportDetails swapchainSupportDetails;
 
-		DeviceSupportDetails& operator=(DeviceSupportDetails&& right) {
+		DeviceSupportDetails& operator=(DeviceSupportDetails&& right) noexcept {
 			queueFamilyIndices = std::move(right.queueFamilyIndices);
 			extensionsSupported = std::move(right.extensionsSupported);
 			memoryProperties = std::move(right.memoryProperties),
