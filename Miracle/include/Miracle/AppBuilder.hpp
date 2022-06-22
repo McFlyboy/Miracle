@@ -12,12 +12,12 @@ namespace Miracle {
 		AppProps m_props;
 
 	public:
-		AppBuilder& setStartScript(std::function<void()>&& startScript) {
+		AppBuilder& setStartScript(Script&& startScript) {
 			m_props.startScript = std::move(startScript);
 			return *this;
 		}
 
-		AppBuilder& setUpdateScript(std::function<void()>&& updateScript) {
+		AppBuilder& setUpdateScript(Script&& updateScript) {
 			m_props.updateScript = std::move(updateScript);
 			return *this;
 		}

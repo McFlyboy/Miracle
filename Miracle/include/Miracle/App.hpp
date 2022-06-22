@@ -6,9 +6,11 @@
 #include <Miracle/Input/Devices/IKeyboard.hpp>
 
 namespace Miracle {
+	using Script = std::function<void()>;
+
 	struct AppProps {
-		std::function<void()> startScript = []() {};
-		std::function<void()> updateScript = []() {};
+		Script startScript = []() {};
+		Script updateScript = []() {};
 		View::WindowProps windowProps;
 	};
 
