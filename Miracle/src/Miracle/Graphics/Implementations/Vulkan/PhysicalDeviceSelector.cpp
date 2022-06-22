@@ -2,7 +2,8 @@
 
 #include <cstring>
 #include <optional>
-#include <format>
+
+#include <fmt/format.h>
 
 #include <Miracle/MiracleError.hpp>
 #include <Miracle/Diagnostics/Logger.hpp>
@@ -42,7 +43,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		auto selectedPhysicalDevice = discreteGpu.value_or(supportedPhysicalDevices.front());
 
 		Logger::info(
-			std::format(
+			fmt::format(
 				"Found Vulkan supported device: {}",
 				selectedPhysicalDevice.get().getProperties().deviceName.data()
 			)
