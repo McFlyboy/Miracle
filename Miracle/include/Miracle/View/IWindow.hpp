@@ -2,8 +2,6 @@
 
 #include <string>
 
-#include <Miracle/components/Definitions.hpp>
-
 namespace Miracle::View {
 	struct WindowProps {
 		std::u8string title = u8"Miracle Application";
@@ -12,7 +10,7 @@ namespace Miracle::View {
 		bool resizable = false;
 	};
 
-	class MIRACLE_API IWindow {
+	class IWindow {
 	protected:
 		IWindow() = default;
 

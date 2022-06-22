@@ -5,7 +5,7 @@
 
 #include <fmt/format.h>
 
-#include <Miracle/components/Miracle/Diagnostics/Logger.hpp>
+#include <Miracle/Diagnostics/Logger.hpp>
 
 using namespace Miracle::Diagnostics;
 

@@ -3,8 +3,7 @@
 #include <cstdint>
 #include <array>
 
-#include <Miracle/components/Miracle/Input/Devices/IKeyboard.hpp>
-
+#include <Miracle/Input/Devices/IKeyboard.hpp>
 #include <Miracle/View/Implementations/Window.hpp>
 
 using namespace Miracle::View::Implementations;

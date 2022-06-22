@@ -2,18 +2,19 @@
 
 #include <functional>
 
-#include <Miracle/components/Definitions.hpp>
-#include <Miracle/components/Miracle/View/IWindow.hpp>
-#include <Miracle/components/Miracle/Input/Devices/IKeyboard.hpp>
+#include <Miracle/View/IWindow.hpp>
+#include <Miracle/Input/Devices/IKeyboard.hpp>
 
 namespace Miracle {
+	using Script = std::function<void()>;
+
 	struct AppProps {
+		Script startScript = []() {};
+		Script updateScript = []() {};
 		View::WindowProps windowProps;
-		std::function<void()> startScript;
-		std::function<void()> updateScript;
 	};
 
-	class MIRACLE_API App {
+	class App {
 	private:
 		static App* s_currentApp;
 
@@ -26,10 +27,14 @@ namespace Miracle {
 	public:
 		App(const AppProps& props);
 
+		App(AppProps&& props = {});
+
 		inline View::IWindow* getWindow() { return m_window; }
+
 		inline Input::Devices::IKeyboard* getKeyboard() { return m_keyboard; }
 
 		int run();
+
 		void close(int exitCode = 0);
 
 		static inline App* getCurrentApp() { return s_currentApp; }

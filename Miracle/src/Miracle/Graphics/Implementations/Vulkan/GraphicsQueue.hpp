@@ -23,7 +23,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			uint32_t queueFamilyIndex
 		);
 
-		GraphicsQueue& operator=(GraphicsQueue&& right) {
+		GraphicsQueue& operator=(GraphicsQueue&& right) noexcept {
 			m_queue = std::move(right.m_queue);
 			m_commandPool = std::move(right.m_commandPool);
 			m_commandBuffers = std::move(right.m_commandBuffers);

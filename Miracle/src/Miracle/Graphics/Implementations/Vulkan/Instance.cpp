@@ -2,8 +2,9 @@
 
 #include <utility>
 
+#include <Miracle/Definitions.hpp>
 #include <Miracle/MiracleError.hpp>
-#include <Miracle/components/Miracle/Diagnostics/Logger.hpp>
+#include <Miracle/Diagnostics/Logger.hpp>
 
 using namespace Miracle::Diagnostics;
 
@@ -22,7 +23,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 		auto validationLayers = getValidationLayers();
 
 		auto extensions = std::vector<const char*>{
-#ifndef NDEBUG
+#ifdef MIRACLE_CONFIG_DEBUG
 			VK_EXT_DEBUG_UTILS_EXTENSION_NAME
 #endif
 		};
@@ -34,7 +35,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			extensions.push_back(surfaceTargetExtension);
 		}
 
-#ifndef NDEBUG
+#ifdef MIRACLE_CONFIG_DEBUG
 		auto debugMessengerCreateInfo = vk::DebugUtilsMessengerCreateInfoEXT{
 			.flags           = {},
 			.messageSeverity = vk::DebugUtilsMessageSeverityFlagBitsEXT::eError
@@ -49,7 +50,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 
 		try {
 			m_instance = context.createInstance({
-#ifndef NDEBUG
+#ifdef MIRACLE_CONFIG_DEBUG
 				.pNext                   = &debugMessengerCreateInfo,
 #endif
 				.flags                   = {},
@@ -66,7 +67,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			throw MiracleError::VulkanGraphicsEngineInstanceCreationError;
 		}
 
-#ifndef NDEBUG
+#ifdef MIRACLE_CONFIG_DEBUG
 		try {
 			m_debugMessenger = m_instance.createDebugUtilsMessengerEXT(debugMessengerCreateInfo);
 		}

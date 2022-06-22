@@ -9,11 +9,11 @@ Input::Devices::IKeyboard* keyboard = nullptr;
 int main() {
 	auto app = AppBuilder()
 		.configureWindow(
-			[](View::WindowProps& props) {
-				props.title = u8"Demo 1";
-				props.width = 800;
-				props.height = 600;
-				props.resizable = true;
+			[](View::WindowProps* props) {
+				props->title = u8"Demo 1";
+				props->width = 800;
+				props->height = 600;
+				props->resizable = true;
 			}
 		).setStartScript(
 			[]() {

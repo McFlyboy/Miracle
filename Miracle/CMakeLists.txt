@@ -1,12 +1,12 @@
 ﻿# Target definition
-add_library(Miracle "src/Miracle/App.cpp" "include/Miracle/Miracle.hpp" "include/Miracle/components/Miracle/App.hpp" "include/Miracle/components/Definitions.hpp" "include/Miracle/components/Miracle/Diagnostics/Logger.hpp" "src/Miracle/Diagnostics/Logger.cpp" "include/Miracle/components/Miracle/View/IWindow.hpp" "src/Miracle/View/Implementations/Window.hpp" "src/Miracle/View/Implementations/Window.cpp" "include/Miracle/components/Miracle/AppBuilder.hpp"  "include/Miracle/components/Miracle/Input/Devices/IKeyboard.hpp" "src/Miracle/Input/Devices/Implementations/Keyboard.hpp" "src/Miracle/Input/Devices/Implementations/Keyboard.cpp" "src/Miracle/EngineDependencies.hpp" "src/Miracle/EngineDependencies.cpp"  "src/Miracle/MiracleError.hpp" "src/Miracle/Graphics/Implementations/Vulkan/GraphicsEngine.hpp" "src/Miracle/Graphics/Implementations/Vulkan/GraphicsEngine.cpp" "src/Miracle/Graphics/Implementations/Vulkan/Vulkan.hpp" "src/Miracle/Graphics/Implementations/Vulkan/Instance.hpp" "src/Miracle/Graphics/Implementations/Vulkan/Instance.cpp" "src/Miracle/Graphics/Implementations/Vulkan/PhysicalDeviceSelector.hpp" "src/Miracle/Graphics/Implementations/Vulkan/PhysicalDeviceSelector.cpp" "src/Miracle/Graphics/Implementations/Vulkan/Device.hpp" "src/Miracle/Graphics/Implementations/Vulkan/Device.cpp" "src/Miracle/Graphics/Implementations/Vulkan/DeviceSupportDetails.hpp" "src/Miracle/Graphics/Implementations/Vulkan/ISurfaceTarget.hpp" "src/Miracle/Graphics/Implementations/Vulkan/Surface.hpp" "src/Miracle/Graphics/Implementations/Vulkan/Surface.cpp" "src/Miracle/Graphics/Implementations/Vulkan/Swapchain.hpp" "src/Miracle/Graphics/Implementations/Vulkan/Swapchain.cpp" "src/Miracle/Graphics/Implementations/Vulkan/GraphicsQueue.hpp" "src/Miracle/Graphics/Implementations/Vulkan/PresentQueue.hpp" "src/Miracle/Graphics/Implementations/Vulkan/Queue.hpp" "src/Miracle/Io/ResourceLoader.hpp" "src/Miracle/Io/ResourceLoader.cpp" "src/Miracle/Graphics/Implementations/Vulkan/GraphicsPipeline.hpp" "src/Miracle/Graphics/Implementations/Vulkan/GraphicsPipeline.cpp" "src/Miracle/Graphics/Implementations/Vulkan/RenderPass.hpp" "src/Miracle/Graphics/Implementations/Vulkan/RenderPass.cpp" "src/Miracle/Graphics/Implementations/Vulkan/GraphicsQueue.cpp" "src/Miracle/Graphics/IGraphicsEngine.hpp" "src/Miracle/Graphics/Implementations/Vulkan/FrameInFlight.hpp" "src/Miracle/Graphics/Implementations/Vulkan/FrameInFlight.cpp" "src/Miracle/Graphics/Implementations/Vulkan/PresentQueue.cpp" "src/Miracle/Graphics/Implementations/Vulkan/FramesInFlight.hpp" "include/Miracle/components/Miracle/Math/Vector2f.hpp" "include/Miracle/components/Miracle/Math/Vector3f.hpp" "src/Miracle/Graphics/Vertex.hpp" "src/Miracle/Graphics/Implementations/Vulkan/VertexBuffer.hpp" "src/Miracle/Graphics/Implementations/Vulkan/VertexBuffer.cpp" "src/Miracle/Graphics/Implementations/Vulkan/Buffer.hpp" "src/Miracle/Graphics/Implementations/Vulkan/Buffer.cpp" "src/Miracle/Graphics/Implementations/Vulkan/IndexBuffer.hpp" "src/Miracle/Graphics/Implementations/Vulkan/IndexBuffer.cpp")
+add_library(Miracle STATIC "src/Miracle/App.cpp" "src/Miracle/Diagnostics/Logger.cpp" "src/Miracle/View/Implementations/Window.cpp" "src/Miracle/Input/Devices/Implementations/Keyboard.cpp" "src/Miracle/EngineDependencies.cpp" "src/Miracle/Graphics/Implementations/Vulkan/GraphicsEngine.cpp" "src/Miracle/Graphics/Implementations/Vulkan/Instance.cpp" "src/Miracle/Graphics/Implementations/Vulkan/PhysicalDeviceSelector.cpp" "src/Miracle/Graphics/Implementations/Vulkan/Device.cpp" "src/Miracle/Graphics/Implementations/Vulkan/Surface.cpp" "src/Miracle/Graphics/Implementations/Vulkan/Swapchain.cpp" "src/Miracle/Io/ResourceLoader.cpp" "src/Miracle/Graphics/Implementations/Vulkan/GraphicsPipeline.cpp" "src/Miracle/Graphics/Implementations/Vulkan/RenderPass.cpp" "src/Miracle/Graphics/Implementations/Vulkan/GraphicsQueue.cpp" "src/Miracle/Graphics/Implementations/Vulkan/FrameInFlight.cpp" "src/Miracle/Graphics/Implementations/Vulkan/PresentQueue.cpp" "src/Miracle/Graphics/Implementations/Vulkan/VertexBuffer.cpp" "src/Miracle/Graphics/Implementations/Vulkan/Buffer.cpp" "src/Miracle/Graphics/Implementations/Vulkan/IndexBuffer.cpp")
 
 # Target properties
 set_target_properties(
 	Miracle
 	PROPERTIES
 		CXX_STANDARD 20
-		CXX_STANDARD_REQUIRED ON
+		CXX_STANDARD_REQUIRED true
 )
 
 # Find 3rd-party packages
@@ -23,16 +23,8 @@ target_link_libraries(
 )
 
 # Include directories
-target_include_directories(Miracle PRIVATE "src")
 target_include_directories(Miracle PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
-
-# Usage macros
-target_compile_definitions(Miracle PRIVATE "MIRACLE_BUILD")
-
-# Linkage macro
-if(BUILD_SHARED_LIBS)
-	target_compile_definitions(Miracle PUBLIC "MIRACLE_LINKAGE_DYNAMIC")
-endif()
+target_include_directories(Miracle PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 # Target resource dependencies
 add_dependencies(Miracle Shaders)

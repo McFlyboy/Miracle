@@ -18,7 +18,7 @@ namespace Miracle::Graphics::Implementations::Vulkan {
 			vk::Format attachmentFormat
 		);
 
-		RenderPass& operator=(RenderPass&& right) {
+		RenderPass& operator=(RenderPass&& right) noexcept {
 			m_renderPass = std::move(right.m_renderPass);
 			return *this;
 		}
