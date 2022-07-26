@@ -11,6 +11,7 @@
 namespace Miracle {
 	using LoggerBackend = Miracle::Infrastructure::Diagnostics::Spdlog::Logger;
 	using MessageBox = Miracle::Infrastructure::View::TinyFileDialogs::MessageBox;
+	using MessageBoxIcon = Miracle::Infrastructure::View::TinyFileDialogs::MessageBoxIcon;
 
 	App::App(
 		std::string&& name,
@@ -99,7 +100,7 @@ namespace Miracle {
 		MessageBox(
 			"Error",
 			fmt::format("{0:#010x}: {1}", error.getErrorCode(), error.what()),
-			MessageBox::Icon::error
+			MessageBoxIcon::error
 		).show();
 	}
 }
