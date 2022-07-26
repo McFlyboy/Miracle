@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Definitions.hpp"
-#include "AppBuilder.hpp"
 #include "App.hpp"
-#include "Diagnostics/Logger.hpp"
-#include "View/IWindow.hpp"
-#include "Input/Devices/IKeyboard.hpp"
+
+#include "Interface/CurrentApp.hpp"
+#include "Interface/Logger.hpp"
+#include "Interface/Window.hpp"
+#include "Interface/Keyboard.hpp"

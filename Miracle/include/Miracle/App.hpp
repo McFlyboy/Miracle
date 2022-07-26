@@ -1,45 +1,68 @@
 #pragma once
 
+#include <string>
+#include <string_view>
 #include <functional>
+#include <optional>
+#include <any>
+#include <memory>
 
-#include <Miracle/View/IWindow.hpp>
-#include <Miracle/Input/Devices/IKeyboard.hpp>
+#include <Miracle/EngineDependencies.hpp>
+#include <Miracle/Common/MiracleError.hpp>
+#include "Application/EventDispatcher.hpp"
+#include "Application/ILogger.hpp"
+#include "Common/Models/WindowConfig.hpp"
 
 namespace Miracle {
 	using Script = std::function<void()>;
+	using UserData = std::optional<std::any>;
 
-	struct AppProps {
+	struct AppInitProps {
+		WindowConfig windowConfig = {};
 		Script startScript = []() {};
 		Script updateScript = []() {};
-		View::WindowProps windowProps;
 	};
 
 	class App {
+		friend class CurrentApp;
+		friend class Logger;
+		friend class Window;
+		friend class Keyboard;
+
 	private:
-		static App* s_currentApp;
+		static inline App* s_currentApp = nullptr;
 
-		const AppProps m_props;
-
-		View::IWindow* m_window = nullptr;
-		Input::Devices::IKeyboard* m_keyboard = nullptr;
+		const std::string m_name;
+		const WindowConfig m_windowConfig;
+		const Script m_startScript;
+		const Script m_updateScript;
+		UserData m_userData;
+		Application::EventDispatcher m_dispatcher;
+		const std::unique_ptr<Application::ILogger> m_logger;
+		EngineDependencies* m_dependencies = nullptr;
 		int m_exitCode = 0;
+		bool m_running = false;
 
 	public:
-		App(const AppProps& props);
+		App(
+			std::string&& name,
+			AppInitProps&& props = {},
+			UserData&& userData = {}
+		);
 
-		App(AppProps&& props = {});
+		inline std::string_view getName() const { return m_name; }
 
-		inline View::IWindow* getWindow() { return m_window; }
+		inline const UserData& getUserData() const { return m_userData; }
 
-		inline Input::Devices::IKeyboard* getKeyboard() { return m_keyboard; }
+		void setUserData(const UserData& userData);
 
 		int run();
 
-		void close(int exitCode = 0);
-
-		static inline App* getCurrentApp() { return s_currentApp; }
-
 	private:
 		void runEngine();
+
+		void runApp();
+
+		void showError(const MiracleError& error) const;
 	};
 }

@@ -9,7 +9,7 @@
       "installDir": "${sourceDir}/out/install/${presetName}",
       "toolchainFile": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
-        "MIRACLE_BUILD_DEMO_PROJECTS": true
+        "MIRACLE_BUILD_DEMO_TARGETS": true
       }
     },
     {

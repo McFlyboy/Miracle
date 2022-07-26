@@ -5,7 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
+  
 jobs:
   # Windows
   windows-build-and-test:
@@ -21,24 +21,15 @@ jobs:
     - name: Install ninja-build tool
       uses: seanmiddleditch/gha-setup-ninja@v3
 
-    - name: Download and install Vulkan SDK
-      run: |
-        Write-Output "Downloading Vulkan SDK"
-        Invoke-WebRequest -Uri https://sdk.lunarg.com/sdk/download/latest/windows/vulkan_sdk.exe -OutFile vulkan_sdk.exe
-        Write-Output "Installing Vulkan SDK"
-        .\vulkan_sdk.exe --accept-licenses --default-answer --confirm-command install
-
     - name: Configure CMake
-      run: |
-        $env:VULKAN_SDK = [System.Environment]::GetEnvironmentVariable("VULKAN_SDK", "Machine")
-        cmake --preset x64-release
+      run: cmake --preset x64-release
 
     - name: Build
       run: cmake --build --preset x64-release-build
 
     - name: Test
       run: ctest --preset x64-release-tests
-      
+
   # Mac OS
   macos-build-and-test:
     runs-on: macos-latest
@@ -50,27 +41,14 @@ jobs:
     - name: Install ninja-build tool
       uses: seanmiddleditch/gha-setup-ninja@v3
 
-    - name: Download and install Vulkan SDK
-      run: |
-        echo Downloading Vulkan SDK
-        SDK_VERSION=`curl https://vulkan.lunarg.com/sdk/latest/mac.txt`
-        curl -O https://sdk.lunarg.com/sdk/download/${SDK_VERSION}/mac/vulkan_sdk.dmg
-        echo Installing Vulkan SDK
-        sudo hdiutil attach vulkan_sdk.dmg
-        sudo /Volumes/vulkansdk-macos-${SDK_VERSION}/InstallVulkan.app/Contents/MacOS/InstallVulkan --root ~/VulkanSDK --accept-licenses --default-answer --confirm-command install
-        sudo hdiutil detach /Volumes/vulkansdk-macos-${SDK_VERSION}
-
     - name: Configure CMake
-      run: |
-        source ~/VulkanSDK/setup-env.sh
-        cmake --preset macos-release
-
+      run: cmake --preset macos-release
     - name: Build
       run: cmake --build --preset macos-release-build
 
     - name: Test
       run: ctest --preset macos-release-tests
-      
+
   # Ubuntu
   ubuntu-build-and-test:
     runs-on: ubuntu-latest
@@ -82,28 +60,8 @@ jobs:
     - name: Install ninja-build tool
       uses: seanmiddleditch/gha-setup-ninja@v3
 
-    - name: Install platform-specific dependencies
-      run: |
-        sudo apt update
-        sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev
-
-    - name: Download and install Vulkan SDK
-      run: |
-        echo Downloading Vulkan SDK
-        curl -o vulkan_sdk_version.txt https://vulkan.lunarg.com/sdk/latest/linux.txt
-        SDK_VERSION=`cat vulkan_sdk_version.txt`
-        curl -O https://sdk.lunarg.com/sdk/download/${SDK_VERSION}/linux/vulkan_sdk.tar.gz
-        echo Installing Vulkan SDK
-        mkdir VulkanSDK
-        cd VulkanSDK
-        tar xf ../vulkan_sdk.tar.gz
-
     - name: Configure CMake
-      run: |
-        SDK_VERSION=`cat vulkan_sdk_version.txt`
-        source VulkanSDK/${SDK_VERSION}/setup-env.sh
-        cmake --preset linux-release
-
+      run: cmake --preset linux-release
     - name: Build
       run: cmake --build --preset linux-release-build
 
