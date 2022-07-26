@@ -24,7 +24,7 @@ namespace Miracle {
 				logger,
 				eventDispatcher,
 				*reinterpret_cast<GlfwMultimediaFramework*>(m_multimediaFramework.get()),
-				Mappings::toWindowInitProps(windowConfig, appName)
+				Mappings::toWindowInitProps(windowConfig, Mappings::toU8StringView(appName))
 			)
 		),
 		m_keyboard(

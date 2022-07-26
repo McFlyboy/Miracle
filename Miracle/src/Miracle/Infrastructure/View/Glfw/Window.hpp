@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string_view>
+#include <string>
 
 #include <GLFW/glfw3.h>
 
@@ -16,6 +16,7 @@ namespace Miracle::Infrastructure::View::Glfw {
 		Application::EventDispatcher& m_eventDispatcher;
 
 		GLFWwindow* m_window = nullptr;
+		std::u8string m_title;
 
 	public:
 		Window(
@@ -35,6 +36,8 @@ namespace Miracle::Infrastructure::View::Glfw {
 
 		virtual bool shouldClose() const override;
 
-		virtual void setTitle(const std::string_view& title) override;
+		virtual std::u8string_view getTitle() const override;
+
+		virtual void setTitle(const std::u8string_view& title) override;
 	};
 }

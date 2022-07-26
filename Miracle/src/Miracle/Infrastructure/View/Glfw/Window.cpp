@@ -8,7 +8,8 @@ namespace Miracle::Infrastructure::View::Glfw {
 		const Application::WindowInitProps& initProps
 	) :
 		m_logger(logger),
-		m_eventDispatcher(eventDispatcher)
+		m_eventDispatcher(eventDispatcher),
+		m_title(initProps.title)
 	{
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		glfwWindowHint(GLFW_RESIZABLE, false);
@@ -17,7 +18,7 @@ namespace Miracle::Infrastructure::View::Glfw {
 		m_window = glfwCreateWindow(
 			initProps.width,
 			initProps.height,
-			initProps.title.data(),
+			reinterpret_cast<const char*>(m_title.c_str()),
 			nullptr,
 			nullptr
 		);
@@ -57,7 +58,12 @@ namespace Miracle::Infrastructure::View::Glfw {
 		return glfwWindowShouldClose(m_window);
 	}
 
-	void Window::setTitle(const std::string_view& title) {
-		glfwSetWindowTitle(m_window, title.data());
+	std::u8string_view Window::getTitle() const {
+		return m_title;
+	}
+
+	void Window::setTitle(const std::u8string_view& title) {
+		m_title = title;
+		glfwSetWindowTitle(m_window, reinterpret_cast<const char*>(m_title.c_str()));
 	}
 }

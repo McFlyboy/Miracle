@@ -6,7 +6,7 @@
 
 namespace Miracle::Application {
 	struct WindowInitProps {
-		std::string_view title;
+		std::u8string_view title;
 		int width;
 		int height;
 	};
@@ -19,7 +19,9 @@ namespace Miracle::Application {
 
 		virtual bool shouldClose() const = 0;
 
-		virtual void setTitle(const std::string_view& title) = 0;
+		virtual std::u8string_view getTitle() const = 0;
+
+		virtual void setTitle(const std::u8string_view& title) = 0;
 	};
 
 	namespace WindowErrors {
