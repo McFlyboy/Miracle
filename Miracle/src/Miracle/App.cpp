@@ -8,10 +8,10 @@
 #include "Infrastructure/Diagnostics/Spdlog/Logger.hpp"
 #include "Infrastructure/View/TinyFileDialogs/MessageBox.hpp"
 
+using namespace Miracle::Infrastructure::View::TinyFileDialogs;
+
 namespace Miracle {
 	using LoggerBackend = Miracle::Infrastructure::Diagnostics::Spdlog::Logger;
-	using MessageBox = Miracle::Infrastructure::View::TinyFileDialogs::MessageBox;
-	using MessageBoxIcon = Miracle::Infrastructure::View::TinyFileDialogs::MessageBoxIcon;
 
 	App::App(
 		std::string&& name,
