@@ -14,13 +14,14 @@
 #include "Common/Models/WindowConfig.hpp"
 
 namespace Miracle {
-	using Script = std::function<void()>;
+	using StartScript = std::function<void()>;
+	using UpdateScript = std::function<void()>;
 	using UserData = std::optional<std::any>;
 
 	struct AppInitProps {
 		WindowConfig windowConfig = {};
-		Script startScript = []() {};
-		Script updateScript = []() {};
+		StartScript startScript = []() {};
+		UpdateScript updateScript = []() {};
 	};
 
 	class App {
@@ -28,14 +29,15 @@ namespace Miracle {
 		friend class Logger;
 		friend class Window;
 		friend class Keyboard;
+		friend class TextInput;
 
 	private:
 		static inline App* s_currentApp = nullptr;
 
 		const std::string m_name;
 		const WindowConfig m_windowConfig;
-		const Script m_startScript;
-		const Script m_updateScript;
+		const StartScript m_startScript;
+		const UpdateScript m_updateScript;
 		UserData m_userData;
 		Application::EventDispatcher m_dispatcher;
 		const std::unique_ptr<Application::ILogger> m_logger;

@@ -1,5 +1,5 @@
 ﻿# Target definition
-add_library(Miracle STATIC "src/Miracle/App.cpp" "src/Miracle/Infrastructure/Diagnostics/Spdlog/Logger.cpp" "src/Miracle/Application/EventDispatcher.cpp" "src/Miracle/EngineDependencies.cpp" "src/Miracle/Infrastructure/Framework/Glfw/MultimediaFramework.cpp" "src/Miracle/Infrastructure/View/Glfw/Window.cpp" "src/Miracle/Infrastructure/Input/Glfw/Keyboard.cpp")
+add_library(Miracle STATIC "src/Miracle/App.cpp" "src/Miracle/Infrastructure/Diagnostics/Spdlog/Logger.cpp" "src/Miracle/Application/EventDispatcher.cpp" "src/Miracle/EngineDependencies.cpp" "src/Miracle/Infrastructure/Framework/Glfw/MultimediaFramework.cpp" "src/Miracle/Infrastructure/View/Glfw/Window.cpp" "src/Miracle/Infrastructure/Input/Glfw/Keyboard.cpp" "src/Miracle/Application/TextInputService.cpp" "src/Miracle/Common/UnicodeConverter.cpp")
 
 # Target properties
 set_target_properties(

@@ -2,6 +2,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include <Miracle/Application/Models/Events/TextInputEvent.hpp>
+
 namespace Miracle::Infrastructure::Input::Glfw {
 	Keyboard::Keyboard(
 		Application::EventDispatcher& eventDispatcher,
@@ -22,10 +24,21 @@ namespace Miracle::Infrastructure::Input::Glfw {
 				);
 			}
 		);
+
+		glfwSetCharCallback(
+			*m_window,
+			[](GLFWwindow* window, unsigned int codePoint) {
+				auto& parentWindow = *reinterpret_cast<View::Glfw::Window*>(glfwGetWindowUserPointer(window));
+				parentWindow.getEventDispatcher().postEvent(
+					Application::TextInputEvent(codePoint)
+				);
+			}
+		);
 	}
 
 	Keyboard::~Keyboard() {
 		glfwSetKeyCallback(*m_window, nullptr);
+		glfwSetCharCallback(*m_window, nullptr);
 	}
 
 	void Keyboard::onEvent(const Application::Event& event) {
@@ -38,6 +51,15 @@ namespace Miracle::Infrastructure::Input::Glfw {
 		auto& keyState = m_keyStates[static_cast<size_t>(keyInputEvent.getKey())];
 
 		keyState.setAction(keyInputEvent.getAction());
+
+		if (
+			keyInputEvent.getKey() == KeyboardKey::keyBackspace
+				&& keyInputEvent.getAction() != Application::KeyInputAction::keyReleased
+		) {
+			m_window.getEventDispatcher().postEvent(
+				Application::TextInputEvent(U'\b')
+			);
+		}
 	}
 
 	bool Keyboard::isKeyPressed(KeyboardKey key) {

@@ -20,12 +20,5 @@ namespace Miracle {
 				.height = windowConfig.height
 			};
 		}
-
-		static inline std::u8string_view toU8StringView(const std::string_view& stringView) {
-			return std::u8string_view(
-				reinterpret_cast<const char8_t*>(stringView.data()),
-				stringView.size()
-			);
-		}
 	};
 }

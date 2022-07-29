@@ -1,6 +1,7 @@
 #include <Miracle/EngineDependencies.hpp>
 
 #include <Miracle/Common/Mappings.hpp>
+#include <Miracle/Common/UnicodeConverter.hpp>
 #include "Infrastructure/Framework/Glfw/MultimediaFramework.hpp"
 #include "Infrastructure/View/Glfw/Window.hpp"
 #include "Infrastructure/Input/Glfw/Keyboard.hpp"
@@ -24,7 +25,7 @@ namespace Miracle {
 				logger,
 				eventDispatcher,
 				*reinterpret_cast<GlfwMultimediaFramework*>(m_multimediaFramework.get()),
-				Mappings::toWindowInitProps(windowConfig, Mappings::toU8StringView(appName))
+				Mappings::toWindowInitProps(windowConfig, UnicodeConverter::toUtf8(appName))
 			)
 		),
 		m_keyboard(
@@ -32,6 +33,7 @@ namespace Miracle {
 				eventDispatcher,
 				*reinterpret_cast<GlfwWindow*>(m_window.get())
 			)
-		)
+		),
+		m_textInputService(eventDispatcher)
 	{}
 }

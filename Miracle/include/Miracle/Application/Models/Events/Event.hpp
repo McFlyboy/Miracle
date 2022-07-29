@@ -24,13 +24,14 @@ namespace Miracle::Application {
 	};
 
 	enum class EventTypes : EventTypesBase::type {
-		none = 0,
+		none      = 0,
 
-		keyInput = EventTypesBase::bit(0),
+		keyInput  = EventTypesBase::bit(0),
+		textInput = EventTypesBase::bit(1),
 
-		input = keyInput,
+		input     = keyInput | textInput,
 
-		all = EventTypesBase::allBits()
+		all       = EventTypesBase::allBits()
 	};
 
 	inline EventTypes operator|(const EventTypes& lhs, const EventTypes& rhs) {
