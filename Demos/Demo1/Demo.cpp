@@ -21,9 +21,7 @@ int main() {
 				TextInput::setTextInputReceiver(
 					text,
 					[&]() {
-						auto utf8Text = UnicodeConverter::toUtf8(text);
-
-						Window::setTitle(utf8Text);
+						Window::setTitle(UnicodeConverter::toUtf8(text));
 					}
 				);
 			},
