@@ -42,7 +42,9 @@ namespace Miracle {
 	class UncategorizedError : public MiracleError {
 	public:
 		enum class ErrorValue : Miracle::ErrorValue {
-			success
+			success,
+
+			noAppRunningError
 		};
 
 		UncategorizedError(ErrorValue errorValue) : MiracleError(

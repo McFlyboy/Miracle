@@ -8,9 +8,9 @@
 #include <memory>
 
 #include <Miracle/EngineDependencies.hpp>
-#include <Miracle/Common/MiracleError.hpp>
 #include "Application/EventDispatcher.hpp"
 #include "Application/ILogger.hpp"
+#include "Common/MiracleError.hpp"
 #include "Common/Models/WindowConfig.hpp"
 
 namespace Miracle {
@@ -66,5 +66,13 @@ namespace Miracle {
 		void runApp();
 
 		void showError(const MiracleError& error) const;
+	};
+
+	class NoAppRunningError : public UncategorizedError {
+	public:
+		NoAppRunningError() : UncategorizedError(
+			UncategorizedError::ErrorValue::noAppRunningError,
+			"Failed on calling app functionality. No app is currently running..."
+		) {}
 	};
 }

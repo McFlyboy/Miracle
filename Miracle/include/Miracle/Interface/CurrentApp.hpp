@@ -11,38 +11,38 @@ namespace Miracle {
 		CurrentApp() = delete;
 
 		static inline std::string_view getName() {
-			if (App::s_currentApp == nullptr) [[unlikely]] return "";
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			return App::s_currentApp->getName();
 		}
 
 		static inline const UserData& getUserData() {
-			if (App::s_currentApp == nullptr) [[unlikely]] return {};
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			return App::s_currentApp->getUserData();
 		}
 
 		static inline void setUserData(const UserData& userData) {
-			if (App::s_currentApp == nullptr) [[unlikely]] return;
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			App::s_currentApp->setUserData(userData);
 		}
 
 		static inline void close(int exitCode = 0) {
-			if (App::s_currentApp == nullptr) [[unlikely]] return;
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			App::s_currentApp->m_running = false;
 			App::s_currentApp->m_exitCode = exitCode;
 		}
 
 		static inline std::optional<std::u8string_view> getClipboardContent() {
-			if (App::s_currentApp == nullptr) [[unlikely]] return u8"";
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			return App::s_currentApp->m_dependencies->getMultimediaFramework().getClipboardContent();
 		}
 
 		static inline void setClipboardContent(const std::u8string_view& content) {
-			if (App::s_currentApp == nullptr) [[unlikely]] return;
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			App::s_currentApp->m_dependencies->getMultimediaFramework().setClipboardContent(content);
 		}

@@ -10,13 +10,13 @@ namespace Miracle {
 		Window() = delete;
 
 		static inline std::u8string_view getTitle() {
-			if (App::s_currentApp == nullptr) [[unlikely]] return u8"";
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			return App::s_currentApp->m_dependencies->getWindow().getTitle();
 		}
 
 		static inline void setTitle(const std::u8string_view& title) {
-			if (App::s_currentApp == nullptr) [[unlikely]] return;
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			App::s_currentApp->m_dependencies->getWindow().setTitle(title);
 		}

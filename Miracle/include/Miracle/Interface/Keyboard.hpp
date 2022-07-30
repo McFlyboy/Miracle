@@ -9,19 +9,19 @@ namespace Miracle {
 		Keyboard() = delete;
 
 		static inline bool isKeyPressed(KeyboardKey key) {
-			if (App::s_currentApp == nullptr) [[unlikely]] return false;
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			return App::s_currentApp->m_dependencies->getKeyboard().isKeyPressed(key);
 		}
 
 		static inline bool isKeyPressedOrRepeated(KeyboardKey key) {
-			if (App::s_currentApp == nullptr) [[unlikely]] return false;
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			return App::s_currentApp->m_dependencies->getKeyboard().isKeyPressedOrRepeated(key);
 		}
 
 		static inline bool isKeyHeld(KeyboardKey key) {
-			if (App::s_currentApp == nullptr) [[unlikely]] return false;
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			return App::s_currentApp->m_dependencies->getKeyboard().isKeyHeld(key);
 		}
