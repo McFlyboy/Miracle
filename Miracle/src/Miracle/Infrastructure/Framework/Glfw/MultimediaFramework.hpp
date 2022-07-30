@@ -17,6 +17,10 @@ namespace Miracle::Infrastructure::Framework::Glfw {
 
 		virtual void processEvents() override;
 
+		virtual std::optional<std::u8string_view> getClipboardContent() const override;
+
+		virtual void setClipboardContent(const std::u8string_view& content) override;
+
 		const GLFWvidmode* getGlfwCurrentVideoModeForPrimaryMonitor() const;
 	};
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string_view>
+#include <optional>
 
 #include <Miracle/App.hpp>
 
@@ -32,6 +33,18 @@ namespace Miracle {
 
 			App::s_currentApp->m_running = false;
 			App::s_currentApp->m_exitCode = exitCode;
+		}
+
+		static inline std::optional<std::u8string_view> getClipboardContent() {
+			if (App::s_currentApp == nullptr) [[unlikely]] return u8"";
+
+			return App::s_currentApp->m_dependencies->getMultimediaFramework().getClipboardContent();
+		}
+
+		static inline void setClipboardContent(const std::u8string_view& content) {
+			if (App::s_currentApp == nullptr) [[unlikely]] return;
+
+			App::s_currentApp->m_dependencies->getMultimediaFramework().setClipboardContent(content);
 		}
 	};
 }

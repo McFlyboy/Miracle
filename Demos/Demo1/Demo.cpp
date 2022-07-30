@@ -1,5 +1,3 @@
-#include <algorithm>
-
 #include <Miracle/Miracle.hpp>
 
 using namespace Miracle;

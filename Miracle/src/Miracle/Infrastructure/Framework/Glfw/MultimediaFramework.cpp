@@ -38,6 +38,16 @@ namespace Miracle::Infrastructure::Framework::Glfw {
 		glfwPollEvents();
 	}
 
+	std::optional<std::u8string_view> MultimediaFramework::getClipboardContent() const {
+		auto content = reinterpret_cast<const char8_t*>(glfwGetClipboardString(nullptr));
+
+		return content != nullptr ? std::optional(content) : std::nullopt;
+	}
+
+	void MultimediaFramework::setClipboardContent(const std::u8string_view& content) {
+		glfwSetClipboardString(nullptr, reinterpret_cast<const char*>(content.data()));
+	}
+
 	const GLFWvidmode* MultimediaFramework::getGlfwCurrentVideoModeForPrimaryMonitor() const {
 		return glfwGetVideoMode(glfwGetPrimaryMonitor());
 	}

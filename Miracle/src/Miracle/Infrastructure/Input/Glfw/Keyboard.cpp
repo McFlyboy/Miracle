@@ -3,13 +3,16 @@
 #include <GLFW/glfw3.h>
 
 #include <Miracle/Application/Models/Events/TextInputEvent.hpp>
+#include <Miracle/Common/UnicodeConverter.hpp>
 
 namespace Miracle::Infrastructure::Input::Glfw {
 	Keyboard::Keyboard(
 		Application::EventDispatcher& eventDispatcher,
+		Application::IMultimediaFramework& multimediaFramework,
 		View::Glfw::Window& window
 	) :
 		EventSubscriber(eventDispatcher),
+		m_multimediaFramework(multimediaFramework),
 		m_window(window)
 	{
 		glfwSetKeyCallback(
@@ -19,7 +22,8 @@ namespace Miracle::Infrastructure::Input::Glfw {
 				parentWindow.getEventDispatcher().postEvent(
 					Application::KeyInputEvent(
 						static_cast<KeyboardKey>(key),
-						static_cast<Application::KeyInputAction>(action)
+						static_cast<Application::KeyInputAction>(action),
+						static_cast<KeyboardModifierKeys>(mods)
 					)
 				);
 			}
@@ -59,6 +63,19 @@ namespace Miracle::Infrastructure::Input::Glfw {
 			m_window.getEventDispatcher().postEvent(
 				Application::TextInputEvent(U'\b')
 			);
+		}
+		else if (
+			keyInputEvent.getModifiers() == KeyboardModifierKeys::modControl
+				&& keyInputEvent.getKey() == KeyboardKey::keyV
+				&& keyInputEvent.getAction() != Application::KeyInputAction::keyReleased
+		) {
+			auto clipboardContent = m_multimediaFramework.getClipboardContent();
+
+			if (clipboardContent.has_value()) {
+				m_window.getEventDispatcher().postEvent(
+					Application::TextInputEvent(UnicodeConverter::toUtf32(clipboardContent.value()))
+				);
+			}
 		}
 	}
 

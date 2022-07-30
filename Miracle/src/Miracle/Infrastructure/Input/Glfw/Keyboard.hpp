@@ -3,6 +3,7 @@
 #include <array>
 
 #include <Miracle/Application/IKeyboard.hpp>
+#include <Miracle/Application/IMultimediaFramework.hpp>
 #include <Miracle/Application/EventDispatcher.hpp>
 #include <Miracle/Application/EventSubscriber.hpp>
 #include <Miracle/Application/Models/Events/KeyInputEvent.hpp>
@@ -35,6 +36,7 @@ namespace Miracle::Infrastructure::Input::Glfw {
 		public Application::IKeyboard
 	{
 	private:
+		Application::IMultimediaFramework& m_multimediaFramework;
 		View::Glfw::Window& m_window;
 
 		std::array<KeyState, static_cast<size_t>(KeyboardKey::keyLast) + 1> m_keyStates = {};
@@ -42,6 +44,7 @@ namespace Miracle::Infrastructure::Input::Glfw {
 	public:
 		Keyboard(
 			Application::EventDispatcher& eventDispatcher,
+			Application::IMultimediaFramework& multimediaFramework,
 			View::Glfw::Window& window
 		);
 

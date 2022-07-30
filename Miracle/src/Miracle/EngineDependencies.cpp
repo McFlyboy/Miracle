@@ -31,6 +31,7 @@ namespace Miracle {
 		m_keyboard(
 			std::make_unique<GlfwKeyboard>(
 				eventDispatcher,
+				*m_multimediaFramework.get(),
 				*reinterpret_cast<GlfwWindow*>(m_window.get())
 			)
 		),
