@@ -48,6 +48,10 @@ namespace Miracle::Infrastructure::Framework::Glfw {
 		glfwSetClipboardString(nullptr, reinterpret_cast<const char*>(content.data()));
 	}
 
+	double MultimediaFramework::getTime() const {
+		return glfwGetTime();
+	}
+
 	const GLFWvidmode* MultimediaFramework::getGlfwCurrentVideoModeForPrimaryMonitor() const {
 		return glfwGetVideoMode(glfwGetPrimaryMonitor());
 	}

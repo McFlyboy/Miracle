@@ -24,6 +24,8 @@ int main() {
 				);
 			},
 			.updateScript = []() {
+				Logger::info(std::to_string(CurrentApp::getTime()));
+
 				if (Keyboard::isKeyPressed(KeyboardKey::keyEscape)) {
 					CurrentApp::close();
 				}

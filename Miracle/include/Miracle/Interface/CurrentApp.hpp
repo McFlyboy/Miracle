@@ -46,5 +46,11 @@ namespace Miracle {
 
 			App::s_currentApp->m_dependencies->getMultimediaFramework().setClipboardContent(content);
 		}
+
+		static inline double getTime() {
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
+
+			return App::s_currentApp->m_dependencies->getMultimediaFramework().getTime();
+		}
 	};
 }

@@ -15,6 +15,8 @@ namespace Miracle::Application {
 		virtual std::optional<std::u8string_view> getClipboardContent() const = 0;
 
 		virtual void setClipboardContent(const std::u8string_view& content) = 0;
+
+		virtual double getTime() const = 0;
 	};
 
 	namespace MultimediaFrameworkErrors {
