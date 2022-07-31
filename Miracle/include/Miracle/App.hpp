@@ -30,6 +30,7 @@ namespace Miracle {
 		friend class Window;
 		friend class Keyboard;
 		friend class TextInput;
+		friend class Clipboard;
 
 	private:
 		static inline App* s_currentApp = nullptr;

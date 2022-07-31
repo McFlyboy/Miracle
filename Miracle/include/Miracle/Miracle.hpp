@@ -8,5 +8,6 @@
 #include "Interface/Window.hpp"
 #include "Interface/Keyboard.hpp"
 #include "Interface/TextInput.hpp"
+#include "Interface/Clipboard.hpp"
 
 #include "Common/UnicodeConverter.hpp"
