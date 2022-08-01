@@ -2,6 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
+#include <Miracle/Application/Models/Events/KeyInputEvent.hpp>
 #include <Miracle/Application/Models/Events/TextInputEvent.hpp>
 #include <Miracle/Common/UnicodeConverter.hpp>
 
@@ -79,7 +80,7 @@ namespace Miracle::Infrastructure::Input::Glfw {
 		}
 	}
 
-	bool Keyboard::isKeyPressed(KeyboardKey key) {
+	bool Keyboard::isKeyPressed(KeyboardKey key) const {
 		if (key == KeyboardKey::keyUnknown) {
 			return false;
 		}
@@ -87,10 +88,10 @@ namespace Miracle::Infrastructure::Input::Glfw {
 		auto& keyState = m_keyStates[static_cast<size_t>(key)];
 
 		return keyState.isUpdated()
-			&& keyState.getActionAndSetStateAsDated() == Application::KeyInputAction::keyPressed;
+			&& keyState.getAction() == Application::KeyInputAction::keyPressed;
 	}
 
-	bool Keyboard::isKeyPressedOrRepeated(KeyboardKey key) {
+	bool Keyboard::isKeyPressedOrRepeated(KeyboardKey key) const {
 		if (key == KeyboardKey::keyUnknown) {
 			return false;
 		}
@@ -98,7 +99,7 @@ namespace Miracle::Infrastructure::Input::Glfw {
 		auto& keyState = m_keyStates[static_cast<size_t>(key)];
 
 		return keyState.isUpdated()
-			&& keyState.getActionAndSetStateAsDated() != Application::KeyInputAction::keyReleased;
+			&& keyState.getAction() != Application::KeyInputAction::keyReleased;
 	}
 
 	bool Keyboard::isKeyHeld(KeyboardKey key) const {
@@ -109,5 +110,11 @@ namespace Miracle::Infrastructure::Input::Glfw {
 		auto& keyState = m_keyStates[static_cast<size_t>(key)];
 
 		return keyState.getAction() != Application::KeyInputAction::keyReleased;
+	}
+
+	void Keyboard::setAllKeyStatesAsDated() {
+		for (auto& keyState : m_keyStates) {
+			keyState.setAsDated();
+		}
 	}
 }

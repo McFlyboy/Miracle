@@ -77,12 +77,14 @@ namespace Miracle {
 	void App::runApp() {
 		auto& framework = m_dependencies->getMultimediaFramework();
 		auto& window = m_dependencies->getWindow();
+		auto& keyboard = m_dependencies->getKeyboard();
 
 		m_running = true;
 
 		m_startScript();
 
 		while (m_running) {
+			keyboard.setAllKeyStatesAsDated();
 			framework.processEvents();
 
 			if (window.shouldClose()) {
