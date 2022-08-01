@@ -21,7 +21,7 @@ namespace Miracle::Infrastructure::Framework::Glfw {
 
 		virtual void setClipboardContent(const std::u8string_view& content) override;
 
-		virtual double getTime() const override;
+		virtual std::chrono::duration<double> getDurationSinceInitialization() const override;
 
 		const GLFWvidmode* getGlfwCurrentVideoModeForPrimaryMonitor() const;
 	};

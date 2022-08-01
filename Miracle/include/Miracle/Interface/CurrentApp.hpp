@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string_view>
+#include <chrono>
 
 #include <Miracle/App.hpp>
 
@@ -34,10 +35,11 @@ namespace Miracle {
 			App::s_currentApp->m_exitCode = exitCode;
 		}
 
-		static inline double getRuntime() {
+		static inline std::chrono::duration<double> getRuntimeDuration() {
 			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
-			return App::s_currentApp->m_dependencies->getMultimediaFramework().getTime();
+			return App::s_currentApp->m_dependencies->getMultimediaFramework()
+				.getDurationSinceInitialization();
 		}
 	};
 }

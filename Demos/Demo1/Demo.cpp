@@ -11,17 +11,7 @@ int main() {
 				.height = 600
 			},
 			.updateScript = []() {
-				if (Keyboard::isKeyPressed(KeyboardKey::keyE)) {
-					Logger::info("Pressed E");
-				}
-
-				if (Keyboard::isKeyPressedOrRepeated(KeyboardKey::keyR)) {
-					Logger::info("Pressed or repeated R");
-				}
-
-				if (Keyboard::isKeyHeld(KeyboardKey::keySpace)) {
-					Logger::info("Holding space...");
-				}
+				Logger::info(std::to_string(CurrentApp::getRuntimeDuration().count()));
 
 				if (Keyboard::isKeyPressed(KeyboardKey::keyEscape)) {
 					CurrentApp::close();
