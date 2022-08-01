@@ -11,6 +11,7 @@
 #include "Application/IKeyboard.hpp"
 #include "Application/TextInputService.hpp"
 #include "Application/DeltaTimeService.hpp"
+#include "Application/PerformanceCountingService.hpp"
 
 namespace Miracle {
 	class EngineDependencies {
@@ -20,6 +21,7 @@ namespace Miracle {
 		std::unique_ptr<Application::IKeyboard> m_keyboard;
 		Application::TextInputService m_textInputService;
 		Application::DeltaTimeService m_deltaTimeService;
+		Application::PerformanceCountingService m_performanceCountingService;
 
 	public:
 		EngineDependencies(
@@ -47,6 +49,10 @@ namespace Miracle {
 
 		inline Application::DeltaTimeService& getDeltaTimeService() {
 			return m_deltaTimeService;
+		}
+
+		inline Application::PerformanceCountingService& getPerformanceCountingService() {
+			return m_performanceCountingService;
 		}
 	};
 }

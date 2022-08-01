@@ -9,8 +9,8 @@ namespace Miracle::Application {
 	private:
 		IMultimediaFramework& m_multimediaFramework;
 
-		std::chrono::duration<float> m_deltaTime;
-		std::chrono::duration<float> m_previousTime;
+		std::chrono::duration<float> m_deltaTime = std::chrono::duration<float>(0.0f);
+		std::chrono::duration<float> m_previousTime = std::chrono::duration<float>(0.0f);
 
 	public:
 		DeltaTimeService(IMultimediaFramework& multimediaFramework);

@@ -10,9 +10,14 @@ int main() {
 				.width  = 800,
 				.height = 600
 			},
+			.startScript = []() {
+				PerformanceCounters::setCountersUpdatedCallback(
+					[]() {
+						Logger::info(std::to_string(PerformanceCounters::getUps()));
+					}
+				);
+			},
 			.updateScript = []() {
-				Logger::info(std::to_string(DeltaTime::get()));
-
 				if (Keyboard::isKeyPressed(KeyboardKey::keyEscape)) {
 					CurrentApp::close();
 				}

@@ -10,5 +10,6 @@
 #include "Interface/TextInput.hpp"
 #include "Interface/Clipboard.hpp"
 #include "Interface/DeltaTime.hpp"
+#include "Interface/PerformanceCounters.hpp"
 
 #include "Common/UnicodeConverter.hpp"

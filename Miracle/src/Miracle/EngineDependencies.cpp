@@ -36,6 +36,7 @@ namespace Miracle {
 			)
 		),
 		m_textInputService(eventDispatcher),
-		m_deltaTimeService(*m_multimediaFramework.get())
+		m_deltaTimeService(*m_multimediaFramework.get()),
+		m_performanceCountingService(*m_multimediaFramework.get())
 	{}
 }

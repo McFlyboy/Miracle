@@ -65,8 +65,6 @@ namespace Miracle {
 
 		m_dependencies->getWindow().show();
 
-		m_logger->info(fmt::format("Running app: {}", getName()));
-
 		runApp();
 
 		m_logger->info("Closing Miracle");
@@ -75,10 +73,13 @@ namespace Miracle {
 	}
 
 	void App::runApp() {
+		m_logger->info(fmt::format("Running app: {}", getName()));
+
 		auto& framework = m_dependencies->getMultimediaFramework();
 		auto& window = m_dependencies->getWindow();
 		auto& keyboard = m_dependencies->getKeyboard();
 		auto& deltaTimeService = m_dependencies->getDeltaTimeService();
+		auto& performanceCountingService = m_dependencies->getPerformanceCountingService();
 
 		m_running = true;
 
@@ -96,6 +97,9 @@ namespace Miracle {
 			deltaTimeService.updateDeltaTime();
 
 			m_updateScript();
+
+			performanceCountingService.incrementUpdateCounter();
+			performanceCountingService.updateCounters();
 		}
 	}
 
