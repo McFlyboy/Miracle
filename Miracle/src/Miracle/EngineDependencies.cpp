@@ -35,6 +35,7 @@ namespace Miracle {
 				*reinterpret_cast<GlfwWindow*>(m_window.get())
 			)
 		),
-		m_textInputService(eventDispatcher)
+		m_textInputService(eventDispatcher),
+		m_deltaTimeService(*m_multimediaFramework.get())
 	{}
 }

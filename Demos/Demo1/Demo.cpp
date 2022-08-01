@@ -11,7 +11,7 @@ int main() {
 				.height = 600
 			},
 			.updateScript = []() {
-				Logger::info(std::to_string(CurrentApp::getRuntimeDuration().count()));
+				Logger::info(std::to_string(DeltaTime::get()));
 
 				if (Keyboard::isKeyPressed(KeyboardKey::keyEscape)) {
 					CurrentApp::close();

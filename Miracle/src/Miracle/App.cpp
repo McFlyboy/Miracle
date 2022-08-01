@@ -78,6 +78,7 @@ namespace Miracle {
 		auto& framework = m_dependencies->getMultimediaFramework();
 		auto& window = m_dependencies->getWindow();
 		auto& keyboard = m_dependencies->getKeyboard();
+		auto& deltaTimeService = m_dependencies->getDeltaTimeService();
 
 		m_running = true;
 
@@ -91,6 +92,8 @@ namespace Miracle {
 				m_running = false;
 				continue;
 			}
+
+			deltaTimeService.updateDeltaTime();
 
 			m_updateScript();
 		}

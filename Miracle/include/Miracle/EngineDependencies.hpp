@@ -10,6 +10,7 @@
 #include "Application/IWindow.hpp"
 #include "Application/IKeyboard.hpp"
 #include "Application/TextInputService.hpp"
+#include "Application/DeltaTimeService.hpp"
 
 namespace Miracle {
 	class EngineDependencies {
@@ -18,6 +19,7 @@ namespace Miracle {
 		std::unique_ptr<Application::IWindow> m_window;
 		std::unique_ptr<Application::IKeyboard> m_keyboard;
 		Application::TextInputService m_textInputService;
+		Application::DeltaTimeService m_deltaTimeService;
 
 	public:
 		EngineDependencies(
@@ -41,6 +43,10 @@ namespace Miracle {
 
 		inline Application::TextInputService& getTextInputService() {
 			return m_textInputService;
+		}
+
+		inline Application::DeltaTimeService& getDeltaTimeService() {
+			return m_deltaTimeService;
 		}
 	};
 }

@@ -9,5 +9,6 @@
 #include "Interface/Keyboard.hpp"
 #include "Interface/TextInput.hpp"
 #include "Interface/Clipboard.hpp"
+#include "Interface/DeltaTime.hpp"
 
 #include "Common/UnicodeConverter.hpp"
