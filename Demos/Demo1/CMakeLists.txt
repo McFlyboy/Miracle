@@ -7,6 +7,7 @@ set_target_properties(
 	PROPERTIES
 		CXX_STANDARD 20
 		CXX_STANDARD_REQUIRED true
+		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
 )
 
 # Linking
