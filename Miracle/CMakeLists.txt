@@ -13,6 +13,7 @@ set_target_properties(
 find_package(spdlog CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(tinyfiledialogs CONFIG REQUIRED)
+find_package(Vulkan REQUIRED)
 
 # Link 3rd-party libraries
 target_link_libraries(
@@ -20,6 +21,7 @@ target_link_libraries(
 	PRIVATE spdlog::spdlog
 	PRIVATE glfw
 	PRIVATE tinyfiledialogs::tinyfiledialogs
+	PRIVATE Vulkan::Vulkan
 )
 
 # Include directories

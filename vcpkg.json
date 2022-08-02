@@ -4,6 +4,7 @@
   "dependencies": [
     "spdlog",
     "glfw3",
-    "tinyfiledialogs"
+    "tinyfiledialogs",
+    "vulkan"
   ]
 }
