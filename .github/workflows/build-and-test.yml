@@ -43,6 +43,7 @@ jobs:
 
     - name: Configure CMake
       run: cmake --preset macos-release
+
     - name: Build
       run: cmake --build --preset macos-release-build
 
@@ -60,8 +61,14 @@ jobs:
     - name: Install ninja-build tool
       uses: seanmiddleditch/gha-setup-ninja@v3
 
+    - name: Install platform-specific dependencies
+      run: |
+        sudo apt update
+        sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev
+
     - name: Configure CMake
       run: cmake --preset linux-release
+
     - name: Build
       run: cmake --build --preset linux-release-build
 
