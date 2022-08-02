@@ -15,7 +15,14 @@ namespace Miracle::Application {
 		const EventTypes& subscribedTypes,
 		EventCallback&& callback
 	) {
-		m_subscriptions.emplace_back(m_nextId, subscribedTypes, std::move(callback));
+		m_subscriptions.push_back(
+			EventSubscription{
+				.id              = m_nextId,
+				.subscribedTypes = subscribedTypes,
+				.callback        = std::move(callback)
+			}
+		);
+
 		return m_nextId++;
 	}
 
