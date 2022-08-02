@@ -16,7 +16,7 @@ namespace Miracle::Application {
 			m_multimediaFramework.getDurationSinceInitialization()
 		);
 
-		if (currentTime == m_previousCounterUpdate) {
+		if (currentTime == m_previousCounterUpdate) [[likely]] {
 			return;
 		}
 
