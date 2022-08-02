@@ -1,6 +1,6 @@
 #pragma once
 
-#include <exception>
+#include <stdexcept>
 #include <cstdint>
 
 namespace Miracle {
@@ -16,17 +16,13 @@ namespace Miracle {
 		window
 	};
 
-	class MiracleError : public std::exception {
+	class MiracleError : public std::runtime_error {
 	private:
 		ErrorCode m_errorCode;
 
 	public:
-		MiracleError(ErrorCategory errorCategory, ErrorValue errorValue) :
-			m_errorCode(createErrorCode(static_cast<ErrorCodeSection>(errorCategory), errorValue))
-		{}
-
 		MiracleError(ErrorCategory errorCategory, ErrorValue errorValue, const char* message) :
-			exception(message),
+			runtime_error(message),
 			m_errorCode(createErrorCode(static_cast<ErrorCodeSection>(errorCategory), errorValue))
 		{}
 
@@ -47,11 +43,6 @@ namespace Miracle {
 			noAppRunningError
 		};
 
-		UncategorizedError(ErrorValue errorValue) : MiracleError(
-			ErrorCategory::none,
-			static_cast<Miracle::ErrorValue>(errorValue)
-		) {}
-
 		UncategorizedError(ErrorValue errorValue, const char* message) : MiracleError(
 			ErrorCategory::none,
 			static_cast<Miracle::ErrorValue>(errorValue),
@@ -65,11 +56,6 @@ namespace Miracle {
 			initError
 		};
 
-		MultimediaFrameworkError(ErrorValue errorValue) : MiracleError(
-			ErrorCategory::multimediaFramework,
-			static_cast<Miracle::ErrorValue>(errorValue)
-		) {}
-
 		MultimediaFrameworkError(ErrorValue errorValue, const char* message) : MiracleError(
 			ErrorCategory::multimediaFramework,
 			static_cast<Miracle::ErrorValue>(errorValue),
@@ -82,11 +68,6 @@ namespace Miracle {
 		enum class ErrorValue : Miracle::ErrorValue {
 			creationError
 		};
-
-		WindowError(ErrorValue errorValue) : MiracleError(
-			ErrorCategory::window,
-			static_cast<Miracle::ErrorValue>(errorValue)
-		) {}
 
 		WindowError(ErrorValue errorValue, const char* message) : MiracleError(
 			ErrorCategory::window,
