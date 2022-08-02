@@ -21,6 +21,9 @@ jobs:
     - name: Install ninja-build tool
       uses: seanmiddleditch/gha-setup-ninja@v3
 
+    - name: Install Vulkan SDK
+      uses: humbletim/install-vulkan-sdk@v1.1.1
+
     - name: Configure CMake
       run: cmake --preset x64-release
 
@@ -40,6 +43,9 @@ jobs:
 
     - name: Install ninja-build tool
       uses: seanmiddleditch/gha-setup-ninja@v3
+
+    - name: Install Vulkan SDK
+      uses: humbletim/install-vulkan-sdk@v1.1.1
 
     - name: Configure CMake
       run: cmake --preset macos-release
@@ -65,6 +71,9 @@ jobs:
       run: |
         sudo apt update
         sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev
+
+    - name: Install Vulkan SDK
+      uses: humbletim/install-vulkan-sdk@v1.1.1
 
     - name: Configure CMake
       run: cmake --preset linux-release
