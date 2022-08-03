@@ -26,7 +26,7 @@ namespace Miracle::Infrastructure::View::Glfw {
 		if (m_window == nullptr) {
 			m_logger.error("Failed to create window");
 
-			throw Application::WindowErrors::WindowCreationError();
+			throw Application::WindowErrors::CreationError();
 		}
 
 		glfwSetWindowUserPointer(m_window, this);

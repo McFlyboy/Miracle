@@ -22,7 +22,7 @@ namespace Miracle::Infrastructure::Framework::Glfw {
 				)
 			);
 
-			throw Application::MultimediaFrameworkErrors::MultimediaFrameworkInitError();
+			throw Application::MultimediaFrameworkErrors::InitError();
 		}
 
 		m_logger.info("GLFW initialized");

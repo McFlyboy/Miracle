@@ -21,11 +21,11 @@ namespace Miracle::Application {
 	};
 
 	namespace MultimediaFrameworkErrors {
-		class MultimediaFrameworkInitError : public MultimediaFrameworkError {
+		class InitError : public MultimediaFrameworkError {
 		public:
-			MultimediaFrameworkInitError() : MultimediaFrameworkError(
+			InitError() : MultimediaFrameworkError(
 				MultimediaFrameworkError::ErrorValue::initError,
-				"Failed to initialize underlying multimedia framework"
+				"Failed to initialize multimedia framework"
 			) {}
 		};
 	}

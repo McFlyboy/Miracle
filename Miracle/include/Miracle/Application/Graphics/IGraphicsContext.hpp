@@ -9,9 +9,9 @@ namespace Miracle::Application {
 	};
 
 	namespace GraphicsContextErrors {
-		class GraphicsContextCreationError : public GraphicsContextError {
+		class CreationError : public GraphicsContextError {
 		public:
-			GraphicsContextCreationError() : GraphicsContextError(
+			CreationError() : GraphicsContextError(
 				GraphicsContextError::ErrorValue::creationError,
 				"Failed to create graphics context"
 			) {}

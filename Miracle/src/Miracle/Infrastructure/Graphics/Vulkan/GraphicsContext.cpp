@@ -41,12 +41,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		catch (const std::exception& e) {
 			logger.error(
 				fmt::format(
-					"Failed to create Vulkan instance as part of creating graphics context.\n{}",
+					"Failed to create Vulkan instance.\n{}",
 					e.what()
 				)
 			);
 
-			throw Application::GraphicsContextErrors::GraphicsContextCreationError();
+			throw Application::GraphicsContextErrors::CreationError();
 		}
 	}
 }

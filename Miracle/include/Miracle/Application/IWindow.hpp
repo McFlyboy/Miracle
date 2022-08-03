@@ -25,9 +25,9 @@ namespace Miracle::Application {
 	};
 
 	namespace WindowErrors {
-		class WindowCreationError : public WindowError {
+		class CreationError : public WindowError {
 		public:
-			WindowCreationError() : WindowError(
+			CreationError() : WindowError(
 				WindowError::ErrorValue::creationError,
 				"Failed to create window"
 			) {}
