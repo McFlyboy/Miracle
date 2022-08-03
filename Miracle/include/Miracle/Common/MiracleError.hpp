@@ -13,7 +13,8 @@ namespace Miracle {
 		none,
 
 		multimediaFramework,
-		window
+		window,
+		graphicsContext
 	};
 
 	class MiracleError : public std::runtime_error {
@@ -71,6 +72,19 @@ namespace Miracle {
 
 		WindowError(ErrorValue errorValue, const char* message) : MiracleError(
 			ErrorCategory::window,
+			static_cast<Miracle::ErrorValue>(errorValue),
+			message
+		) {}
+	};
+
+	class GraphicsContextError : public MiracleError {
+	public:
+		enum class ErrorValue : Miracle::ErrorValue {
+			creationError
+		};
+
+		GraphicsContextError(ErrorValue errorValue, const char* message) : MiracleError(
+			ErrorCategory::graphicsContext,
 			static_cast<Miracle::ErrorValue>(errorValue),
 			message
 		) {}

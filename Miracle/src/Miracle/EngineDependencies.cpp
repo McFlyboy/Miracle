@@ -5,11 +5,13 @@
 #include "Infrastructure/Framework/Glfw/MultimediaFramework.hpp"
 #include "Infrastructure/View/Glfw/Window.hpp"
 #include "Infrastructure/Input/Glfw/Keyboard.hpp"
+#include "Infrastructure/Graphics/Vulkan/GraphicsContext.hpp"
 
 namespace Miracle {
 	using GlfwMultimediaFramework = Infrastructure::Framework::Glfw::MultimediaFramework;
 	using GlfwWindow = Infrastructure::View::Glfw::Window;
 	using GlfwKeyboard = Infrastructure::Input::Glfw::Keyboard;
+	using VulkanGraphicsContext = Infrastructure::Graphics::Vulkan::GraphicsContext;
 
 	EngineDependencies::EngineDependencies(
 		const std::string_view& appName,
@@ -33,6 +35,12 @@ namespace Miracle {
 				eventDispatcher,
 				*m_multimediaFramework.get(),
 				*reinterpret_cast<GlfwWindow*>(m_window.get())
+			)
+		),
+		m_graphicsContext(
+			std::make_unique<VulkanGraphicsContext>(
+				appName,
+				logger
 			)
 		),
 		m_textInputService(eventDispatcher),
