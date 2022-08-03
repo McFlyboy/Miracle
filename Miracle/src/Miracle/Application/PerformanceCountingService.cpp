@@ -20,7 +20,7 @@ namespace Miracle::Application {
 			return;
 		}
 
-		m_previousCounterUpdate++;
+		m_previousCounterUpdate = currentTime;
 		m_ups = std::exchange(m_updateCounter, 0);
 		m_callback();
 	}
