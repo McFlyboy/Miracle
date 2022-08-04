@@ -77,6 +77,8 @@ jobs:
 
     - name: Configure CMake
       run: cmake --preset linux-release
+      env:
+        CXX: g++-10
 
     - name: Build
       run: cmake --build --preset linux-release-build
