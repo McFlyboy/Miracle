@@ -80,7 +80,9 @@ namespace Miracle {
 	class GraphicsContextError : public MiracleError {
 	public:
 		enum class ErrorValue : Miracle::ErrorValue {
-			creationError
+			creationError,
+			debugToolsUnavailableError,
+			functionalityNotSupportedError
 		};
 
 		GraphicsContextError(ErrorValue errorValue, const char* message) : MiracleError(

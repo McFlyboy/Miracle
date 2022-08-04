@@ -16,5 +16,21 @@ namespace Miracle::Application {
 				"Failed to create graphics context"
 			) {}
 		};
+
+		class DebugToolsUnavailableError : public GraphicsContextError {
+		public:
+			DebugToolsUnavailableError() : GraphicsContextError(
+				GraphicsContextError::ErrorValue::debugToolsUnavailableError,
+				"Debug tools for graphics context unavailable"
+			) {}
+		};
+
+		class FunctionalityNotSupportedError : public GraphicsContextError {
+		public:
+			FunctionalityNotSupportedError() : GraphicsContextError(
+				GraphicsContextError::ErrorValue::functionalityNotSupportedError,
+				"Critical graphics related functionality not supported"
+			) {}
+		};
 	}
 }
