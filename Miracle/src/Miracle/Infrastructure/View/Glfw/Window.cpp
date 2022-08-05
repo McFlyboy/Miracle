@@ -1,5 +1,9 @@
 #include "Window.hpp"
 
+#include <fmt/format.h>
+
+#include <Miracle/Application/Graphics/IGraphicsContext.hpp>
+
 namespace Miracle::Infrastructure::View::Glfw {
 	Window::Window(
 		Application::ILogger& logger,
@@ -65,5 +69,32 @@ namespace Miracle::Infrastructure::View::Glfw {
 	void Window::setTitle(const std::u8string_view& title) {
 		m_title = title;
 		glfwSetWindowTitle(m_window, reinterpret_cast<const char*>(m_title.c_str()));
+	}
+
+	std::span<const char*> Window::getRequiredVulkanExtensionNames() const {
+		uint32_t extensionCount = 0;
+		auto extensionNames = glfwGetRequiredInstanceExtensions(&extensionCount);
+
+		return std::span(extensionNames, extensionCount);
+	}
+
+	vk::raii::SurfaceKHR Window::createVulkanSurface(
+		vk::raii::Instance& instance
+	) const {
+		VkSurfaceKHR surface = nullptr;
+		auto result = vk::Result(glfwCreateWindowSurface(*instance, m_window, nullptr, &surface));
+
+		if (result != vk::Result::eSuccess) {
+			m_logger.error(
+				fmt::format(
+					"Failed to create Vulkan surface for graphics context target.\nResult: {}",
+					vk::to_string(result)
+				)
+			);
+
+			throw Application::GraphicsContextErrors::CreationError();
+		}
+
+		return vk::raii::SurfaceKHR(instance, surface);
 	}
 }

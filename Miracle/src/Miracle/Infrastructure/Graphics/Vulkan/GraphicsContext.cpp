@@ -10,13 +10,16 @@
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	GraphicsContext::GraphicsContext(
 		const std::string_view& appName,
-		Application::ILogger& logger
+		Application::ILogger& logger,
+		IContextTarget& target
 	) :
 		m_logger(logger),
-		m_instance(createInstance(appName))
+		m_target(target),
+		m_instance(createInstance(appName)),
 #ifdef MIRACLE_CONFIG_DEBUG
-		, m_debugMessenger(createDebugMessenger())
+		m_debugMessenger(createDebugMessenger()),
 #endif
+		m_surface(target.createVulkanSurface(m_instance))
 	{
 		m_logger.info("Vulkan graphics context created");
 	}
@@ -36,11 +39,17 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		auto extensionNames = std::vector<const char*>();
 
+		auto extensionNamesRequiredByTarget = m_target.getRequiredVulkanExtensionNames();
+
+		for (auto& extensionName : extensionNamesRequiredByTarget) {
+			extensionNames.push_back(extensionName);
+		}
+
 #ifdef MIRACLE_CONFIG_DEBUG
+		extensionNames.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+
 		auto validationLayerNames = std::array{ "VK_LAYER_KHRONOS_validation" };
 		checkValidationLayersAvailable(validationLayerNames);
-
-		extensionNames.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 
 		auto debugMessengerCreateInfo = getDebugMessengerCreateInfo();
 #endif

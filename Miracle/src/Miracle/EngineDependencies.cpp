@@ -40,7 +40,8 @@ namespace Miracle {
 		m_graphicsContext(
 			std::make_unique<VulkanGraphicsContext>(
 				appName,
-				logger
+				logger,
+				*reinterpret_cast<GlfwWindow*>(m_window.get())
 			)
 		),
 		m_textInputService(eventDispatcher),
