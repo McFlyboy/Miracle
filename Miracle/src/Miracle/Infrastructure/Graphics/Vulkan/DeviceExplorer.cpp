@@ -3,7 +3,10 @@
 #include <span>
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
-	DeviceInfo DeviceExplorer::getDeviceInfo(const vk::raii::PhysicalDevice& device) {
+	DeviceInfo DeviceExplorer::getDeviceInfo(
+		const vk::raii::PhysicalDevice& device,
+		const vk::raii::SurfaceKHR& surface
+	) {
 		auto properties = device.getProperties();
 		auto memoryProperties = device.getMemoryProperties();
 
@@ -21,16 +24,18 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			.name                  = properties.deviceName,
 			.type                  = properties.deviceType,
 			.deviceLocalMemorySize = memorySize,
-			.queueFamilyIndices    = queryQueueFamilyIndices(device)
+			.queueFamilyIndices    = queryQueueFamilyIndices(device, surface)
 		};
 	}
 
 	bool DeviceExplorer::isDeviceSupported(const DeviceInfo& deviceInfo) {
-		return deviceInfo.queueFamilyIndices.graphicsFamilyIndex.has_value();
+		return deviceInfo.queueFamilyIndices.graphicsFamilyIndex.has_value()
+			&& deviceInfo.queueFamilyIndices.presentFamilyIndex.has_value();
 	}
 
 	QueueFamilyIndices DeviceExplorer::queryQueueFamilyIndices(
-		const vk::raii::PhysicalDevice& device
+		const vk::raii::PhysicalDevice& device,
+		const vk::raii::SurfaceKHR& surface
 	) {
 		auto queueFamilyIndices = QueueFamilyIndices{};
 
@@ -39,6 +44,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		for (size_t i = 0; i < queueFamiliesProperties.size(); i++) {
 			if (queueFamiliesProperties[i].queueFlags & vk::QueueFlagBits::eGraphics) {
 				queueFamilyIndices.graphicsFamilyIndex = i;
+			}
+
+			if (device.getSurfaceSupportKHR(i, *surface)) {
+				queueFamilyIndices.presentFamilyIndex = i;
 			}
 
 			if (queueFamilyIndices.hasAllIndicesSet()) break;

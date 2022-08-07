@@ -2,7 +2,6 @@
 
 #include <cstring>
 #include <exception>
-#include <array>
 #include <vector>
 #include <algorithm>
 
@@ -17,14 +16,29 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		IContextTarget& target
 	) :
 		m_logger(logger),
-		m_target(target),
-		m_instance(createInstance(appName)),
-#ifdef MIRACLE_CONFIG_DEBUG
-		m_debugMessenger(createDebugMessenger()),
-#endif
-		m_surface(target.createVulkanSurface(m_instance))
+		m_target(target)
 	{
-		getMostOptimalPhysicalDevice();
+		m_instance = createInstance(appName);
+#ifdef MIRACLE_CONFIG_DEBUG
+		m_debugMessenger = createDebugMessenger();
+#endif
+		m_surface = target.createVulkanSurface(m_instance);
+
+		auto [physicalDevice, deviceInfo] = getMostOptimalPhysicalDevice();
+
+		m_deviceInfo = std::move(deviceInfo);
+		m_device = createDevice(physicalDevice);
+
+		m_graphicsQueue = m_device.getQueue(
+			m_deviceInfo.queueFamilyIndices.graphicsFamilyIndex.value(),
+			0
+		);
+
+		m_presentQueue = m_device.getQueue(
+			m_deviceInfo.queueFamilyIndices.presentFamilyIndex.value(),
+			0
+		);
+
 		m_logger.info("Vulkan graphics context created");
 	}
 
@@ -52,8 +66,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 #ifdef MIRACLE_CONFIG_DEBUG
 		extensionNames.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 
-		auto validationLayerNames = std::array{ "VK_LAYER_KHRONOS_validation" };
-		checkValidationLayersAvailable(validationLayerNames);
+		checkValidationLayersAvailable(s_validationLayerNames);
 
 		auto debugMessengerCreateInfo = getDebugMessengerCreateInfo();
 #endif
@@ -69,8 +82,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 					.flags                   = {},
 					.pApplicationInfo        = &appInfo,
 #ifdef MIRACLE_CONFIG_DEBUG
-					.enabledLayerCount       = static_cast<uint32_t>(validationLayerNames.size()),
-					.ppEnabledLayerNames     = validationLayerNames.data(),
+					.enabledLayerCount       = static_cast<uint32_t>(s_validationLayerNames.size()),
+					.ppEnabledLayerNames     = s_validationLayerNames.data(),
 #endif
 					.enabledExtensionCount   = static_cast<uint32_t>(extensionNames.size()),
 					.ppEnabledExtensionNames = extensionNames.data()
@@ -225,7 +238,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		supportedDevices.reserve(allDevices.size());
 
 		for (auto& device : allDevices) {
-			auto deviceInfo = DeviceExplorer::getDeviceInfo(device);
+			auto deviceInfo = DeviceExplorer::getDeviceInfo(device, m_surface);
 
 			if (!DeviceExplorer::isDeviceSupported(deviceInfo)) continue;
 
@@ -271,5 +284,48 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		);
 
 		return std::pair(std::move(*selectedDevice), std::move(deviceInfo));
+	}
+
+	vk::raii::Device GraphicsContext::createDevice(
+		const vk::raii::PhysicalDevice& physicalDevice
+	) const {
+		float queuePriority = 1.0f;
+
+		auto uniqueQueueFamilyIndices = m_deviceInfo.queueFamilyIndices.createSetOfAllUniqueIndices();
+
+		auto deviceQueueCreateInfos = std::vector<vk::DeviceQueueCreateInfo>();
+		deviceQueueCreateInfos.reserve(uniqueQueueFamilyIndices.size());
+
+		for (auto& queueFamilyIndex : uniqueQueueFamilyIndices) {
+			deviceQueueCreateInfos.push_back(
+				vk::DeviceQueueCreateInfo{
+					.flags            = {},
+					.queueFamilyIndex = queueFamilyIndex,
+					.queueCount       = 1,
+					.pQueuePriorities = &queuePriority
+				}
+			);
+		}
+
+		try {
+			return physicalDevice.createDevice(
+				vk::DeviceCreateInfo{
+					.flags                   = {},
+					.queueCreateInfoCount    = static_cast<uint32_t>(deviceQueueCreateInfos.size()),
+					.pQueueCreateInfos       = deviceQueueCreateInfos.data(),
+#ifdef MIRACLE_CONFIG_DEBUG
+					.enabledLayerCount = static_cast<uint32_t>(s_validationLayerNames.size()),
+					.ppEnabledLayerNames = s_validationLayerNames.data(),
+#endif
+					.enabledExtensionCount   = 0,
+					.ppEnabledExtensionNames = nullptr,
+					.pEnabledFeatures        = nullptr
+				}
+			);
+		}
+		catch (const std::exception& e) {
+			m_logger.error(fmt::format("Failed to create Vulkan device.\n{}", e.what()));
+			throw Application::GraphicsContextErrors::CreationError();
+		}
 	}
 }
