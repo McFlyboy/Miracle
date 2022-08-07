@@ -257,7 +257,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		std::sort(
 			supportedDevices.begin(),
 			supportedDevices.end(),
-			[](std::pair<vk::raii::PhysicalDevice*, DeviceInfo>& lhs, std::pair<vk::raii::PhysicalDevice*, DeviceInfo>& rhs) {
+			[](
+				std::pair<vk::raii::PhysicalDevice*, DeviceInfo>& lhs,
+				std::pair<vk::raii::PhysicalDevice*, DeviceInfo>& rhs
+			) {
 				bool isLhsDiscreteGpu = lhs.second.type == vk::PhysicalDeviceType::eDiscreteGpu;
 				bool isRhsDiscreteGpu = rhs.second.type == vk::PhysicalDeviceType::eDiscreteGpu;
 

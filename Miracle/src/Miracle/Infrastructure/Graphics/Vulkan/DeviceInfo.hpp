@@ -31,10 +31,15 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 	};
 
+	struct DeviceExtensionSupport {
+		
+	};
+
 	struct DeviceInfo {
 		std::string name = {};
 		vk::PhysicalDeviceType type = {};
 		vk::DeviceSize deviceLocalMemorySize = {};
 		QueueFamilyIndices queueFamilyIndices = {};
+		DeviceExtensionSupport extensionSupport = {};
 	};
 }
