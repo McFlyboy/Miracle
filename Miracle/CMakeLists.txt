@@ -1,5 +1,5 @@
 ﻿# Target definition
-add_library(Miracle STATIC "src/Miracle/App.cpp" "src/Miracle/Infrastructure/Diagnostics/Spdlog/Logger.cpp" "src/Miracle/Application/EventDispatcher.cpp" "src/Miracle/EngineDependencies.cpp" "src/Miracle/Infrastructure/Framework/Glfw/MultimediaFramework.cpp" "src/Miracle/Infrastructure/View/Glfw/Window.cpp" "src/Miracle/Infrastructure/Input/Glfw/Keyboard.cpp" "src/Miracle/Application/TextInputService.cpp" "src/Miracle/Common/UnicodeConverter.cpp" "src/Miracle/Application/DeltaTimeService.cpp" "src/Miracle/Application/PerformanceCountingService.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/GraphicsContext.cpp")
+add_library(Miracle STATIC "src/Miracle/App.cpp" "src/Miracle/Infrastructure/Diagnostics/Spdlog/Logger.cpp" "src/Miracle/Application/EventDispatcher.cpp" "src/Miracle/EngineDependencies.cpp" "src/Miracle/Infrastructure/Framework/Glfw/MultimediaFramework.cpp" "src/Miracle/Infrastructure/View/Glfw/Window.cpp" "src/Miracle/Infrastructure/Input/Glfw/Keyboard.cpp" "src/Miracle/Application/TextInputService.cpp" "src/Miracle/Common/UnicodeConverter.cpp" "src/Miracle/Application/DeltaTimeService.cpp" "src/Miracle/Application/PerformanceCountingService.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/GraphicsContext.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/DeviceExplorer.cpp")
 
 # Target properties
 set_target_properties(

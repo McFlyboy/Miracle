@@ -82,7 +82,9 @@ namespace Miracle {
 		enum class ErrorValue : Miracle::ErrorValue {
 			creationError,
 			debugToolsUnavailableError,
-			functionalityNotSupportedError
+			functionalityNotSupportedError,
+			graphicsDeviceNotFoundError,
+			noGraphicsDeviceSupportedError
 		};
 
 		GraphicsContextError(ErrorValue errorValue, const char* message) : MiracleError(

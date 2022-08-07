@@ -4,8 +4,11 @@
 #include <exception>
 #include <array>
 #include <vector>
+#include <algorithm>
 
 #include <fmt/format.h>
+
+#include "DeviceExplorer.hpp"
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	GraphicsContext::GraphicsContext(
@@ -21,6 +24,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 #endif
 		m_surface(target.createVulkanSurface(m_instance))
 	{
+		getMostOptimalPhysicalDevice();
 		m_logger.info("Vulkan graphics context created");
 	}
 
@@ -204,4 +208,67 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		return false;
 	}
 #endif
+
+	std::pair<vk::raii::PhysicalDevice, DeviceInfo> GraphicsContext::getMostOptimalPhysicalDevice() const {
+		auto allDevices = m_instance.enumeratePhysicalDevices();
+		
+		if (allDevices.empty()) {
+			m_logger.error("No Vulkan physical devices found");
+			throw Application::GraphicsContextErrors::GraphicsDeviceNotFoundError();
+		}
+
+		m_logger.info(
+			fmt::format("Vulkan physical devices found: {}", allDevices.size())
+		);
+
+		auto supportedDevices = std::vector<std::pair<vk::raii::PhysicalDevice*, DeviceInfo>>();
+		supportedDevices.reserve(allDevices.size());
+
+		for (auto& device : allDevices) {
+			auto deviceInfo = DeviceExplorer::getDeviceInfo(device);
+
+			if (!DeviceExplorer::isDeviceSupported(deviceInfo)) continue;
+
+			supportedDevices.emplace_back(&device, std::move(deviceInfo));
+		}
+
+		if (supportedDevices.empty()) {
+			m_logger.error("No Vulkan physical devices supported");
+			throw Application::GraphicsContextErrors::NoGraphicsDeviceSupportedError();
+		}
+
+		m_logger.info(
+			fmt::format("Supported Vulkan physical devices: {}", supportedDevices.size())
+		);
+
+		std::ranges::sort(
+			supportedDevices,
+			[](std::pair<vk::raii::PhysicalDevice*, DeviceInfo>& lhs, std::pair<vk::raii::PhysicalDevice*, DeviceInfo>& rhs) {
+				bool isLhsDiscreteGpu = lhs.second.type == vk::PhysicalDeviceType::eDiscreteGpu;
+				bool isRhsDiscreteGpu = rhs.second.type == vk::PhysicalDeviceType::eDiscreteGpu;
+
+				if (isLhsDiscreteGpu && !isRhsDiscreteGpu) {
+					return true;
+				}
+				else if (isRhsDiscreteGpu && !isLhsDiscreteGpu) {
+					return false;
+				}
+				else {
+					return lhs.second.deviceLocalMemorySize > rhs.second.deviceLocalMemorySize;
+				}
+			}
+		);
+
+		auto& [selectedDevice, deviceInfo] = supportedDevices.front();
+
+		m_logger.info(
+			fmt::format(
+				"Selected Vulkan device: {} [{}]",
+				deviceInfo.name,
+				vk::to_string(deviceInfo.type)
+			)
+		);
+
+		return std::pair(std::move(*selectedDevice), std::move(deviceInfo));
+	}
 }

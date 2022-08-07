@@ -32,5 +32,21 @@ namespace Miracle::Application {
 				"Critical graphics related functionality not supported"
 			) {}
 		};
+
+		class GraphicsDeviceNotFoundError : public GraphicsContextError {
+		public:
+			GraphicsDeviceNotFoundError() : GraphicsContextError(
+				GraphicsContextError::ErrorValue::graphicsDeviceNotFoundError,
+				"Graphics card not found"
+			) {}
+		};
+
+		class NoGraphicsDeviceSupportedError : public GraphicsContextError {
+		public:
+			NoGraphicsDeviceSupportedError() : GraphicsContextError(
+				GraphicsContextError::ErrorValue::noGraphicsDeviceSupportedError,
+				"No Graphics card supported"
+			) {}
+		};
 	}
 }

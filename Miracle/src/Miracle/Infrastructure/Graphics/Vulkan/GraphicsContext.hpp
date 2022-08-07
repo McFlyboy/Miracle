@@ -2,12 +2,14 @@
 
 #include <string_view>
 #include <span>
+#include <utility>
 
 #include <Miracle/Definitions.hpp>
 #include <Miracle/Application/Graphics/IGraphicsContext.hpp>
 #include <Miracle/Application/ILogger.hpp>
 #include "Vulkan.hpp"
 #include "IContextTarget.hpp"
+#include "DeviceInfo.hpp"
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	class GraphicsContext : public Application::IGraphicsContext {
@@ -53,6 +55,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			const VkDebugUtilsMessengerCallbackDataEXT* callbackData,
 			void* userData
 		);
+
+		std::pair<vk::raii::PhysicalDevice, DeviceInfo> getMostOptimalPhysicalDevice() const;
 #endif
 	};
 }
