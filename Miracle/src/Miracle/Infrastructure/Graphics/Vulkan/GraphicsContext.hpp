@@ -56,7 +56,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			void* userData
 		);
 
-		std::pair<vk::raii::PhysicalDevice, DeviceInfo> getMostOptimalPhysicalDevice() const;
 #endif
+		std::pair<vk::raii::PhysicalDevice, DeviceInfo> getMostOptimalPhysicalDevice() const;
 	};
 }
