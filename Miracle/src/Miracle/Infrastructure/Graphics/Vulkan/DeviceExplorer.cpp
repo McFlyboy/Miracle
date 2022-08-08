@@ -1,5 +1,6 @@
 #include "DeviceExplorer.hpp"
 
+#include <cstring>
 #include <span>
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
@@ -24,13 +25,15 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			.name                  = properties.deviceName,
 			.type                  = properties.deviceType,
 			.deviceLocalMemorySize = memorySize,
-			.queueFamilyIndices    = queryQueueFamilyIndices(device, surface)
+			.queueFamilyIndices    = queryQueueFamilyIndices(device, surface),
+			.extensionSupport      = queryExtensionSupport(device)
 		};
 	}
 
 	bool DeviceExplorer::isDeviceSupported(const DeviceInfo& deviceInfo) {
 		return deviceInfo.queueFamilyIndices.graphicsFamilyIndex.has_value()
-			&& deviceInfo.queueFamilyIndices.presentFamilyIndex.has_value();
+			&& deviceInfo.queueFamilyIndices.presentFamilyIndex.has_value()
+			&& deviceInfo.extensionSupport.hasSwapchainSupport;
 	}
 
 	QueueFamilyIndices DeviceExplorer::queryQueueFamilyIndices(
@@ -54,5 +57,19 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 
 		return queueFamilyIndices;
+	}
+
+	DeviceExtensionSupport DeviceExplorer::queryExtensionSupport(
+		const vk::raii::PhysicalDevice& device
+	) {
+		auto extensionSupport = DeviceExtensionSupport{};
+
+		for (auto& extensionProperties : device.enumerateDeviceExtensionProperties()) {
+			if (std::strcmp(extensionProperties.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0) {
+				extensionSupport.hasSwapchainSupport = true;
+			}
+		}
+
+		return extensionSupport;
 	}
 }

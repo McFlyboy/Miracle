@@ -310,6 +310,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			);
 		}
 
+		auto extensionNames = std::array{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
 		try {
 			return physicalDevice.createDevice(
 				vk::DeviceCreateInfo{
@@ -320,8 +322,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 					.enabledLayerCount = static_cast<uint32_t>(s_validationLayerNames.size()),
 					.ppEnabledLayerNames = s_validationLayerNames.data(),
 #endif
-					.enabledExtensionCount   = 0,
-					.ppEnabledExtensionNames = nullptr,
+					.enabledExtensionCount   = static_cast<uint32_t>(extensionNames.size()),
+					.ppEnabledExtensionNames = extensionNames.data(),
 					.pEnabledFeatures        = nullptr
 				}
 			);

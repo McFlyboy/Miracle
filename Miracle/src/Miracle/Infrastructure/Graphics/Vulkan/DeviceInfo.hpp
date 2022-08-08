@@ -32,7 +32,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	};
 
 	struct DeviceExtensionSupport {
-		
+		bool hasSwapchainSupport = {};
 	};
 
 	struct DeviceInfo {
