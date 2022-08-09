@@ -26,8 +26,9 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		auto [physicalDevice, deviceInfo] = getMostOptimalPhysicalDevice();
 
+		m_physicalDevice = std::move(physicalDevice);
 		m_deviceInfo = std::move(deviceInfo);
-		m_device = createDevice(physicalDevice);
+		m_device = createDevice(m_physicalDevice);
 
 		m_graphicsQueue = m_device.getQueue(
 			m_deviceInfo.queueFamilyIndices.graphicsFamilyIndex.value(),
@@ -44,6 +45,18 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 	GraphicsContext::~GraphicsContext() {
 		m_logger.info("Destroying Vulkan graphics context...");
+	}
+
+	SurfaceExtent GraphicsContext::getCurrentSurfaceExtent() const {
+		auto surfaceCapabilities = m_physicalDevice.getSurfaceCapabilitiesKHR(*m_surface);
+
+		return SurfaceExtent{
+			.extent    = surfaceCapabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()
+				? std::optional(surfaceCapabilities.currentExtent)
+				: std::nullopt,
+			.minExtent = surfaceCapabilities.minImageExtent,
+			.maxExtent = surfaceCapabilities.maxImageExtent
+		};
 	}
 
 	vk::raii::Instance GraphicsContext::createInstance(const std::string_view& appName) {

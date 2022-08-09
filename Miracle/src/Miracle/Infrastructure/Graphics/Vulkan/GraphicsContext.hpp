@@ -11,6 +11,7 @@
 #include "Vulkan.hpp"
 #include "IContextTarget.hpp"
 #include "DeviceInfo.hpp"
+#include "SurfaceExtent.hpp"
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	class GraphicsContext : public Application::IGraphicsContext {
@@ -26,6 +27,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::DebugUtilsMessengerEXT m_debugMessenger = nullptr;
 #endif
 		vk::raii::SurfaceKHR m_surface = nullptr;
+		vk::raii::PhysicalDevice m_physicalDevice = nullptr;
 		DeviceInfo m_deviceInfo;
 		vk::raii::Device m_device = nullptr;
 		vk::raii::Queue m_graphicsQueue = nullptr;
@@ -39,6 +41,20 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		);
 
 		~GraphicsContext();
+
+		inline const IContextTarget& getTarget() const { return m_target; }
+
+		inline const vk::raii::SurfaceKHR& getSurface() const { return m_surface; }
+
+		inline const DeviceInfo& getDeviceInfo() const { return m_deviceInfo; }
+
+		inline const vk::raii::Device& getDevice() const { return m_device; }
+
+		SurfaceExtent getCurrentSurfaceExtent() const;
+
+		inline vk::SurfaceTransformFlagBitsKHR getCurrentSurfaceTransformation() const {
+			return m_physicalDevice.getSurfaceCapabilitiesKHR(*m_surface).currentTransform;
+		}
 
 	private:
 		vk::raii::Instance createInstance(const std::string_view& appName);

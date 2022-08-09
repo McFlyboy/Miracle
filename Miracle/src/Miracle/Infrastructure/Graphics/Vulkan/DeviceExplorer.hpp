@@ -22,7 +22,13 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		);
 
 		static DeviceExtensionSupport queryExtensionSupport(
-			const vk::raii::PhysicalDevice& device
+			const vk::raii::PhysicalDevice& device,
+			const vk::raii::SurfaceKHR& surface
+		);
+
+		static SwapchainSupport querySwapchainSupport(
+			const vk::raii::PhysicalDevice& device,
+			const vk::raii::SurfaceKHR& surface
 		);
 	};
 }

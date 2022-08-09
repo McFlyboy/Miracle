@@ -50,5 +50,7 @@ namespace Miracle::Infrastructure::View::Glfw {
 		virtual vk::raii::SurfaceKHR createVulkanSurface(
 			vk::raii::Instance& instance
 		) const override;
+
+		virtual vk::Extent2D getCurrentVulkanExtent() const override;
 	};
 }

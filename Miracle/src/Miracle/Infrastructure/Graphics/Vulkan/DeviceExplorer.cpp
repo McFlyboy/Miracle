@@ -26,14 +26,16 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			.type                  = properties.deviceType,
 			.deviceLocalMemorySize = memorySize,
 			.queueFamilyIndices    = queryQueueFamilyIndices(device, surface),
-			.extensionSupport      = queryExtensionSupport(device)
+			.extensionSupport      = queryExtensionSupport(device, surface)
 		};
 	}
 
 	bool DeviceExplorer::isDeviceSupported(const DeviceInfo& deviceInfo) {
 		return deviceInfo.queueFamilyIndices.graphicsFamilyIndex.has_value()
 			&& deviceInfo.queueFamilyIndices.presentFamilyIndex.has_value()
-			&& deviceInfo.extensionSupport.hasSwapchainSupport;
+			&& deviceInfo.extensionSupport.swapchainSupport.has_value()
+			&& !deviceInfo.extensionSupport.swapchainSupport.value().surfaceFormats.empty()
+			&& deviceInfo.extensionSupport.swapchainSupport.value().hasImmediateModePresentationSupport;
 	}
 
 	QueueFamilyIndices DeviceExplorer::queryQueueFamilyIndices(
@@ -60,16 +62,47 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	}
 
 	DeviceExtensionSupport DeviceExplorer::queryExtensionSupport(
-		const vk::raii::PhysicalDevice& device
+		const vk::raii::PhysicalDevice& device,
+		const vk::raii::SurfaceKHR& surface
 	) {
 		auto extensionSupport = DeviceExtensionSupport{};
 
 		for (auto& extensionProperties : device.enumerateDeviceExtensionProperties()) {
 			if (std::strcmp(extensionProperties.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0) {
-				extensionSupport.hasSwapchainSupport = true;
+				extensionSupport.swapchainSupport = querySwapchainSupport(device, surface);
 			}
 		}
 
 		return extensionSupport;
+	}
+
+	SwapchainSupport DeviceExplorer::querySwapchainSupport(
+		const vk::raii::PhysicalDevice& device,
+		const vk::raii::SurfaceKHR& surface
+	) {
+		auto surfaceCapabilities = device.getSurfaceCapabilitiesKHR(*surface);
+		auto presentModes = device.getSurfacePresentModesKHR(*surface);
+
+		bool hasImmediateMode = false;
+		bool hasMailboxMode = false;
+
+		for (auto& presentMode : presentModes) {
+			if (presentMode == vk::PresentModeKHR::eImmediate) {
+				hasImmediateMode = true;
+			}
+			else if (presentMode == vk::PresentModeKHR::eMailbox) {
+				hasMailboxMode = true;
+			}
+		}
+
+		return SwapchainSupport{
+			.minImageCount                       = surfaceCapabilities.minImageCount,
+			.maxImageCount                       = surfaceCapabilities.maxImageCount != 0
+				? std::optional(surfaceCapabilities.maxImageCount)
+				: std::nullopt,
+			.surfaceFormats                      = device.getSurfaceFormatsKHR(*surface),
+			.hasImmediateModePresentationSupport = hasImmediateMode,
+			.hasMailboxModePresentationSupport   = hasMailboxMode
+		};
 	}
 }

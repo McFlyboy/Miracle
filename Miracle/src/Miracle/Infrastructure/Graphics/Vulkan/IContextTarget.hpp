@@ -14,5 +14,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		virtual vk::raii::SurfaceKHR createVulkanSurface(
 			vk::raii::Instance& instance
 		) const = 0;
+
+		virtual vk::Extent2D getCurrentVulkanExtent() const = 0;
 	};
 }

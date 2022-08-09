@@ -97,4 +97,16 @@ namespace Miracle::Infrastructure::View::Glfw {
 
 		return vk::raii::SurfaceKHR(instance, surface);
 	}
+
+	vk::Extent2D Window::getCurrentVulkanExtent() const {
+		int width = 0;
+		int height = 0;
+
+		glfwGetFramebufferSize(m_window, &width, &height);
+
+		return vk::Extent2D{
+			.width = static_cast<uint32_t>(width),
+			.height = static_cast<uint32_t>(height)
+		};
+	}
 }

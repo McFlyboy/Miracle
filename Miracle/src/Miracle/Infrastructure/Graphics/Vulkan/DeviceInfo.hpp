@@ -3,13 +3,14 @@
 #include <string>
 #include <optional>
 #include <set>
+#include <vector>
 
 #include "Vulkan.hpp"
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	struct QueueFamilyIndices {
-		std::optional<uint32_t> graphicsFamilyIndex = std::nullopt;
-		std::optional<uint32_t> presentFamilyIndex = std::nullopt;
+		std::optional<uint32_t> graphicsFamilyIndex = {};
+		std::optional<uint32_t> presentFamilyIndex = {};
 
 		inline bool hasAllIndicesSet() const {
 			return graphicsFamilyIndex.has_value()
@@ -31,8 +32,16 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 	};
 
+	struct SwapchainSupport {
+		uint32_t minImageCount = {};
+		std::optional<uint32_t> maxImageCount = {};
+		std::vector<vk::SurfaceFormatKHR> surfaceFormats = {};
+		bool hasImmediateModePresentationSupport = {};
+		bool hasMailboxModePresentationSupport = {};
+	};
+
 	struct DeviceExtensionSupport {
-		bool hasSwapchainSupport = {};
+		std::optional<SwapchainSupport> swapchainSupport = {};
 	};
 
 	struct DeviceInfo {
