@@ -16,16 +16,18 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		m_logger(logger),
 		m_context(context),
 		m_preferredImageCount(selectImageCount()),
-		m_surfaceFormat(selectSurfaceFormat(initProps.useSrgb))
+		m_surfaceFormat(selectSurfaceFormat(initProps.useSrgb)),
+		m_imageExtent(selectExtent()),
+		m_presentMode(selectPresentMode(initProps.useVsync))
 	{
-		auto& deviceInfo = m_context.getDeviceInfo();
+		auto& queueFamilyIndices = m_context.getDeviceInfo().queueFamilyIndices;
 
-		bool sharingModeEnabled = deviceInfo.queueFamilyIndices.graphicsFamilyIndex.value()
-			!= deviceInfo.queueFamilyIndices.presentFamilyIndex.value();
+		bool sharingModeEnabled = queueFamilyIndices.graphicsFamilyIndex.value()
+			!= queueFamilyIndices.presentFamilyIndex.value();
 
-		auto queueFamilyIndices = std::array{
-			deviceInfo.queueFamilyIndices.graphicsFamilyIndex.value(),
-			deviceInfo.queueFamilyIndices.presentFamilyIndex.value()
+		auto queueFamilyIndexArray = std::array{
+			queueFamilyIndices.graphicsFamilyIndex.value(),
+			queueFamilyIndices.presentFamilyIndex.value()
 		};
 
 		try {
@@ -36,21 +38,21 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 					.minImageCount         = m_preferredImageCount,
 					.imageFormat           = m_surfaceFormat.format,
 					.imageColorSpace       = m_surfaceFormat.colorSpace,
-					.imageExtent           = selectExtent(),
+					.imageExtent           = m_imageExtent,
 					.imageArrayLayers      = 1,
 					.imageUsage            = vk::ImageUsageFlagBits::eColorAttachment,
 					.imageSharingMode      = sharingModeEnabled
 						? vk::SharingMode::eConcurrent
 						: vk::SharingMode::eExclusive,
 					.queueFamilyIndexCount = sharingModeEnabled
-						? static_cast<uint32_t>(queueFamilyIndices.size())
+						? static_cast<uint32_t>(queueFamilyIndexArray.size())
 						: 0,
 					.pQueueFamilyIndices   = sharingModeEnabled
-						? queueFamilyIndices.data()
+						? queueFamilyIndexArray.data()
 						: nullptr,
 					.preTransform          = m_context.getCurrentSurfaceTransformation(),
 					.compositeAlpha        = vk::CompositeAlphaFlagBitsKHR::eOpaque,
-					.presentMode           = selectPresentMode(initProps.useVsync),
+					.presentMode           = m_presentMode,
 					.clipped               = true,
 					.oldSwapchain          = nullptr
 				}
@@ -59,6 +61,15 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		catch (const std::exception& e) {
 			m_logger.error(fmt::format("Failed to create Vulkan swapchain.\n{}", e.what()));
 			throw Application::SwapchainErrors::CreationError();
+		}
+
+		auto images = m_swapchain.getImages();
+		m_images.reserve(images.size());
+		m_imageViews.reserve(images.size());
+
+		for (auto& image : images) {
+			m_images.emplace_back(image);
+			m_imageViews.push_back(createImageView(m_images.back()));
 		}
 
 		m_logger.info("Vulkan swapchain created");
@@ -142,5 +153,41 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				? vk::PresentModeKHR::eMailbox
 				: vk::PresentModeKHR::eFifo
 			: vk::PresentModeKHR::eImmediate;
+	}
+
+	vk::raii::ImageView Swapchain::createImageView(const vk::Image& image) const {
+		try {
+			return m_context.getDevice().createImageView(
+				vk::ImageViewCreateInfo{
+					.flags            = {},
+					.image            = image,
+					.viewType         = vk::ImageViewType::e2D,
+					.format           = m_surfaceFormat.format,
+					.components       = vk::ComponentMapping{
+						.r = vk::ComponentSwizzle::eIdentity,
+						.g = vk::ComponentSwizzle::eIdentity,
+						.b = vk::ComponentSwizzle::eIdentity,
+						.a = vk::ComponentSwizzle::eIdentity
+					},
+					.subresourceRange = vk::ImageSubresourceRange{
+						.aspectMask     = vk::ImageAspectFlagBits::eColor,
+						.baseMipLevel   = 0,
+						.levelCount     = 1,
+						.baseArrayLayer = 0,
+						.layerCount     = 1
+					}
+				}
+			);
+		}
+		catch (const std::exception& e) {
+			m_logger.error(
+				fmt::format(
+					"Failed to create Vulkan image view for image in swapchain.\n{}",
+					e.what()
+				)
+			);
+
+			throw Application::SwapchainErrors::CreationError();
+		}
 	}
 }
