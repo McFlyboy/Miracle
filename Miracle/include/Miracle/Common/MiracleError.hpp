@@ -15,7 +15,8 @@ namespace Miracle {
 		multimediaFramework,
 		window,
 		graphicsContext,
-		swapchain
+		swapchain,
+		renderPass
 	};
 
 	class MiracleError : public std::runtime_error {
@@ -103,6 +104,19 @@ namespace Miracle {
 
 		SwapchainError(ErrorValue errorValue, const char* message) : MiracleError(
 			ErrorCategory::swapchain,
+			static_cast<Miracle::ErrorValue>(errorValue),
+			message
+		) {}
+	};
+
+	class RenderPassError : public MiracleError {
+	public:
+		enum class ErrorValue : Miracle::ErrorValue {
+			creationError
+		};
+
+		RenderPassError(ErrorValue errorValue, const char* message) : MiracleError(
+			ErrorCategory::renderPass,
 			static_cast<Miracle::ErrorValue>(errorValue),
 			message
 		) {}

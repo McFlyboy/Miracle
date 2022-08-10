@@ -16,7 +16,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::SwapchainKHR m_swapchain = nullptr;
 		std::map<vk::Image, vk::raii::ImageView> m_images;
 		uint32_t m_preferredImageCount;
-		vk::SurfaceFormatKHR m_surfaceFormat;
+		const vk::SurfaceFormatKHR m_surfaceFormat;
 		vk::Extent2D m_imageExtent;
 		vk::PresentModeKHR m_presentMode;
 
@@ -28,6 +28,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		);
 
 		~Swapchain();
+
+		inline vk::Format getImageFormat() const { return m_surfaceFormat.format; }
 
 	private:
 		uint32_t selectImageCount() const;

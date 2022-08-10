@@ -11,6 +11,7 @@
 #include "Application/IKeyboard.hpp"
 #include "Application/Graphics/IGraphicsContext.hpp"
 #include "Application/Graphics/ISwapchain.hpp"
+#include "Application/Graphics/IRenderPass.hpp"
 #include "Application/TextInputService.hpp"
 #include "Application/DeltaTimeService.hpp"
 #include "Application/PerformanceCountingService.hpp"
@@ -23,6 +24,7 @@ namespace Miracle {
 		std::unique_ptr<Application::IKeyboard> m_keyboard;
 		std::unique_ptr<Application::IGraphicsContext> m_graphicsContext;
 		std::unique_ptr<Application::ISwapchain> m_swapchain;
+		std::unique_ptr<Application::IRenderPass> m_renderPass;
 		Application::TextInputService m_textInputService;
 		Application::DeltaTimeService m_deltaTimeService;
 		Application::PerformanceCountingService m_performanceCountingService;

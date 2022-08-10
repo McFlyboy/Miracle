@@ -7,6 +7,7 @@
 #include "Infrastructure/Input/Glfw/Keyboard.hpp"
 #include "Infrastructure/Graphics/Vulkan/GraphicsContext.hpp"
 #include "Infrastructure/Graphics/Vulkan/Swapchain.hpp"
+#include "Infrastructure/Graphics/Vulkan/RenderPass.hpp"
 
 namespace Miracle {
 	using GlfwMultimediaFramework = Infrastructure::Framework::Glfw::MultimediaFramework;
@@ -14,6 +15,7 @@ namespace Miracle {
 	using GlfwKeyboard = Infrastructure::Input::Glfw::Keyboard;
 	using VulkanGraphicsContext = Infrastructure::Graphics::Vulkan::GraphicsContext;
 	using VulkanSwapchain = Infrastructure::Graphics::Vulkan::Swapchain;
+	using VulkanRenderPass = Infrastructure::Graphics::Vulkan::RenderPass;
 
 	EngineDependencies::EngineDependencies(
 		const std::string_view& appName,
@@ -54,6 +56,13 @@ namespace Miracle {
 					.useSrgb  = true,
 					.useVsync = true
 				}
+			)
+		),
+		m_renderPass(
+			std::make_unique<VulkanRenderPass>(
+				logger,
+				*reinterpret_cast<VulkanGraphicsContext*>(m_graphicsContext.get()),
+				*reinterpret_cast<VulkanSwapchain*>(m_swapchain.get())
 			)
 		),
 		m_textInputService(eventDispatcher),
