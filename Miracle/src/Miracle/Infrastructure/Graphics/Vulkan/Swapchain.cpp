@@ -64,12 +64,9 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 
 		auto images = m_swapchain.getImages();
-		m_images.reserve(images.size());
-		m_imageViews.reserve(images.size());
 
 		for (auto& image : images) {
-			m_images.emplace_back(image);
-			m_imageViews.push_back(createImageView(m_images.back()));
+			m_images.emplace(image, createImageView(image));
 		}
 
 		m_logger.info("Vulkan swapchain created");

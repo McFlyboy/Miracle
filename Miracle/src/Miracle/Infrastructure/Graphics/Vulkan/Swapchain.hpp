@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <map>
 
 #include <Miracle/Application/Graphics/ISwapchain.hpp>
 #include <Miracle/Application/ILogger.hpp>
@@ -14,8 +14,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		GraphicsContext& m_context;
 
 		vk::raii::SwapchainKHR m_swapchain = nullptr;
-		std::vector<vk::Image> m_images;
-		std::vector<vk::raii::ImageView> m_imageViews;
+		std::map<vk::Image, vk::raii::ImageView> m_images;
 		uint32_t m_preferredImageCount;
 		vk::SurfaceFormatKHR m_surfaceFormat;
 		vk::Extent2D m_imageExtent;
