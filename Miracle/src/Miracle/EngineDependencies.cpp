@@ -46,7 +46,7 @@ namespace Miracle {
 				appName,
 				logger,
 				*reinterpret_cast<GlfwWindow*>(m_window.get())
-				)
+			)
 		),
 		m_swapchain(
 			std::make_unique<VulkanSwapchain>(
