@@ -48,11 +48,11 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		for (size_t i = 0; i < queueFamiliesProperties.size(); i++) {
 			if (queueFamiliesProperties[i].queueFlags & vk::QueueFlagBits::eGraphics) {
-				queueFamilyIndices.graphicsFamilyIndex = i;
+				queueFamilyIndices.graphicsFamilyIndex = static_cast<uint32_t>(i);
 			}
 
 			if (device.getSurfaceSupportKHR(i, *surface)) {
-				queueFamilyIndices.presentFamilyIndex = i;
+				queueFamilyIndices.presentFamilyIndex = static_cast<uint32_t>(i);
 			}
 
 			if (queueFamilyIndices.hasAllIndicesSet()) break;
