@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <vector>
 
 #include <Miracle/Application/Graphics/ISwapchain.hpp>
 #include <Miracle/Application/ILogger.hpp>
@@ -20,6 +21,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::SwapchainKHR m_swapchain = nullptr;
 		std::map<vk::Image, vk::raii::ImageView> m_images;
 		vk::raii::RenderPass m_renderPass = nullptr;
+		std::vector<vk::raii::Framebuffer> m_frameBuffers;
 
 	public:
 		Swapchain(
@@ -44,5 +46,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::ImageView createImageView(const vk::Image& image) const;
 
 		vk::raii::RenderPass createRenderPass() const;
+
+		vk::raii::Framebuffer createFrameBuffer(const vk::raii::ImageView& imageView) const;
 	};
 }

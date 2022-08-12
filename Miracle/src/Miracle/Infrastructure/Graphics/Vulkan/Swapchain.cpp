@@ -71,6 +71,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		m_renderPass = createRenderPass();
 
+		m_frameBuffers.reserve(m_images.size());
+
+		for (auto& [image, imageView] : m_images) {
+			m_frameBuffers.push_back(createFrameBuffer(imageView));
+		}
+
 		m_logger.info("Vulkan swapchain created");
 	}
 
@@ -243,6 +249,29 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		catch (const std::exception& e) {
 			m_logger.error(
 				fmt::format("Failed to create Vulkan render pass for swapchain.\n{}", e.what())
+			);
+
+			throw Application::SwapchainErrors::CreationError();
+		}
+	}
+
+	vk::raii::Framebuffer Swapchain::createFrameBuffer(const vk::raii::ImageView& imageView) const {
+		try {
+			return m_context.getDevice().createFramebuffer(
+				vk::FramebufferCreateInfo{
+					.flags           = {},
+					.renderPass      = *m_renderPass,
+					.attachmentCount = 1,
+					.pAttachments    = &*imageView,
+					.width           = m_imageExtent.width,
+					.height          = m_imageExtent.height,
+					.layers          = 1
+				}
+			);
+		}
+		catch (const std::exception& e) {
+			m_logger.error(
+				fmt::format("Failed to create Vulkan frame buffer for swapchain.\n{}", e.what())
 			);
 
 			throw Application::SwapchainErrors::CreationError();
