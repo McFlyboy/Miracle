@@ -40,22 +40,17 @@ namespace Miracle {
 		m_graphicsApi(
 			std::make_unique<VulkanGraphicsApi>()
 		),
-		m_graphicsContext(
-			m_graphicsApi->createGraphicsContext(
-				appName,
-				logger,
-				*reinterpret_cast<GlfwWindow*>(m_window.get())
-			)
-		),
-		m_swapchain(
-			m_graphicsApi->createSwapchain(
-				logger,
-				*m_graphicsContext.get(),
-				Application::SwapchainInitProps{
+		m_renderer(
+			appName,
+			logger,
+			*m_graphicsApi.get(),
+			*reinterpret_cast<GlfwWindow*>(m_window.get()),
+			Application::RendererInitProps{
+				.swapchainInitProps = Application::SwapchainInitProps{
 					.useSrgb  = true,
 					.useVsync = true
 				}
-			)
+			}
 		),
 		m_textInputService(eventDispatcher),
 		m_deltaTimeService(*m_multimediaFramework.get()),
