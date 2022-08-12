@@ -5,17 +5,13 @@
 #include "Infrastructure/Framework/Glfw/MultimediaFramework.hpp"
 #include "Infrastructure/View/Glfw/Window.hpp"
 #include "Infrastructure/Input/Glfw/Keyboard.hpp"
-#include "Infrastructure/Graphics/Vulkan/GraphicsContext.hpp"
-#include "Infrastructure/Graphics/Vulkan/Swapchain.hpp"
-#include "Infrastructure/Graphics/Vulkan/RenderPass.hpp"
+#include "Infrastructure/Graphics/Vulkan/GraphicsApi.hpp"
 
 namespace Miracle {
 	using GlfwMultimediaFramework = Infrastructure::Framework::Glfw::MultimediaFramework;
 	using GlfwWindow = Infrastructure::View::Glfw::Window;
 	using GlfwKeyboard = Infrastructure::Input::Glfw::Keyboard;
-	using VulkanGraphicsContext = Infrastructure::Graphics::Vulkan::GraphicsContext;
-	using VulkanSwapchain = Infrastructure::Graphics::Vulkan::Swapchain;
-	using VulkanRenderPass = Infrastructure::Graphics::Vulkan::RenderPass;
+	using VulkanGraphicsApi = Infrastructure::Graphics::Vulkan::GraphicsApi;
 
 	EngineDependencies::EngineDependencies(
 		const std::string_view& appName,
@@ -41,28 +37,24 @@ namespace Miracle {
 				*reinterpret_cast<GlfwWindow*>(m_window.get())
 				)
 		),
+		m_graphicsApi(
+			std::make_unique<VulkanGraphicsApi>()
+		),
 		m_graphicsContext(
-			std::make_unique<VulkanGraphicsContext>(
+			m_graphicsApi->createGraphicsContext(
 				appName,
 				logger,
 				*reinterpret_cast<GlfwWindow*>(m_window.get())
 			)
 		),
 		m_swapchain(
-			std::make_unique<VulkanSwapchain>(
+			m_graphicsApi->createSwapchain(
 				logger,
-				*reinterpret_cast<VulkanGraphicsContext*>(m_graphicsContext.get()),
+				*m_graphicsContext.get(),
 				Application::SwapchainInitProps{
 					.useSrgb  = true,
 					.useVsync = true
 				}
-			)
-		),
-		m_renderPass(
-			std::make_unique<VulkanRenderPass>(
-				logger,
-				*reinterpret_cast<VulkanGraphicsContext*>(m_graphicsContext.get()),
-				*reinterpret_cast<VulkanSwapchain*>(m_swapchain.get())
 			)
 		),
 		m_textInputService(eventDispatcher),

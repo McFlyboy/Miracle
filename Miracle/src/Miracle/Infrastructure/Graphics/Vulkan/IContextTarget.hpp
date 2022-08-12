@@ -2,10 +2,12 @@
 
 #include <span>
 
+#include <Miracle/Application/Graphics/IContextTarget.hpp>
 #include "Vulkan.hpp"
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
-	class IContextTarget {
+	class IContextTarget : public Application::IContextTarget
+	{
 	public:
 		virtual ~IContextTarget() = default;
 

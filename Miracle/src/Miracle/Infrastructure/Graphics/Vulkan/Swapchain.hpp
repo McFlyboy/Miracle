@@ -13,12 +13,13 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		Application::ILogger& m_logger;
 		GraphicsContext& m_context;
 
-		vk::raii::SwapchainKHR m_swapchain = nullptr;
-		std::map<vk::Image, vk::raii::ImageView> m_images;
 		uint32_t m_preferredImageCount;
 		const vk::SurfaceFormatKHR m_surfaceFormat;
 		vk::Extent2D m_imageExtent;
 		vk::PresentModeKHR m_presentMode;
+		vk::raii::SwapchainKHR m_swapchain = nullptr;
+		std::map<vk::Image, vk::raii::ImageView> m_images;
+		vk::raii::RenderPass m_renderPass = nullptr;
 
 	public:
 		Swapchain(
@@ -41,5 +42,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::PresentModeKHR selectPresentMode(bool useVsync) const;
 
 		vk::raii::ImageView createImageView(const vk::Image& image) const;
+
+		vk::raii::RenderPass createRenderPass() const;
 	};
 }

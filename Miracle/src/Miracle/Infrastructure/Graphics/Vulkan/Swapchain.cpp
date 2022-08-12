@@ -69,6 +69,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_images.emplace(image, createImageView(image));
 		}
 
+		m_renderPass = createRenderPass();
+
 		m_logger.info("Vulkan swapchain created");
 	}
 
@@ -182,6 +184,65 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 					"Failed to create Vulkan image view for image in swapchain.\n{}",
 					e.what()
 				)
+			);
+
+			throw Application::SwapchainErrors::CreationError();
+		}
+	}
+
+	vk::raii::RenderPass Swapchain::createRenderPass() const {
+		auto attachments = std::array{
+			vk::AttachmentDescription{
+				.flags          = {},
+				.format         = m_surfaceFormat.format,
+				.samples        = vk::SampleCountFlagBits::e1,
+				.loadOp         = vk::AttachmentLoadOp::eClear,
+				.storeOp        = vk::AttachmentStoreOp::eStore,
+				.stencilLoadOp  = vk::AttachmentLoadOp::eDontCare,
+				.stencilStoreOp = vk::AttachmentStoreOp::eDontCare,
+				.initialLayout  = vk::ImageLayout::eUndefined,
+				.finalLayout    = vk::ImageLayout::ePresentSrcKHR
+			}
+		};
+
+		auto attachmentReferences = std::array{
+			vk::AttachmentReference{
+				.attachment = 0,
+				.layout     = vk::ImageLayout::eColorAttachmentOptimal
+			}
+		};
+
+		auto subpasses = std::array{
+			vk::SubpassDescription{
+				.flags                   = {},
+				.pipelineBindPoint       = vk::PipelineBindPoint::eGraphics,
+				.inputAttachmentCount    = 0,
+				.pInputAttachments       = nullptr,
+				.colorAttachmentCount    = static_cast<uint32_t>(attachmentReferences.size()),
+				.pColorAttachments       = attachmentReferences.data(),
+				.pResolveAttachments     = nullptr,
+				.pDepthStencilAttachment = nullptr,
+				.preserveAttachmentCount = 0,
+				.pPreserveAttachments    = nullptr
+			}
+		};
+
+		try {
+			return m_context.getDevice().createRenderPass(
+				vk::RenderPassCreateInfo{
+					.flags           = {},
+					.attachmentCount = static_cast<uint32_t>(attachments.size()),
+					.pAttachments    = attachments.data(),
+					.subpassCount    = static_cast<uint32_t>(subpasses.size()),
+					.pSubpasses      = subpasses.data(),
+					.dependencyCount = 0,
+					.pDependencies   = nullptr
+				}
+			);
+		}
+		catch (const std::exception& e) {
+			m_logger.error(
+				fmt::format("Failed to create Vulkan render pass for swapchain.\n{}", e.what())
 			);
 
 			throw Application::SwapchainErrors::CreationError();
