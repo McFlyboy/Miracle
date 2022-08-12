@@ -28,7 +28,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		m_physicalDevice = std::move(physicalDevice);
 		m_deviceInfo = std::move(deviceInfo);
-		m_device = createDevice(m_physicalDevice);
+		m_device = createDevice();
 
 		m_graphicsQueue = m_device.getQueue(
 			m_deviceInfo.queueFamilyIndices.graphicsFamilyIndex.value(),
@@ -39,6 +39,9 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_deviceInfo.queueFamilyIndices.presentFamilyIndex.value(),
 			0
 		);
+
+		m_commandPool = createCommandPool();
+		m_commandBuffer = createCommandBuffer();
 
 		m_logger.info("Vulkan graphics context created");
 	}
@@ -302,9 +305,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		return std::pair(std::move(*selectedDevice), std::move(deviceInfo));
 	}
 
-	vk::raii::Device GraphicsContext::createDevice(
-		const vk::raii::PhysicalDevice& physicalDevice
-	) const {
+	vk::raii::Device GraphicsContext::createDevice() const {
 		float queuePriority = 1.0f;
 
 		auto uniqueQueueFamilyIndices = m_deviceInfo.queueFamilyIndices.createSetOfAllUniqueIndices();
@@ -326,7 +327,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		auto extensionNames = std::array{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 		try {
-			return physicalDevice.createDevice(
+			return m_physicalDevice.createDevice(
 				vk::DeviceCreateInfo{
 					.flags                   = {},
 					.queueCreateInfoCount    = static_cast<uint32_t>(deviceQueueCreateInfos.size()),
@@ -343,6 +344,45 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 		catch (const std::exception& e) {
 			m_logger.error(fmt::format("Failed to create Vulkan device.\n{}", e.what()));
+			throw Application::GraphicsContextErrors::CreationError();
+		}
+	}
+
+	vk::raii::CommandPool GraphicsContext::createCommandPool() const {
+		try {
+			return m_device.createCommandPool(
+				vk::CommandPoolCreateInfo{
+					.flags            = vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
+					.queueFamilyIndex = m_deviceInfo.queueFamilyIndices.graphicsFamilyIndex.value()
+				}
+			);
+		}
+		catch (const std::exception& e) {
+			m_logger.error(
+				fmt::format("Failed to create Vulkan command pool for context.\n{}", e.what())
+			);
+
+			throw Application::GraphicsContextErrors::CreationError();
+		}
+	}
+
+	vk::raii::CommandBuffer GraphicsContext::createCommandBuffer() const {
+		try {
+			return std::move(
+				m_device.allocateCommandBuffers(
+					vk::CommandBufferAllocateInfo{
+						.commandPool        = *m_commandPool,
+						.level              = vk::CommandBufferLevel::ePrimary,
+						.commandBufferCount = 1
+					}
+				).front()
+			);
+		}
+		catch (const std::exception& e) {
+			m_logger.error(
+				fmt::format("Failed to create Vulkan command buffer for context.\n{}", e.what())
+			);
+
 			throw Application::GraphicsContextErrors::CreationError();
 		}
 	}

@@ -32,6 +32,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::Device m_device = nullptr;
 		vk::raii::Queue m_graphicsQueue = nullptr;
 		vk::raii::Queue m_presentQueue = nullptr;
+		vk::raii::CommandPool m_commandPool = nullptr;
+		vk::raii::CommandBuffer m_commandBuffer = nullptr;
 
 	public:
 		GraphicsContext(
@@ -82,8 +84,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 #endif
 		std::pair<vk::raii::PhysicalDevice, DeviceInfo> getMostOptimalPhysicalDevice() const;
 
-		vk::raii::Device createDevice(
-			const vk::raii::PhysicalDevice& physicalDevice
-		) const;
+		vk::raii::Device createDevice() const;
+
+		vk::raii::CommandPool createCommandPool() const;
+
+		vk::raii::CommandBuffer createCommandBuffer() const;
 	};
 }
