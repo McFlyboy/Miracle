@@ -22,6 +22,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		std::map<vk::Image, vk::raii::ImageView> m_images;
 		vk::raii::RenderPass m_renderPass = nullptr;
 		std::vector<vk::raii::Framebuffer> m_frameBuffers;
+		vk::raii::Semaphore m_imageAvailableSemaphore = nullptr;
+		uint32_t m_imageIndex = 0;
 
 	public:
 		Swapchain(
@@ -31,6 +33,16 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		);
 
 		~Swapchain();
+
+		virtual void beginRenderPassCommand(
+			float clearColorRed,
+			float clearColorGreen,
+			float clearColorBlue
+		) override;
+
+		virtual void endRenderPassCommand() override;
+
+		virtual void swap() override;
 
 		inline vk::Format getImageFormat() const { return m_surfaceFormat.format; }
 

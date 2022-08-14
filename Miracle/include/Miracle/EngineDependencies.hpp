@@ -47,6 +47,10 @@ namespace Miracle {
 			return *m_keyboard.get();
 		}
 
+		inline Application::Renderer& getRenderer() {
+			return m_renderer;
+		}
+
 		inline Application::TextInputService& getTextInputService() {
 			return m_textInputService;
 		}

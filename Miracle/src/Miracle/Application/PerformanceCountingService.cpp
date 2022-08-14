@@ -7,6 +7,10 @@ namespace Miracle::Application {
 		m_multimediaFramework(multimediaFramework)
 	{}
 
+	void PerformanceCountingService::incrementFrameCounter() {
+		m_frameCounter++;
+	}
+
 	void PerformanceCountingService::incrementUpdateCounter() {
 		m_updateCounter++;
 	}
@@ -21,6 +25,7 @@ namespace Miracle::Application {
 		}
 
 		m_previousCounterUpdate = currentTime;
+		m_fps = std::exchange(m_frameCounter, 0);
 		m_ups = std::exchange(m_updateCounter, 0);
 		m_callback();
 	}

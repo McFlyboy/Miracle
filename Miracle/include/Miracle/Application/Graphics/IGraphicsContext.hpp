@@ -1,11 +1,21 @@
 #pragma once
 
+#include <functional>
+
 #include <Miracle/Common/MiracleError.hpp>
 
 namespace Miracle::Application {
+	using Recording = std::function<void()>;
+
 	class IGraphicsContext {
 	public:
 		virtual ~IGraphicsContext() = default;
+
+		virtual void recordCommands(const Recording& recording) = 0;
+
+		virtual void submitRecording() = 0;
+
+		virtual void waitForDeviceIdle() = 0;
 	};
 
 	namespace GraphicsContextErrors {

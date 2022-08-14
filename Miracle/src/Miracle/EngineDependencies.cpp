@@ -47,8 +47,8 @@ namespace Miracle {
 			*reinterpret_cast<GlfwWindow*>(m_window.get()),
 			Application::RendererInitProps{
 				.swapchainInitProps = Application::SwapchainInitProps{
-					.useSrgb  = true,
-					.useVsync = true
+					.useSrgb  = false,
+					.useVsync = false
 				}
 			}
 		),

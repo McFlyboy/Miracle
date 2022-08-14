@@ -77,11 +77,94 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_frameBuffers.push_back(createFrameBuffer(imageView));
 		}
 
+		try {
+			m_imageAvailableSemaphore = m_context.getDevice().createSemaphore(
+				vk::SemaphoreCreateInfo{
+					.flags = {}
+				}
+			);
+		}
+		catch (const std::exception& e) {
+			m_logger.error(fmt::format("Failed to create Vulkan semaphore for swapchain.\n{}", e.what()));
+			throw Application::SwapchainErrors::CreationError();
+		}
+
+		auto [result, imageIndex] = m_swapchain.acquireNextImage(
+			std::numeric_limits<uint64_t>().max(),
+			*m_imageAvailableSemaphore
+		);
+
+		m_imageIndex = imageIndex;
+
 		m_logger.info("Vulkan swapchain created");
 	}
 
 	Swapchain::~Swapchain() {
 		m_logger.info("Destroying Vulkan swapchain...");
+	}
+
+	void Swapchain::beginRenderPassCommand(
+		float clearColorRed,
+		float clearColorGreen,
+		float clearColorBlue
+	) {
+		auto clearValues = std::array{
+			vk::ClearValue(
+				vk::ClearColorValue(
+					std::array{
+						clearColorRed,
+						clearColorGreen,
+						clearColorBlue,
+						1.0f
+					}
+				)
+			)
+		};
+
+		m_context.getCommandBuffer().beginRenderPass(
+			vk::RenderPassBeginInfo{
+				.renderPass      = *m_renderPass,
+				.framebuffer     = *m_frameBuffers[m_imageIndex],
+				.renderArea      = vk::Rect2D{
+					.offset = vk::Offset2D{
+						.x = 0,
+						.y = 0
+					},
+					.extent = m_imageExtent
+				},
+				.clearValueCount = static_cast<uint32_t>(clearValues.size()),
+				.pClearValues    = clearValues.data()
+			},
+			vk::SubpassContents::eInline
+		);
+	}
+
+	void Swapchain::endRenderPassCommand() {
+		m_context.getCommandBuffer().endRenderPass();
+	}
+
+	void Swapchain::swap() {
+		m_context.getDevice().waitIdle();
+
+		m_context.getPresentQueue().presentKHR(
+			vk::PresentInfoKHR{
+				.waitSemaphoreCount = 0,
+				.pWaitSemaphores    = nullptr,
+				.swapchainCount     = 1,
+				.pSwapchains        = &*m_swapchain,
+				.pImageIndices      = &m_imageIndex,
+				.pResults           = nullptr
+			}
+		);
+
+		m_context.getDevice().waitIdle();
+
+		auto [result, imageIndex] = m_swapchain.acquireNextImage(
+			std::numeric_limits<uint64_t>().max(),
+			*m_imageAvailableSemaphore
+		);
+
+		m_imageIndex = imageIndex;
 	}
 
 	uint32_t Swapchain::selectImageCount() const {

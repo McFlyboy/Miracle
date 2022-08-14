@@ -6,6 +6,16 @@ namespace Miracle::Application {
 	class ISwapchain {
 	public:
 		virtual ~ISwapchain() = default;
+
+		virtual void beginRenderPassCommand(
+			float clearColorRed,
+			float clearColorGreen,
+			float clearColorBlue
+		) = 0;
+
+		virtual void endRenderPassCommand() = 0;
+
+		virtual void swap() = 0;
 	};
 
 	struct SwapchainInitProps {

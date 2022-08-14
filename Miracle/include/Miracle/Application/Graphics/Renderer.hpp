@@ -30,5 +30,9 @@ namespace Miracle::Application {
 			IContextTarget& contextTarget,
 			const RendererInitProps& initProps
 		);
+
+		~Renderer();
+
+		void render();
 	};
 }

@@ -50,6 +50,42 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		m_logger.info("Destroying Vulkan graphics context...");
 	}
 
+	void GraphicsContext::recordCommands(const Application::Recording& recording) {
+		m_device.waitIdle();
+
+		m_commandBuffer.reset();
+		m_commandBuffer.begin(
+			vk::CommandBufferBeginInfo{
+				.flags            = {},
+				.pInheritanceInfo = {}
+			}
+		);
+
+		recording();
+
+		m_commandBuffer.end();
+	}
+
+	void GraphicsContext::submitRecording() {
+		m_device.waitIdle();
+
+		m_graphicsQueue.submit(
+			vk::SubmitInfo{
+				.waitSemaphoreCount   = 0,
+				.pWaitSemaphores      = nullptr,
+				.pWaitDstStageMask    = nullptr,
+				.commandBufferCount   = 1,
+				.pCommandBuffers      = &*m_commandBuffer,
+				.signalSemaphoreCount = 0,
+				.pSignalSemaphores    = nullptr
+			}
+		);
+	}
+
+	void GraphicsContext::waitForDeviceIdle() {
+		m_device.waitIdle();
+	}
+
 	SurfaceExtent GraphicsContext::getCurrentSurfaceExtent() const {
 		auto surfaceCapabilities = m_physicalDevice.getSurfaceCapabilitiesKHR(*m_surface);
 

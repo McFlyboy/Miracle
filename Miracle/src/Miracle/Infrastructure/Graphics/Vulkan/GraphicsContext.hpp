@@ -44,6 +44,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		~GraphicsContext();
 
+		virtual void recordCommands(const Application::Recording& recording) override;
+
+		virtual void submitRecording() override;
+
+		virtual void waitForDeviceIdle() override;
+
 		inline const IContextTarget& getTarget() const { return m_target; }
 
 		inline const vk::raii::SurfaceKHR& getSurface() const { return m_surface; }
@@ -51,6 +57,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		inline const DeviceInfo& getDeviceInfo() const { return m_deviceInfo; }
 
 		inline const vk::raii::Device& getDevice() const { return m_device; }
+
+		inline const vk::raii::Queue& getPresentQueue() const { return m_presentQueue; }
+
+		inline const vk::raii::CommandBuffer& getCommandBuffer() const { return m_commandBuffer; }
 
 		SurfaceExtent getCurrentSurfaceExtent() const;
 

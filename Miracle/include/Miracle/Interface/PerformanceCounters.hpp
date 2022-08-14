@@ -12,6 +12,12 @@ namespace Miracle {
 	public:
 		PerformanceCounters() = delete;
 
+		static inline int getFps() {
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
+
+			return App::s_currentApp->m_dependencies->getPerformanceCountingService().getFps();
+		}
+
 		static inline int getUps() {
 			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 

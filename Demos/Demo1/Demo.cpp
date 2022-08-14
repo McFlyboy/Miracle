@@ -13,7 +13,10 @@ int main() {
 			.startScript = []() {
 				PerformanceCounters::setCountersUpdatedCallback(
 					[]() {
-						Logger::info(std::string("UPS: ") + std::to_string(PerformanceCounters::getUps()));
+						Logger::info(
+							std::string("FPS: ") + std::to_string(PerformanceCounters::getFps())
+							+ std::string(" - UPS: ") + std::to_string(PerformanceCounters::getUps())
+						);
 					}
 				);
 			},
