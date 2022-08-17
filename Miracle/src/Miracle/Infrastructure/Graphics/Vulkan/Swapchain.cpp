@@ -305,6 +305,18 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			}
 		};
 
+		auto subpassDependencies = std::array{
+			vk::SubpassDependency{
+				.srcSubpass      = VK_SUBPASS_EXTERNAL,
+				.dstSubpass      = 0,
+				.srcStageMask    = vk::PipelineStageFlagBits::eColorAttachmentOutput,
+				.dstStageMask    = vk::PipelineStageFlagBits::eColorAttachmentOutput,
+				.srcAccessMask   = vk::AccessFlags(),
+				.dstAccessMask   = vk::AccessFlagBits::eColorAttachmentWrite,
+				.dependencyFlags = {}
+			}
+		};
+
 		try {
 			return m_context.getDevice().createRenderPass(
 				vk::RenderPassCreateInfo{
@@ -313,8 +325,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 					.pAttachments    = attachments.data(),
 					.subpassCount    = static_cast<uint32_t>(subpasses.size()),
 					.pSubpasses      = subpasses.data(),
-					.dependencyCount = 0,
-					.pDependencies   = nullptr
+					.dependencyCount = static_cast<uint32_t>(subpassDependencies.size()),
+					.pDependencies   = subpassDependencies.data()
 				}
 			);
 		}

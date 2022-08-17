@@ -75,7 +75,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 	void GraphicsContext::submitRecording(Application::DeviceSynchronizer waitSynchronizer) {
 		vk::Semaphore waitSemaphore = static_cast<VkSemaphore>(waitSynchronizer);
-		vk::PipelineStageFlags waitStage = vk::PipelineStageFlagBits::eAllCommands;
+		vk::PipelineStageFlags waitStage = vk::PipelineStageFlagBits::eColorAttachmentOutput;
 
 		m_device.resetFences(*m_commandExecutionFinishedFence);
 
