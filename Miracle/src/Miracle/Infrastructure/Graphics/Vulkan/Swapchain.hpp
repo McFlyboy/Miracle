@@ -18,11 +18,11 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		const vk::SurfaceFormatKHR m_surfaceFormat;
 		vk::Extent2D m_imageExtent;
 		vk::PresentModeKHR m_presentMode;
+		vk::raii::Semaphore m_nextImageReady;
 		vk::raii::SwapchainKHR m_swapchain = nullptr;
 		std::map<vk::Image, vk::raii::ImageView> m_images;
 		vk::raii::RenderPass m_renderPass = nullptr;
 		std::vector<vk::raii::Framebuffer> m_frameBuffers;
-		vk::raii::Semaphore m_imageAvailableSemaphore = nullptr;
 		uint32_t m_imageIndex = 0;
 
 	public:
@@ -34,6 +34,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		~Swapchain();
 
+		inline virtual Application::DeviceSynchronizer getNextImageReadySynchronizer() const override {
+			return *m_nextImageReady;
+		}
+
 		virtual void beginRenderPassCommand(
 			float clearColorRed,
 			float clearColorGreen,
@@ -44,8 +48,6 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		virtual void swap() override;
 
-		inline vk::Format getImageFormat() const { return m_surfaceFormat.format; }
-
 	private:
 		uint32_t selectImageCount() const;
 
@@ -55,10 +57,14 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		vk::PresentModeKHR selectPresentMode(bool useVsync) const;
 
+		vk::raii::Semaphore createSemaphore() const;
+
 		vk::raii::ImageView createImageView(const vk::Image& image) const;
 
 		vk::raii::RenderPass createRenderPass() const;
 
 		vk::raii::Framebuffer createFrameBuffer(const vk::raii::ImageView& imageView) const;
+
+		uint32_t getNextImageIndex();
 	};
 }

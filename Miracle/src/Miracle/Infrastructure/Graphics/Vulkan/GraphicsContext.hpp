@@ -34,6 +34,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::Queue m_presentQueue = nullptr;
 		vk::raii::CommandPool m_commandPool = nullptr;
 		vk::raii::CommandBuffer m_commandBuffer = nullptr;
+		vk::raii::Fence m_recordingSubmitted = nullptr;
 
 	public:
 		GraphicsContext(
@@ -46,7 +47,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		virtual void recordCommands(const Application::Recording& recording) override;
 
-		virtual void submitRecording() override;
+		virtual void submitRecording(Application::DeviceSynchronizer waitSynchronizer) override;
 
 		virtual void waitForDeviceIdle() override;
 
@@ -99,5 +100,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::CommandPool createCommandPool() const;
 
 		vk::raii::CommandBuffer createCommandBuffer() const;
+
+		vk::raii::Fence createFence(bool preSignaled) const;
 	};
 }

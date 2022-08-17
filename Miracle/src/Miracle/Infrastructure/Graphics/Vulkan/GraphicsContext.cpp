@@ -4,6 +4,7 @@
 #include <exception>
 #include <vector>
 #include <algorithm>
+#include <limits>
 
 #include <fmt/format.h>
 
@@ -42,6 +43,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		m_commandPool = createCommandPool();
 		m_commandBuffer = createCommandBuffer();
+		m_recordingSubmitted = createFence(true);
 
 		m_logger.info("Vulkan graphics context created");
 	}
@@ -51,7 +53,11 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	}
 
 	void GraphicsContext::recordCommands(const Application::Recording& recording) {
-		m_device.waitIdle();
+		auto result = m_device.waitForFences(
+			*m_recordingSubmitted,
+			true,
+			std::numeric_limits<uint64_t>::max()
+		);
 
 		m_commandBuffer.reset();
 		m_commandBuffer.begin(
@@ -66,19 +72,23 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		m_commandBuffer.end();
 	}
 
-	void GraphicsContext::submitRecording() {
-		m_device.waitIdle();
+	void GraphicsContext::submitRecording(Application::DeviceSynchronizer waitSynchronizer) {
+		vk::Semaphore waitSemaphore = static_cast<VkSemaphore>(waitSynchronizer);
+		vk::PipelineStageFlags waitStage = vk::PipelineStageFlagBits::eAllCommands;
+
+		m_device.resetFences(*m_recordingSubmitted);
 
 		m_graphicsQueue.submit(
 			vk::SubmitInfo{
-				.waitSemaphoreCount   = 0,
-				.pWaitSemaphores      = nullptr,
-				.pWaitDstStageMask    = nullptr,
+				.waitSemaphoreCount   = 1,
+				.pWaitSemaphores      = &waitSemaphore,
+				.pWaitDstStageMask    = &waitStage,
 				.commandBufferCount   = 1,
 				.pCommandBuffers      = &*m_commandBuffer,
 				.signalSemaphoreCount = 0,
 				.pSignalSemaphores    = nullptr
-			}
+			},
+			*m_recordingSubmitted
 		);
 	}
 
@@ -417,6 +427,25 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		catch (const std::exception& e) {
 			m_logger.error(
 				fmt::format("Failed to create Vulkan command buffer for context.\n{}", e.what())
+			);
+
+			throw Application::GraphicsContextErrors::CreationError();
+		}
+	}
+
+	vk::raii::Fence GraphicsContext::createFence(bool preSignaled) const {
+		try {
+			return m_device.createFence(
+				vk::FenceCreateInfo{
+					.flags = preSignaled
+						? vk::FenceCreateFlagBits::eSignaled
+						: vk::FenceCreateFlagBits()
+				}
+			);
+		}
+		catch (const std::exception& e) {
+			m_logger.error(
+				fmt::format("Failed to create Vulkan fence for context.\n{}", e.what())
 			);
 
 			throw Application::GraphicsContextErrors::CreationError();

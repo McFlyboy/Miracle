@@ -12,9 +12,13 @@ namespace Miracle::Application {
 		m_api(api),
 		m_context(m_api.createGraphicsContext(appName, m_logger, contextTarget)),
 		m_swapchain(m_api.createSwapchain(m_logger, *m_context.get(), initProps.swapchainInitProps))
-	{}
+	{
+		m_logger.info("Renderer created");
+	}
 
 	Renderer::~Renderer() {
+		m_logger.info("Destroying renderer...");
+
 		m_context->waitForDeviceIdle();
 	}
 
@@ -26,7 +30,7 @@ namespace Miracle::Application {
 			}
 		);
 
-		m_context->submitRecording();
+		m_context->submitRecording(m_swapchain->getNextImageReadySynchronizer());
 
 		m_swapchain->swap();
 	}
