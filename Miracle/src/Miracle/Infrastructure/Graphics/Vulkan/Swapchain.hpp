@@ -18,11 +18,11 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		const vk::SurfaceFormatKHR m_surfaceFormat;
 		vk::Extent2D m_imageExtent;
 		vk::PresentModeKHR m_presentMode;
-		vk::raii::Semaphore m_nextImageReady;
 		vk::raii::SwapchainKHR m_swapchain = nullptr;
 		std::map<vk::Image, vk::raii::ImageView> m_images;
 		vk::raii::RenderPass m_renderPass = nullptr;
 		std::vector<vk::raii::Framebuffer> m_frameBuffers;
+		vk::raii::Semaphore m_nextImageReady = nullptr;
 		uint32_t m_imageIndex = 0;
 
 	public:

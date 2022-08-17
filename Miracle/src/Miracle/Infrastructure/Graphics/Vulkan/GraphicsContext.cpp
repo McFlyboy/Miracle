@@ -43,7 +43,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		m_commandPool = createCommandPool();
 		m_commandBuffer = createCommandBuffer();
-		m_recordingSubmitted = createFence(true);
+		m_commandExecutionFinishedFence = createFence(true);
+		m_commandExecutionFinished = createSemaphore();
 
 		m_logger.info("Vulkan graphics context created");
 	}
@@ -54,7 +55,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 	void GraphicsContext::recordCommands(const Application::Recording& recording) {
 		auto result = m_device.waitForFences(
-			*m_recordingSubmitted,
+			*m_commandExecutionFinishedFence,
 			true,
 			std::numeric_limits<uint64_t>::max()
 		);
@@ -76,7 +77,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::Semaphore waitSemaphore = static_cast<VkSemaphore>(waitSynchronizer);
 		vk::PipelineStageFlags waitStage = vk::PipelineStageFlagBits::eAllCommands;
 
-		m_device.resetFences(*m_recordingSubmitted);
+		m_device.resetFences(*m_commandExecutionFinishedFence);
 
 		m_graphicsQueue.submit(
 			vk::SubmitInfo{
@@ -85,10 +86,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				.pWaitDstStageMask    = &waitStage,
 				.commandBufferCount   = 1,
 				.pCommandBuffers      = &*m_commandBuffer,
-				.signalSemaphoreCount = 0,
-				.pSignalSemaphores    = nullptr
+				.signalSemaphoreCount = 1,
+				.pSignalSemaphores    = &*m_commandExecutionFinished
 			},
-			*m_recordingSubmitted
+			*m_commandExecutionFinishedFence
 		);
 	}
 
@@ -448,6 +449,20 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				fmt::format("Failed to create Vulkan fence for context.\n{}", e.what())
 			);
 
+			throw Application::GraphicsContextErrors::CreationError();
+		}
+	}
+
+	vk::raii::Semaphore GraphicsContext::createSemaphore() const {
+		try {
+			return m_device.createSemaphore(
+				vk::SemaphoreCreateInfo{
+					.flags = {}
+				}
+			);
+		}
+		catch (const std::exception& e) {
+			m_logger.error(fmt::format("Failed to create Vulkan semaphore for context.\n{}", e.what()));
 			throw Application::GraphicsContextErrors::CreationError();
 		}
 	}

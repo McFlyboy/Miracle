@@ -34,7 +34,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::Queue m_presentQueue = nullptr;
 		vk::raii::CommandPool m_commandPool = nullptr;
 		vk::raii::CommandBuffer m_commandBuffer = nullptr;
-		vk::raii::Fence m_recordingSubmitted = nullptr;
+		vk::raii::Fence m_commandExecutionFinishedFence = nullptr;
+		vk::raii::Semaphore m_commandExecutionFinished = nullptr;
 
 	public:
 		GraphicsContext(
@@ -62,6 +63,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		inline const vk::raii::Queue& getPresentQueue() const { return m_presentQueue; }
 
 		inline const vk::raii::CommandBuffer& getCommandBuffer() const { return m_commandBuffer; }
+
+		inline const vk::raii::Semaphore& getCommandExecutionFinished() const {
+			return m_commandExecutionFinished;
+		}
 
 		SurfaceExtent getCurrentSurfaceExtent() const;
 
@@ -102,5 +107,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::CommandBuffer createCommandBuffer() const;
 
 		vk::raii::Fence createFence(bool preSignaled) const;
+
+		vk::raii::Semaphore createSemaphore() const;
 	};
 }

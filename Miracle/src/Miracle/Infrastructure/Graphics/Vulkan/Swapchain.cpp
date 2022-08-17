@@ -18,8 +18,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		m_preferredImageCount(selectImageCount()),
 		m_surfaceFormat(selectSurfaceFormat(initProps.useSrgb)),
 		m_imageExtent(selectExtent()),
-		m_presentMode(selectPresentMode(initProps.useVsync)),
-		m_nextImageReady(createSemaphore())
+		m_presentMode(selectPresentMode(initProps.useVsync))
 	{
 		auto& queueFamilyIndices = m_context.getDeviceInfo().queueFamilyIndices;
 
@@ -78,6 +77,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_frameBuffers.push_back(createFrameBuffer(imageView));
 		}
 
+		m_nextImageReady = createSemaphore();
 		m_imageIndex = getNextImageIndex();
 
 		m_logger.info("Vulkan swapchain created");
@@ -128,12 +128,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	}
 
 	void Swapchain::swap() {
-		m_context.getDevice().waitIdle();
-
 		auto result = m_context.getPresentQueue().presentKHR(
 			vk::PresentInfoKHR{
-				.waitSemaphoreCount = 0,
-				.pWaitSemaphores    = nullptr,
+				.waitSemaphoreCount = 1,
+				.pWaitSemaphores    = &*m_context.getCommandExecutionFinished(),
 				.swapchainCount     = 1,
 				.pSwapchains        = &*m_swapchain,
 				.pImageIndices      = &m_imageIndex,
