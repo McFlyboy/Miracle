@@ -2,7 +2,6 @@
 
 #include <cstring>
 #include <exception>
-#include <vector>
 #include <algorithm>
 #include <limits>
 
@@ -42,9 +41,17 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		);
 
 		m_commandPool = createCommandPool();
-		m_commandBuffer = createCommandBuffer();
-		m_commandExecutionFinishedFence = createFence(true);
-		m_commandExecutionFinished = createSemaphore();
+		m_commandBuffers = createCommandBuffers(2);
+
+		m_commandExecutionWaitSemaphores.reserve(m_commandBuffers.size());
+		m_commandExecutionSignalSemaphores.reserve(m_commandBuffers.size());
+		m_commandExecutionSignalFences.reserve(m_commandBuffers.size());
+
+		for (auto& commandBuffer : m_commandBuffers) {
+			m_commandExecutionWaitSemaphores.push_back(createSemaphore());
+			m_commandExecutionSignalSemaphores.push_back(createSemaphore());
+			m_commandExecutionSignalFences.push_back(createFence(true));
+		}
 
 		m_logger.info("Vulkan graphics context created");
 	}
@@ -55,13 +62,13 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 	void GraphicsContext::recordCommands(const Application::Recording& recording) {
 		auto result = m_device.waitForFences(
-			*m_commandExecutionFinishedFence,
+			*m_commandExecutionSignalFences[m_currentCommandBufferIndex],
 			true,
 			std::numeric_limits<uint64_t>::max()
 		);
 
-		m_commandBuffer.reset();
-		m_commandBuffer.begin(
+		m_commandBuffers[m_currentCommandBufferIndex].reset();
+		m_commandBuffers[m_currentCommandBufferIndex].begin(
 			vk::CommandBufferBeginInfo{
 				.flags            = {},
 				.pInheritanceInfo = {}
@@ -70,26 +77,25 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		recording();
 
-		m_commandBuffer.end();
+		m_commandBuffers[m_currentCommandBufferIndex].end();
 	}
 
-	void GraphicsContext::submitRecording(Application::DeviceSynchronizer waitSynchronizer) {
-		vk::Semaphore waitSemaphore = static_cast<VkSemaphore>(waitSynchronizer);
+	void GraphicsContext::submitRecording() {
 		vk::PipelineStageFlags waitStage = vk::PipelineStageFlagBits::eColorAttachmentOutput;
 
-		m_device.resetFences(*m_commandExecutionFinishedFence);
+		m_device.resetFences(*m_commandExecutionSignalFences[m_currentCommandBufferIndex]);
 
 		m_graphicsQueue.submit(
 			vk::SubmitInfo{
 				.waitSemaphoreCount   = 1,
-				.pWaitSemaphores      = &waitSemaphore,
+				.pWaitSemaphores      = &*m_commandExecutionWaitSemaphores[m_currentCommandBufferIndex],
 				.pWaitDstStageMask    = &waitStage,
 				.commandBufferCount   = 1,
-				.pCommandBuffers      = &*m_commandBuffer,
+				.pCommandBuffers      = &*m_commandBuffers[m_currentCommandBufferIndex],
 				.signalSemaphoreCount = 1,
-				.pSignalSemaphores    = &*m_commandExecutionFinished
+				.pSignalSemaphores    = &*m_commandExecutionSignalSemaphores[m_currentCommandBufferIndex]
 			},
-			*m_commandExecutionFinishedFence
+			*m_commandExecutionSignalFences[m_currentCommandBufferIndex]
 		);
 	}
 
@@ -413,21 +419,20 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 	}
 
-	vk::raii::CommandBuffer GraphicsContext::createCommandBuffer() const {
+	vk::raii::CommandBuffers GraphicsContext::createCommandBuffers(size_t count) const {
 		try {
-			return std::move(
-				m_device.allocateCommandBuffers(
-					vk::CommandBufferAllocateInfo{
-						.commandPool        = *m_commandPool,
-						.level              = vk::CommandBufferLevel::ePrimary,
-						.commandBufferCount = 1
-					}
-				).front()
+			return vk::raii::CommandBuffers(
+				m_device,
+				vk::CommandBufferAllocateInfo{
+					.commandPool        = *m_commandPool,
+					.level              = vk::CommandBufferLevel::ePrimary,
+					.commandBufferCount = static_cast<uint32_t>(count)
+				}
 			);
 		}
 		catch (const std::exception& e) {
 			m_logger.error(
-				fmt::format("Failed to create Vulkan command buffer for context.\n{}", e.what())
+				fmt::format("Failed to create Vulkan command buffers for context.\n{}", e.what())
 			);
 
 			throw Application::GraphicsContextErrors::CreationError();

@@ -77,7 +77,6 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_frameBuffers.push_back(createFrameBuffer(imageView));
 		}
 
-		m_nextImageReady = createSemaphore();
 		m_imageIndex = getNextImageIndex();
 
 		m_logger.info("Vulkan swapchain created");
@@ -131,13 +130,15 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		auto result = m_context.getPresentQueue().presentKHR(
 			vk::PresentInfoKHR{
 				.waitSemaphoreCount = 1,
-				.pWaitSemaphores    = &*m_context.getCommandExecutionFinished(),
+				.pWaitSemaphores    = &*m_context.getCommandExecutionSignalSemaphore(),
 				.swapchainCount     = 1,
 				.pSwapchains        = &*m_swapchain,
 				.pImageIndices      = &m_imageIndex,
 				.pResults           = nullptr
 			}
 		);
+
+		m_context.nextCommandBuffer();
 
 		m_imageIndex = getNextImageIndex();
 	}
@@ -216,20 +217,6 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				? vk::PresentModeKHR::eMailbox
 				: vk::PresentModeKHR::eFifo
 			: vk::PresentModeKHR::eImmediate;
-	}
-
-	vk::raii::Semaphore Swapchain::createSemaphore() const {
-		try {
-			return m_context.getDevice().createSemaphore(
-				vk::SemaphoreCreateInfo{
-					.flags = {}
-				}
-			);
-		}
-		catch (const std::exception& e) {
-			m_logger.error(fmt::format("Failed to create Vulkan semaphore for swapchain.\n{}", e.what()));
-			throw Application::SwapchainErrors::CreationError();
-		}
 	}
 
 	vk::raii::ImageView Swapchain::createImageView(const vk::Image& image) const {
@@ -365,7 +352,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	uint32_t Swapchain::getNextImageIndex() {
 		auto [result, imageIndex] = m_swapchain.acquireNextImage(
 			std::numeric_limits<uint64_t>().max(),
-			*m_nextImageReady
+			*m_context.getCommandExecutionWaitSemaphore()
 		);
 
 		return imageIndex;

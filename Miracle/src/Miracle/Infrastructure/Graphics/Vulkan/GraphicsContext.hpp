@@ -4,6 +4,7 @@
 #include <span>
 #include <utility>
 #include <array>
+#include <vector>
 
 #include <Miracle/Definitions.hpp>
 #include <Miracle/Application/Graphics/IGraphicsContext.hpp>
@@ -33,10 +34,11 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::Queue m_graphicsQueue = nullptr;
 		vk::raii::Queue m_presentQueue = nullptr;
 		vk::raii::CommandPool m_commandPool = nullptr;
-		vk::raii::CommandBuffer m_commandBuffer = nullptr;
-		vk::raii::Fence m_commandExecutionFinishedFence = nullptr;
-		vk::raii::Semaphore m_commandExecutionFinished = nullptr;
-
+		vk::raii::CommandBuffers m_commandBuffers = nullptr;
+		std::vector<vk::raii::Semaphore> m_commandExecutionWaitSemaphores;
+		std::vector<vk::raii::Semaphore> m_commandExecutionSignalSemaphores;
+		std::vector<vk::raii::Fence> m_commandExecutionSignalFences;
+		size_t m_currentCommandBufferIndex = 0;
 	public:
 		GraphicsContext(
 			const std::string_view& appName,
@@ -48,7 +50,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		virtual void recordCommands(const Application::Recording& recording) override;
 
-		virtual void submitRecording(Application::DeviceSynchronizer waitSynchronizer) override;
+		virtual void submitRecording() override;
 
 		virtual void waitForDeviceIdle() override;
 
@@ -62,16 +64,26 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		inline const vk::raii::Queue& getPresentQueue() const { return m_presentQueue; }
 
-		inline const vk::raii::CommandBuffer& getCommandBuffer() const { return m_commandBuffer; }
+		inline const vk::raii::CommandBuffer& getCommandBuffer() const {
+			return m_commandBuffers[m_currentCommandBufferIndex];
+		}
 
-		inline const vk::raii::Semaphore& getCommandExecutionFinished() const {
-			return m_commandExecutionFinished;
+		inline const vk::raii::Semaphore& getCommandExecutionWaitSemaphore() const {
+			return m_commandExecutionWaitSemaphores[m_currentCommandBufferIndex];
+		}
+
+		inline const vk::raii::Semaphore& getCommandExecutionSignalSemaphore() const {
+			return m_commandExecutionSignalSemaphores[m_currentCommandBufferIndex];
 		}
 
 		SurfaceExtent getCurrentSurfaceExtent() const;
 
 		inline vk::SurfaceTransformFlagBitsKHR getCurrentSurfaceTransformation() const {
 			return m_physicalDevice.getSurfaceCapabilitiesKHR(*m_surface).currentTransform;
+		}
+
+		inline void nextCommandBuffer() {
+			++m_currentCommandBufferIndex %= m_commandBuffers.size();
 		}
 
 	private:
@@ -104,7 +116,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		vk::raii::CommandPool createCommandPool() const;
 
-		vk::raii::CommandBuffer createCommandBuffer() const;
+		vk::raii::CommandBuffers createCommandBuffers(size_t count) const;
 
 		vk::raii::Fence createFence(bool preSignaled) const;
 

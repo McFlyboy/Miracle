@@ -22,7 +22,6 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		std::map<vk::Image, vk::raii::ImageView> m_images;
 		vk::raii::RenderPass m_renderPass = nullptr;
 		std::vector<vk::raii::Framebuffer> m_frameBuffers;
-		vk::raii::Semaphore m_nextImageReady = nullptr;
 		uint32_t m_imageIndex = 0;
 
 	public:
@@ -33,10 +32,6 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		);
 
 		~Swapchain();
-
-		inline virtual Application::DeviceSynchronizer getNextImageReadySynchronizer() const override {
-			return *m_nextImageReady;
-		}
 
 		virtual void beginRenderPassCommand(
 			float clearColorRed,
@@ -56,8 +51,6 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::Extent2D selectExtent() const;
 
 		vk::PresentModeKHR selectPresentMode(bool useVsync) const;
-
-		vk::raii::Semaphore createSemaphore() const;
 
 		vk::raii::ImageView createImageView(const vk::Image& image) const;
 

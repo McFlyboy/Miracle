@@ -3,7 +3,6 @@
 #include <functional>
 
 #include <Miracle/Common/MiracleError.hpp>
-#include "DeviceSynchronizer.hpp"
 
 namespace Miracle::Application {
 	using Recording = std::function<void()>;
@@ -14,7 +13,7 @@ namespace Miracle::Application {
 
 		virtual void recordCommands(const Recording& recording) = 0;
 
-		virtual void submitRecording(DeviceSynchronizer waitSynchronizer) = 0;
+		virtual void submitRecording() = 0;
 
 		virtual void waitForDeviceIdle() = 0;
 	};

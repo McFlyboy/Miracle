@@ -1,14 +1,11 @@
 #pragma once
 
 #include <Miracle/Common/MiracleError.hpp>
-#include "DeviceSynchronizer.hpp"
 
 namespace Miracle::Application {
 	class ISwapchain {
 	public:
 		virtual ~ISwapchain() = default;
-
-		inline virtual DeviceSynchronizer getNextImageReadySynchronizer() const = 0;
 
 		virtual void beginRenderPassCommand(
 			float clearColorRed,

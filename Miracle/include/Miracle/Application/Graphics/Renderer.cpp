@@ -30,7 +30,7 @@ namespace Miracle::Application {
 			}
 		);
 
-		m_context->submitRecording(m_swapchain->getNextImageReadySynchronizer());
+		m_context->submitRecording();
 
 		m_swapchain->swap();
 	}
