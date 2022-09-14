@@ -8,5 +8,6 @@ namespace Miracle {
 		std::optional<std::u8string> title = std::nullopt;
 		int width = 640;
 		int height = 480;
+		bool resizable = false;
 	};
 }

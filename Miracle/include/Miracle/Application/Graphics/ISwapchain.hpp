@@ -16,6 +16,8 @@ namespace Miracle::Application {
 		virtual void endRenderPassCommand() = 0;
 
 		virtual void swap() = 0;
+
+		virtual void recreate() = 0;
 	};
 
 	struct SwapchainInitProps {

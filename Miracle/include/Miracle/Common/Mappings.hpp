@@ -15,9 +15,10 @@ namespace Miracle {
 			const std::u8string_view& defaultTitle
 		) {
 			return Application::WindowInitProps{
-				.title  = windowConfig.title.has_value() ? windowConfig.title.value() : defaultTitle,
-				.width  = windowConfig.width,
-				.height = windowConfig.height
+				.title     = windowConfig.title.has_value() ? windowConfig.title.value() : defaultTitle,
+				.width     = windowConfig.width,
+				.height    = windowConfig.height,
+				.resizable = windowConfig.resizable
 			};
 		}
 	};

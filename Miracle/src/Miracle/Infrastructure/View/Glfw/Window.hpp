@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <utility>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -22,6 +23,7 @@ namespace Miracle::Infrastructure::View::Glfw {
 
 		GLFWwindow* m_window = nullptr;
 		std::u8string m_title;
+		bool m_sizeChanged = false;
 
 	public:
 		Window(
@@ -37,6 +39,8 @@ namespace Miracle::Infrastructure::View::Glfw {
 
 		inline Application::EventDispatcher& getEventDispatcher() const { return m_eventDispatcher; }
 
+		inline virtual bool stateChanged() override { return std::exchange(m_sizeChanged, false); }
+
 		virtual void show() override;
 
 		virtual bool shouldClose() const override;
@@ -44,6 +48,10 @@ namespace Miracle::Infrastructure::View::Glfw {
 		virtual std::u8string_view getTitle() const override;
 
 		virtual void setTitle(const std::u8string_view& title) override;
+
+		virtual bool isResizable() const override;
+
+		virtual void setResizable(bool resizable) override;
 
 		virtual std::span<const char*> getRequiredVulkanExtensionNames() const override;
 

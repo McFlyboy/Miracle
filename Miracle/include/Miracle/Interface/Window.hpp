@@ -20,5 +20,17 @@ namespace Miracle {
 
 			App::s_currentApp->m_dependencies->getWindow().setTitle(title);
 		}
+
+		static inline bool isResizable() {
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
+
+			return App::s_currentApp->m_dependencies->getWindow().isResizable();
+		}
+
+		static inline void setResizable(bool resizable) {
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
+
+			App::s_currentApp->m_dependencies->getWindow().setResizable(resizable);
+		}
 	};
 }

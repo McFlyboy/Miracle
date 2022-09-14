@@ -18,6 +18,7 @@ namespace Miracle::Application {
 	private:
 		ILogger& m_logger;
 		IGraphicsApi& m_api;
+		IContextTarget& m_contextTarget;
 
 		std::unique_ptr<IGraphicsContext> m_context;
 		std::unique_ptr<ISwapchain> m_swapchain;

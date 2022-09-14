@@ -43,6 +43,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		virtual void swap() override;
 
+		virtual void recreate() override;
+
 	private:
 		uint32_t selectImageCount() const;
 
@@ -51,6 +53,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::Extent2D selectExtent() const;
 
 		vk::PresentModeKHR selectPresentMode(bool useVsync) const;
+
+		vk::raii::SwapchainKHR createSwapchain() const;
 
 		vk::raii::ImageView createImageView(const vk::Image& image) const;
 

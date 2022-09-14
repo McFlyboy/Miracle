@@ -20,48 +20,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		m_imageExtent(selectExtent()),
 		m_presentMode(selectPresentMode(initProps.useVsync))
 	{
-		auto& queueFamilyIndices = m_context.getDeviceInfo().queueFamilyIndices;
-
-		bool sharingModeEnabled = queueFamilyIndices.graphicsFamilyIndex.value()
-			!= queueFamilyIndices.presentFamilyIndex.value();
-
-		auto queueFamilyIndexArray = std::array{
-			queueFamilyIndices.graphicsFamilyIndex.value(),
-			queueFamilyIndices.presentFamilyIndex.value()
-		};
-
-		try {
-			m_swapchain = m_context.getDevice().createSwapchainKHR(
-				vk::SwapchainCreateInfoKHR{
-					.flags                 = {},
-					.surface               = *m_context.getSurface(),
-					.minImageCount         = m_preferredImageCount,
-					.imageFormat           = m_surfaceFormat.format,
-					.imageColorSpace       = m_surfaceFormat.colorSpace,
-					.imageExtent           = m_imageExtent,
-					.imageArrayLayers      = 1,
-					.imageUsage            = vk::ImageUsageFlagBits::eColorAttachment,
-					.imageSharingMode      = sharingModeEnabled
-						? vk::SharingMode::eConcurrent
-						: vk::SharingMode::eExclusive,
-					.queueFamilyIndexCount = sharingModeEnabled
-						? static_cast<uint32_t>(queueFamilyIndexArray.size())
-						: 0,
-					.pQueueFamilyIndices   = sharingModeEnabled
-						? queueFamilyIndexArray.data()
-						: nullptr,
-					.preTransform          = m_context.getCurrentSurfaceTransformation(),
-					.compositeAlpha        = vk::CompositeAlphaFlagBitsKHR::eOpaque,
-					.presentMode           = m_presentMode,
-					.clipped               = true,
-					.oldSwapchain          = nullptr
-				}
-			);
-		}
-		catch (const std::exception& e) {
-			m_logger.error(fmt::format("Failed to create Vulkan swapchain.\n{}", e.what()));
-			throw Application::SwapchainErrors::CreationError();
-		}
+		m_swapchain = createSwapchain();
 
 		auto images = m_swapchain.getImages();
 
@@ -143,6 +102,29 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		m_imageIndex = getNextImageIndex();
 	}
 
+	void Swapchain::recreate() {
+		m_frameBuffers.clear();
+		m_images.clear();
+		m_swapchain.clear();
+
+		m_imageExtent = selectExtent();
+		m_swapchain = createSwapchain();
+
+		auto images = m_swapchain.getImages();
+
+		for (auto& image : images) {
+			m_images.emplace(image, createImageView(image));
+		}
+
+		for (auto& [image, imageView] : m_images) {
+			m_frameBuffers.push_back(createFrameBuffer(imageView));
+		}
+
+		m_imageIndex = getNextImageIndex();
+
+		m_logger.info("Vulkan swapchain re-created");
+	}
+
 	uint32_t Swapchain::selectImageCount() const {
 		auto& swapchainSupport = m_context.getDeviceInfo().extensionSupport.swapchainSupport.value();
 
@@ -217,6 +199,51 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				? vk::PresentModeKHR::eMailbox
 				: vk::PresentModeKHR::eFifo
 			: vk::PresentModeKHR::eImmediate;
+	}
+
+	vk::raii::SwapchainKHR Swapchain::createSwapchain() const {
+		auto& queueFamilyIndices = m_context.getDeviceInfo().queueFamilyIndices;
+
+		bool sharingModeEnabled = queueFamilyIndices.graphicsFamilyIndex.value()
+			!= queueFamilyIndices.presentFamilyIndex.value();
+
+		auto queueFamilyIndexArray = std::array{
+			queueFamilyIndices.graphicsFamilyIndex.value(),
+			queueFamilyIndices.presentFamilyIndex.value()
+		};
+
+		try {
+			return m_context.getDevice().createSwapchainKHR(
+				vk::SwapchainCreateInfoKHR{
+					.flags = {},
+					.surface = *m_context.getSurface(),
+					.minImageCount = m_preferredImageCount,
+					.imageFormat = m_surfaceFormat.format,
+					.imageColorSpace = m_surfaceFormat.colorSpace,
+					.imageExtent = m_imageExtent,
+					.imageArrayLayers = 1,
+					.imageUsage = vk::ImageUsageFlagBits::eColorAttachment,
+					.imageSharingMode = sharingModeEnabled
+						? vk::SharingMode::eConcurrent
+						: vk::SharingMode::eExclusive,
+					.queueFamilyIndexCount = sharingModeEnabled
+						? static_cast<uint32_t>(queueFamilyIndexArray.size())
+						: 0,
+					.pQueueFamilyIndices = sharingModeEnabled
+						? queueFamilyIndexArray.data()
+						: nullptr,
+					.preTransform = m_context.getCurrentSurfaceTransformation(),
+					.compositeAlpha = vk::CompositeAlphaFlagBitsKHR::eOpaque,
+					.presentMode = m_presentMode,
+					.clipped = true,
+					.oldSwapchain = nullptr
+				}
+			);
+		}
+		catch (const std::exception& e) {
+			m_logger.error(fmt::format("Failed to create Vulkan swapchain.\n{}", e.what()));
+			throw Application::SwapchainErrors::CreationError();
+		}
 	}
 
 	vk::raii::ImageView Swapchain::createImageView(const vk::Image& image) const {

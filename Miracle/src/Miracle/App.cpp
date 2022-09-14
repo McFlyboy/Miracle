@@ -84,26 +84,33 @@ namespace Miracle {
 
 		m_running = true;
 
-		m_startScript();
+		try {
+			m_startScript();
 
-		while (m_running) {
-			keyboard.setAllKeyStatesAsDated();
-			framework.processEvents();
+			while (m_running) {
+				keyboard.setAllKeyStatesAsDated();
+				framework.processEvents();
 
-			if (window.shouldClose()) {
-				m_running = false;
-				continue;
+				if (window.shouldClose()) {
+					m_running = false;
+					continue;
+				}
+
+				deltaTimeService.updateDeltaTime();
+
+				m_updateScript();
+				performanceCountingService.incrementUpdateCounter();
+
+				renderer.render();
+				performanceCountingService.incrementFrameCounter();
+
+				performanceCountingService.updateCounters();
 			}
-
-			deltaTimeService.updateDeltaTime();
-
-			m_updateScript();
-			performanceCountingService.incrementUpdateCounter();
-
-			renderer.render();
-			performanceCountingService.incrementFrameCounter();
-
-			performanceCountingService.updateCounters();
+		}
+		catch (const MiracleError& e) {
+			showError(e);
+			m_exitCode = static_cast<int>(e.getErrorCode());
+			m_running = false;
 		}
 	}
 

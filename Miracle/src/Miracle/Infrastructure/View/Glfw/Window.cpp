@@ -16,7 +16,7 @@ namespace Miracle::Infrastructure::View::Glfw {
 		m_title(initProps.title)
 	{
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, false);
+		glfwWindowHint(GLFW_RESIZABLE, initProps.resizable);
 		glfwWindowHint(GLFW_VISIBLE, false);
 
 		m_window = glfwCreateWindow(
@@ -34,6 +34,14 @@ namespace Miracle::Infrastructure::View::Glfw {
 		}
 
 		glfwSetWindowUserPointer(m_window, this);
+
+		glfwSetWindowSizeCallback(
+			m_window,
+			[](GLFWwindow* window, int width, int height) {
+				reinterpret_cast<Window*>(glfwGetWindowUserPointer(window))
+					->m_sizeChanged = true;
+			}
+		);
 
 		auto monitorVideoMode = multimediaFramework.getGlfwCurrentVideoModeForPrimaryMonitor();
 
@@ -69,6 +77,14 @@ namespace Miracle::Infrastructure::View::Glfw {
 	void Window::setTitle(const std::u8string_view& title) {
 		m_title = title;
 		glfwSetWindowTitle(m_window, reinterpret_cast<const char*>(m_title.c_str()));
+	}
+
+	bool Window::isResizable() const {
+		return glfwGetWindowAttrib(m_window, GLFW_RESIZABLE);
+	}
+
+	void Window::setResizable(bool resizable) {
+		glfwSetWindowAttrib(m_window, GLFW_RESIZABLE, resizable);
 	}
 
 	std::span<const char*> Window::getRequiredVulkanExtensionNames() const {

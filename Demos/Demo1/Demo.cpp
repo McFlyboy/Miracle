@@ -24,6 +24,10 @@ int main() {
 				if (Keyboard::isKeyPressed(KeyboardKey::keyEscape)) {
 					CurrentApp::close();
 				}
+
+				if (Keyboard::isKeyPressed(KeyboardKey::keyR)) {
+					Window::setResizable(!Window::isResizable());
+				}
 			}
 		}
 	);
