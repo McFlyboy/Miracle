@@ -6,8 +6,7 @@
 #include "Vulkan.hpp"
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
-	class IContextTarget : public Application::IContextTarget
-	{
+	class IContextTarget : public Application::IContextTarget {
 	public:
 		virtual ~IContextTarget() = default;
 
