@@ -35,7 +35,7 @@ namespace Miracle::Infrastructure::View::Glfw {
 
 		glfwSetWindowUserPointer(m_window, this);
 
-		glfwSetWindowSizeCallback(
+		glfwSetFramebufferSizeCallback(
 			m_window,
 			[](GLFWwindow* window, int width, int height) {
 				reinterpret_cast<Window*>(glfwGetWindowUserPointer(window))
