@@ -97,6 +97,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			}
 		);
 
+		if (result == vk::Result::eSuboptimalKHR) {
+			m_logger.warning("Swapped Vulkan swapchain in suboptimal state");
+		}
+
 		m_context.nextCommandBuffer();
 
 		m_imageIndex = getNextImageIndex();
@@ -382,6 +386,23 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			*m_context.getCommandExecutionWaitSemaphore()
 		);
 
+		switch (result) {
+		case vk::Result::eTimeout:
+			m_logger.warning("Timed out on acquiring next Vulkan swapchain image");
+			break;
+
+		case vk::Result::eNotReady:
+			m_logger.warning("No Vulkan image in swapchain was ready for use");
+			break;
+
+		case vk::Result::eSuboptimalKHR:
+			m_logger.warning("Acquired Vulkan swapchain in suboptimal state");
+			break;
+
+		default:
+			break;
+		}		 
+		
 		return imageIndex;
 	}
 }

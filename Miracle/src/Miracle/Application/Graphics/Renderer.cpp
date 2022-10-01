@@ -1,4 +1,4 @@
-#include "Renderer.hpp"
+#include <Miracle/Application/Graphics/Renderer.hpp>
 
 namespace Miracle::Application {
 	Renderer::Renderer(
