@@ -16,8 +16,7 @@ namespace Miracle {
 		) {
 			return Application::WindowInitProps{
 				.title     = windowConfig.title.has_value() ? windowConfig.title.value() : defaultTitle,
-				.width     = windowConfig.width,
-				.height    = windowConfig.height,
+				.size      = windowConfig.size,
 				.resizable = windowConfig.resizable
 			};
 		}

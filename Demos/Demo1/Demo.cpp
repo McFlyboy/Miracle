@@ -7,15 +7,17 @@ int main() {
 		"Demo 1",
 		AppInitProps{
 			.windowConfig = WindowConfig{
-				.width  = 800,
-				.height = 600
+				.size = WindowSize{
+					.width  = 800,
+					.height = 600
+				},
 			},
 			.startScript = []() {
 				PerformanceCounters::setCountersUpdatedCallback(
 					[]() {
 						Logger::info(
 							std::string("FPS: ") + std::to_string(PerformanceCounters::getFps())
-							+ std::string(" - UPS: ") + std::to_string(PerformanceCounters::getUps())
+								+ " - UPS: " + std::to_string(PerformanceCounters::getUps())
 						);
 					}
 				);

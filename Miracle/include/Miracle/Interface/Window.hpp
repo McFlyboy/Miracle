@@ -3,6 +3,7 @@
 #include <string_view>
 
 #include <Miracle/App.hpp>
+#include <Miracle/Common/Models/WindowSize.hpp>
 
 namespace Miracle {
 	class Window {
@@ -31,6 +32,18 @@ namespace Miracle {
 			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			App::s_currentApp->m_dependencies->getWindow().setResizable(resizable);
+		}
+
+		static inline WindowSize getSize() {
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
+
+			return App::s_currentApp->m_dependencies->getWindow().getSize();
+		}
+
+		static inline void setSize(WindowSize size) {
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
+
+			App::s_currentApp->m_dependencies->getWindow().setSize(size);
 		}
 	};
 }

@@ -6,6 +6,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <Miracle/Common/Models/WindowSize.hpp>
 #include <Miracle/Application/IWindow.hpp>
 #include <Miracle/Application/ILogger.hpp>
 #include <Miracle/Application/EventDispatcher.hpp>
@@ -23,7 +24,9 @@ namespace Miracle::Infrastructure::View::Glfw {
 
 		GLFWwindow* m_window = nullptr;
 		std::u8string m_title;
+		WindowSize m_sizeInPixels = {};
 		bool m_sizeChanged = false;
+		bool m_iconified = false;
 
 	public:
 		Window(
@@ -39,7 +42,9 @@ namespace Miracle::Infrastructure::View::Glfw {
 
 		inline Application::EventDispatcher& getEventDispatcher() const { return m_eventDispatcher; }
 
-		inline virtual bool stateChanged() override { return std::exchange(m_sizeChanged, false); }
+		inline virtual bool isSizeChanged() override { return std::exchange(m_sizeChanged, false); }
+
+		virtual bool isCurrentlyPresentable() const override;
 
 		virtual void show() override;
 
@@ -52,6 +57,10 @@ namespace Miracle::Infrastructure::View::Glfw {
 		virtual bool isResizable() const override;
 
 		virtual void setResizable(bool resizable) override;
+
+		virtual WindowSize getSize() const override;
+
+		virtual void setSize(WindowSize size) override;
 
 		virtual std::span<const char*> getRequiredVulkanExtensionNames() const override;
 

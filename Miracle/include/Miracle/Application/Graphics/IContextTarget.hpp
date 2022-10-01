@@ -5,6 +5,8 @@ namespace Miracle::Application {
 	public:
 		virtual ~IContextTarget() = default;
 
-		inline virtual bool stateChanged() = 0;
+		inline virtual bool isSizeChanged() = 0;
+
+		virtual bool isCurrentlyPresentable() const = 0;
 	};
 }

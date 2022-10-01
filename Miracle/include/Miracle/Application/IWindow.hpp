@@ -3,6 +3,7 @@
 #include <string_view>
 
 #include <Miracle/Common/MiracleError.hpp>
+#include <Miracle/Common/Models/WindowSize.hpp>
 
 namespace Miracle::Application {
 	class IWindow {
@@ -20,12 +21,15 @@ namespace Miracle::Application {
 		virtual bool isResizable() const = 0;
 
 		virtual void setResizable(bool resizable) = 0;
+
+		virtual WindowSize getSize() const = 0;
+
+		virtual void setSize(WindowSize size) = 0;
 	};
 
 	struct WindowInitProps {
 		std::u8string_view title;
-		int width;
-		int height;
+		WindowSize size;
 		bool resizable;
 	};
 

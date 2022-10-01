@@ -24,7 +24,9 @@ namespace Miracle::Application {
 	}
 
 	void Renderer::render() {
-		if (m_contextTarget.stateChanged()) {
+		if (!m_contextTarget.isCurrentlyPresentable()) [[unlikely]] return;
+
+		if (m_contextTarget.isSizeChanged()) [[unlikely]] {
 			m_context->waitForDeviceIdle();
 			m_swapchain->recreate();
 		}

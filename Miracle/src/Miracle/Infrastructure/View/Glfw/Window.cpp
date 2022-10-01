@@ -20,8 +20,8 @@ namespace Miracle::Infrastructure::View::Glfw {
 		glfwWindowHint(GLFW_VISIBLE, false);
 
 		m_window = glfwCreateWindow(
-			initProps.width,
-			initProps.height,
+			initProps.size.width,
+			initProps.size.height,
 			reinterpret_cast<const char*>(m_title.c_str()),
 			nullptr,
 			nullptr
@@ -33,13 +33,25 @@ namespace Miracle::Infrastructure::View::Glfw {
 			throw Application::WindowErrors::CreationError();
 		}
 
+		glfwGetFramebufferSize(m_window, &m_sizeInPixels.width, &m_sizeInPixels.height);
+
 		glfwSetWindowUserPointer(m_window, this);
 
 		glfwSetFramebufferSizeCallback(
 			m_window,
 			[](GLFWwindow* window, int width, int height) {
+				auto _this = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+				_this->m_sizeInPixels.width = width;
+				_this->m_sizeInPixels.height = height;
+				_this->m_sizeChanged = true;
+			}
+		);
+
+		glfwSetWindowIconifyCallback(
+			m_window,
+			[](GLFWwindow* window, int iconified) {
 				reinterpret_cast<Window*>(glfwGetWindowUserPointer(window))
-					->m_sizeChanged = true;
+					->m_iconified = iconified;
 			}
 		);
 
@@ -47,8 +59,8 @@ namespace Miracle::Infrastructure::View::Glfw {
 
 		glfwSetWindowPos(
 			m_window,
-			(monitorVideoMode->width - initProps.width) / 2,
-			(monitorVideoMode->height - initProps.height) / 2
+			(monitorVideoMode->width - initProps.size.width) / 2,
+			(monitorVideoMode->height - initProps.size.height) / 2
 		);
 
 		m_logger.info("Application window created");
@@ -85,6 +97,24 @@ namespace Miracle::Infrastructure::View::Glfw {
 
 	void Window::setResizable(bool resizable) {
 		glfwSetWindowAttrib(m_window, GLFW_RESIZABLE, resizable);
+	}
+
+	WindowSize Window::getSize() const {
+		WindowSize size = {};
+
+		glfwGetWindowSize(m_window, &size.width, &size.height);
+
+		return size;
+	}
+
+	void Window::setSize(WindowSize size) {
+		glfwSetWindowSize(m_window, size.width, size.height);
+	}
+
+	bool Window::isCurrentlyPresentable() const {
+		return !m_iconified
+			&& m_sizeInPixels.width != 0
+			&& m_sizeInPixels.height != 0;
 	}
 
 	std::span<const char*> Window::getRequiredVulkanExtensionNames() const {
