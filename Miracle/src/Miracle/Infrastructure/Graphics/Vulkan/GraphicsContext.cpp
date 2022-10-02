@@ -67,7 +67,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			std::numeric_limits<uint64_t>::max()
 		);
 
-		if (result == vk::Result::eTimeout) {
+		if (result == vk::Result::eTimeout) [[unlikely]] {
 			m_logger.warning("Timed out on waiting for Vulkan fence");
 		}
 

@@ -97,7 +97,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			}
 		);
 
-		if (result == vk::Result::eSuboptimalKHR) {
+		if (result == vk::Result::eSuboptimalKHR) [[unlikely]] {
 			m_logger.warning("Swapped Vulkan swapchain in suboptimal state");
 		}
 
@@ -399,7 +399,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_logger.warning("Acquired Vulkan swapchain in suboptimal state");
 			break;
 
-		default:
+		default: [[likely]]
 			break;
 		}		 
 		
