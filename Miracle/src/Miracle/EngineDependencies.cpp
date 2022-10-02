@@ -2,12 +2,14 @@
 
 #include <Miracle/Common/Mappings.hpp>
 #include <Miracle/Common/UnicodeConverter.hpp>
+#include "Infrastructure/Persistance/FileSystem/FileAccess.hpp"
 #include "Infrastructure/Framework/Glfw/MultimediaFramework.hpp"
 #include "Infrastructure/View/Glfw/Window.hpp"
 #include "Infrastructure/Input/Glfw/Keyboard.hpp"
 #include "Infrastructure/Graphics/Vulkan/GraphicsApi.hpp"
 
 namespace Miracle {
+	using FileSystemFileAccess = Infrastructure::Persistance::FileSystem::FileAccess;
 	using GlfwMultimediaFramework = Infrastructure::Framework::Glfw::MultimediaFramework;
 	using GlfwWindow = Infrastructure::View::Glfw::Window;
 	using GlfwKeyboard = Infrastructure::Input::Glfw::Keyboard;
@@ -19,6 +21,9 @@ namespace Miracle {
 		Application::ILogger& logger,
 		Application::EventDispatcher& eventDispatcher
 	) :
+		m_fileAccess(
+			std::make_unique<FileSystemFileAccess>(logger)
+		),
 		m_multimediaFramework(
 			std::make_unique<GlfwMultimediaFramework>(logger)
 		),

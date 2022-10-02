@@ -6,6 +6,7 @@
 #include "Common/Models/WindowConfig.hpp"
 #include "Application/ILogger.hpp"
 #include "Application/EventDispatcher.hpp"
+#include "Application/IFileAccess.hpp"
 #include "Application/IMultimediaFramework.hpp"
 #include "Application/IWindow.hpp"
 #include "Application/IKeyboard.hpp"
@@ -18,6 +19,7 @@
 namespace Miracle {
 	class EngineDependencies {
 	private:
+		std::unique_ptr<Application::IFileAccess> m_fileAccess;
 		std::unique_ptr<Application::IMultimediaFramework> m_multimediaFramework;
 		std::unique_ptr<Application::IWindow> m_window;
 		std::unique_ptr<Application::IKeyboard> m_keyboard;

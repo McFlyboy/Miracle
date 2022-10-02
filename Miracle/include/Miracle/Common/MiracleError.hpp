@@ -12,6 +12,7 @@ namespace Miracle {
 	enum class ErrorCategory : ErrorCodeSection {
 		none,
 
+		fileAccess,
 		multimediaFramework,
 		window,
 		graphicsContext,
@@ -48,6 +49,20 @@ namespace Miracle {
 
 		UncategorizedError(ErrorValue errorValue, const char* message) : MiracleError(
 			ErrorCategory::none,
+			static_cast<Miracle::ErrorValue>(errorValue),
+			message
+		) {}
+	};
+
+	class FileAccessError : public MiracleError {
+	public:
+		enum class ErrorValue : Miracle::ErrorValue {
+			fileDoesNotExistError,
+			unableToOpenFileError
+		};
+
+		FileAccessError(ErrorValue errorValue, const char* message) : MiracleError(
+			ErrorCategory::fileAccess,
 			static_cast<Miracle::ErrorValue>(errorValue),
 			message
 		) {}
