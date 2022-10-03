@@ -12,7 +12,8 @@ namespace Miracle::Application {
 		m_api(api),
 		m_contextTarget(contextTarget),
 		m_context(m_api.createGraphicsContext(appName, m_logger, m_contextTarget)),
-		m_swapchain(m_api.createSwapchain(m_logger, *m_context.get(), initProps.swapchainInitProps))
+		m_swapchain(m_api.createSwapchain(m_logger, *m_context.get(), initProps.swapchainInitProps)),
+		m_pipeline(m_api.createGraphicsPipeline(m_logger, *m_context.get()))
 	{
 		m_logger.info("Renderer created");
 	}

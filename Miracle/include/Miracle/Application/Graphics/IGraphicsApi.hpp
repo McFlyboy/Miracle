@@ -7,6 +7,7 @@
 #include "IContextTarget.hpp"
 #include "IGraphicsContext.hpp"
 #include "ISwapchain.hpp"
+#include "IGraphicsPipeline.hpp"
 
 namespace Miracle::Application {
 	class IGraphicsApi {
@@ -23,6 +24,11 @@ namespace Miracle::Application {
 			ILogger& logger,
 			IGraphicsContext& context,
 			const SwapchainInitProps& initProps
+		) const = 0;
+
+		virtual std::unique_ptr<IGraphicsPipeline> createGraphicsPipeline(
+			ILogger& logger,
+			IGraphicsContext& context
 		) const = 0;
 	};
 }

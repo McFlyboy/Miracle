@@ -2,6 +2,7 @@
 
 #include "GraphicsContext.hpp"
 #include "Swapchain.hpp"
+#include "GraphicsPipeline.hpp"
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	std::unique_ptr<Application::IGraphicsContext> GraphicsApi::createGraphicsContext(
@@ -25,6 +26,16 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			logger,
 			*reinterpret_cast<GraphicsContext*>(&context),
 			initProps
+		);
+	}
+
+	std::unique_ptr<Application::IGraphicsPipeline> GraphicsApi::createGraphicsPipeline(
+		Application::ILogger& logger,
+		Application::IGraphicsContext& context
+	) const {
+		return std::make_unique<GraphicsPipeline>(
+			logger,
+			*reinterpret_cast<GraphicsContext*>(&context)
 		);
 	}
 }

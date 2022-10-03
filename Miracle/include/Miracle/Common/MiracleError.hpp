@@ -17,7 +17,8 @@ namespace Miracle {
 		window,
 		graphicsContext,
 		swapchain,
-		renderPass
+		renderPass,
+		graphicsPipeline
 	};
 
 	class MiracleError : public std::runtime_error {
@@ -132,6 +133,19 @@ namespace Miracle {
 
 		RenderPassError(ErrorValue errorValue, const char* message) : MiracleError(
 			ErrorCategory::renderPass,
+			static_cast<Miracle::ErrorValue>(errorValue),
+			message
+		) {}
+	};
+
+	class GraphicsPipelineError : public MiracleError {
+	public:
+		enum class ErrorValue : Miracle::ErrorValue {
+			creationError
+		};
+
+		GraphicsPipelineError(ErrorValue errorValue, const char* message) : MiracleError(
+			ErrorCategory::graphicsPipeline,
 			static_cast<Miracle::ErrorValue>(errorValue),
 			message
 		) {}

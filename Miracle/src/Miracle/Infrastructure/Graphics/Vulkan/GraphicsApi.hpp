@@ -15,5 +15,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			Application::IGraphicsContext& context,
 			const Application::SwapchainInitProps& initProps
 		) const override;
+
+		virtual std::unique_ptr<Application::IGraphicsPipeline> createGraphicsPipeline(
+			Application::ILogger& logger,
+			Application::IGraphicsContext& context
+		) const override;
 	};
 }
