@@ -11,6 +11,22 @@ namespace Miracle::Application {
 	public:
 		virtual ~IGraphicsContext() = default;
 
+		virtual void setViewport(
+			float x,
+			float y,
+			float width,
+			float height
+		) = 0;
+
+		virtual void setScissor(
+			int x,
+			int y,
+			unsigned int width,
+			unsigned int height
+		) = 0;
+
+		virtual void draw() = 0;
+
 		virtual void recordCommands(const Recording& recording) = 0;
 
 		virtual void submitRecording() = 0;

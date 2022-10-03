@@ -45,7 +45,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		m_logger.info("Destroying Vulkan swapchain...");
 	}
 
-	void Swapchain::beginRenderPassCommand(
+	void Swapchain::beginRenderPass(
 		float clearColorRed,
 		float clearColorGreen,
 		float clearColorBlue
@@ -81,7 +81,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		);
 	}
 
-	void Swapchain::endRenderPassCommand() {
+	void Swapchain::endRenderPass() {
 		m_context.getCommandBuffer().endRenderPass();
 	}
 

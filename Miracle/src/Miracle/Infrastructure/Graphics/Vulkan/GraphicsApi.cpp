@@ -31,11 +31,15 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 	std::unique_ptr<Application::IGraphicsPipeline> GraphicsApi::createGraphicsPipeline(
 		Application::ILogger& logger,
-		Application::IGraphicsContext& context
+		Application::IFileAccess& fileAccess,
+		Application::IGraphicsContext& context,
+		Application::ISwapchain& swapchain
 	) const {
 		return std::make_unique<GraphicsPipeline>(
 			logger,
-			*reinterpret_cast<GraphicsContext*>(&context)
+			fileAccess,
+			*reinterpret_cast<GraphicsContext*>(&context),
+			*reinterpret_cast<Swapchain*>(&swapchain)
 		);
 	}
 }

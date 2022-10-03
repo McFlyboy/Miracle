@@ -33,17 +33,19 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		~Swapchain();
 
-		virtual void beginRenderPassCommand(
+		virtual void beginRenderPass(
 			float clearColorRed,
 			float clearColorGreen,
 			float clearColorBlue
 		) override;
 
-		virtual void endRenderPassCommand() override;
+		virtual void endRenderPass() override;
 
 		virtual void swap() override;
 
 		virtual void recreate() override;
+
+		inline const vk::raii::RenderPass& getRenderPass() const { return m_renderPass; }
 
 	private:
 		uint32_t selectImageCount() const;

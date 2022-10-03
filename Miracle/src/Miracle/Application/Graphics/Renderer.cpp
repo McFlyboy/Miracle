@@ -4,16 +4,18 @@ namespace Miracle::Application {
 	Renderer::Renderer(
 		const std::string_view& appName,
 		ILogger& logger,
+		IFileAccess& fileAccess,
 		IGraphicsApi& api,
 		IContextTarget& contextTarget,
 		const RendererInitProps& initProps
 	) :
 		m_logger(logger),
+		m_fileAccess(fileAccess),
 		m_api(api),
 		m_contextTarget(contextTarget),
 		m_context(m_api.createGraphicsContext(appName, m_logger, m_contextTarget)),
 		m_swapchain(m_api.createSwapchain(m_logger, *m_context.get(), initProps.swapchainInitProps)),
-		m_pipeline(m_api.createGraphicsPipeline(m_logger, *m_context.get()))
+		m_pipeline(m_api.createGraphicsPipeline(m_logger, m_fileAccess, *m_context.get(), *m_swapchain.get()))
 	{
 		m_logger.info("Renderer created");
 	}
@@ -34,8 +36,15 @@ namespace Miracle::Application {
 
 		m_context->recordCommands(
 			[&]() {
-				m_swapchain->beginRenderPassCommand(0.125f, 0.125f, 0.125f);
-				m_swapchain->endRenderPassCommand();
+				m_swapchain->beginRenderPass(0.125f, 0.125f, 0.125f);
+
+				m_pipeline->bind();
+				m_context->setViewport(0.0f, 0.0f, 800.0f, 600.0f);
+				m_context->setScissor(0, 0, 800, 600);
+
+				m_context->draw();
+
+				m_swapchain->endRenderPass();
 			}
 		);
 

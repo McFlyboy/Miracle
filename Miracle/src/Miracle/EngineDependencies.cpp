@@ -48,6 +48,7 @@ namespace Miracle {
 		m_renderer(
 			appName,
 			logger,
+			*m_fileAccess.get(),
 			*m_graphicsApi.get(),
 			*reinterpret_cast<GlfwWindow*>(m_window.get()),
 			Application::RendererInitProps{

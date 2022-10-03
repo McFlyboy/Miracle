@@ -18,7 +18,9 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		virtual std::unique_ptr<Application::IGraphicsPipeline> createGraphicsPipeline(
 			Application::ILogger& logger,
-			Application::IGraphicsContext& context
+			Application::IFileAccess& fileAccess,
+			Application::IGraphicsContext& context,
+			Application::ISwapchain& swapchain
 		) const override;
 	};
 }

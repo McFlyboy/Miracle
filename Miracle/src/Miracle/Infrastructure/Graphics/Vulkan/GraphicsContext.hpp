@@ -48,6 +48,22 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		~GraphicsContext();
 
+		virtual void setViewport(
+			float x,
+			float y,
+			float width,
+			float height
+		) override;
+
+		virtual void setScissor(
+			int x,
+			int y,
+			unsigned int width,
+			unsigned int height
+		) override;
+
+		virtual void draw() override;
+
 		virtual void recordCommands(const Application::Recording& recording) override;
 
 		virtual void submitRecording() override;

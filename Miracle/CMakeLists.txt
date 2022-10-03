@@ -28,3 +28,7 @@ target_link_libraries(
 # Include directories
 target_include_directories(Miracle PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_include_directories(Miracle PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+
+
+# Dependency targets
+add_dependencies(Miracle MiracleShaders)

@@ -7,13 +7,13 @@ namespace Miracle::Application {
 	public:
 		virtual ~ISwapchain() = default;
 
-		virtual void beginRenderPassCommand(
+		virtual void beginRenderPass(
 			float clearColorRed,
 			float clearColorGreen,
 			float clearColorBlue
 		) = 0;
 
-		virtual void endRenderPassCommand() = 0;
+		virtual void endRenderPass() = 0;
 
 		virtual void swap() = 0;
 

@@ -4,6 +4,7 @@
 #include <string_view>
 
 #include <Miracle/Application/ILogger.hpp>
+#include <Miracle/Application/IFileAccess.hpp>
 #include "IContextTarget.hpp"
 #include "IGraphicsContext.hpp"
 #include "ISwapchain.hpp"
@@ -28,7 +29,9 @@ namespace Miracle::Application {
 
 		virtual std::unique_ptr<IGraphicsPipeline> createGraphicsPipeline(
 			ILogger& logger,
-			IGraphicsContext& context
+			IFileAccess& fileAccess,
+			IGraphicsContext& context,
+			ISwapchain& swapchain
 		) const = 0;
 	};
 }

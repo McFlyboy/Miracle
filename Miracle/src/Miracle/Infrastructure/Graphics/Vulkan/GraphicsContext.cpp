@@ -60,6 +60,50 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		m_logger.info("Destroying Vulkan graphics context...");
 	}
 
+	void GraphicsContext::setViewport(
+		float x,
+		float y,
+		float width,
+		float height
+	) {
+		getCommandBuffer().setViewport(
+			0,
+			vk::Viewport{
+				.x        = x,
+				.y        = y,
+				.width    = width,
+				.height   = height,
+				.minDepth = 0.0f,
+				.maxDepth = 1.0f
+			}
+		);
+	}
+
+	void GraphicsContext::setScissor(
+		int x,
+		int y,
+		unsigned int width,
+		unsigned int height
+	) {
+		getCommandBuffer().setScissor(
+			0,
+			vk::Rect2D{
+				.offset = vk::Offset2D{
+					.x = x,
+					.y = y
+				},
+				.extent = vk::Extent2D{
+					.width  = width,
+					.height = height
+				}
+			}
+		);
+	}
+
+	void GraphicsContext::draw() {
+		getCommandBuffer().draw(3, 1, 0, 0);
+	}
+
 	void GraphicsContext::recordCommands(const Application::Recording& recording) {
 		auto result = m_device.waitForFences(
 			*m_commandExecutionSignalFences[m_currentCommandBufferIndex],

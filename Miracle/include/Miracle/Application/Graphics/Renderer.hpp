@@ -4,6 +4,7 @@
 #include <string_view>
 
 #include <Miracle/Application/ILogger.hpp>
+#include <Miracle/Application/IFileAccess.hpp>
 #include "IGraphicsApi.hpp"
 #include "IContextTarget.hpp"
 #include "IGraphicsContext.hpp"
@@ -18,6 +19,7 @@ namespace Miracle::Application {
 	class Renderer {
 	private:
 		ILogger& m_logger;
+		IFileAccess& m_fileAccess;
 		IGraphicsApi& m_api;
 		IContextTarget& m_contextTarget;
 
@@ -29,6 +31,7 @@ namespace Miracle::Application {
 		Renderer(
 			const std::string_view& appName,
 			ILogger& logger,
+			IFileAccess& fileAccess,
 			IGraphicsApi& api,
 			IContextTarget& contextTarget,
 			const RendererInitProps& initProps
