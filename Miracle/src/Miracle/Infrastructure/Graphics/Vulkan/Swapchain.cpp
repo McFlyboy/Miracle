@@ -45,6 +45,13 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		m_logger.info("Destroying Vulkan swapchain...");
 	}
 
+	Application::SwapchainImageSize Swapchain::getImageSize() const {
+		return Application::SwapchainImageSize{
+			.width  = m_imageExtent.width,
+			.height = m_imageExtent.height
+		};
+	}
+
 	void Swapchain::beginRenderPass(
 		float clearColorRed,
 		float clearColorGreen,

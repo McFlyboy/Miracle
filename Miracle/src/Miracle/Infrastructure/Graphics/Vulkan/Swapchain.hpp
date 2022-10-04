@@ -33,6 +33,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		~Swapchain();
 
+		virtual Application::SwapchainImageSize getImageSize() const override;
+
 		virtual void beginRenderPass(
 			float clearColorRed,
 			float clearColorGreen,

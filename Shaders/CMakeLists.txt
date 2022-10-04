@@ -30,7 +30,7 @@ list(
 
 # Target definition
 add_custom_target(
-	MiracleShaders
+	Shaders
 	DEPENDS ${BINARY_FILENAMES}
 )
 

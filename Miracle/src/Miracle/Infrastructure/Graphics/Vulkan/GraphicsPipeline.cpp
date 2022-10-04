@@ -70,8 +70,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			.depthClampEnable        = false,
 			.rasterizerDiscardEnable = false,
 			.polygonMode             = vk::PolygonMode::eFill,
-			.cullMode                = vk::CullModeFlagBits::eBack,
-			.frontFace               = vk::FrontFace::eCounterClockwise,
+			.cullMode                = vk::CullModeFlagBits::eNone,
+			.frontFace               = {},
 			.depthBiasEnable         = false,
 			.depthBiasConstantFactor = {},
 			.depthBiasClamp          = {},
@@ -90,13 +90,13 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		};
 
 		auto colorBlendAttachmentState = vk::PipelineColorBlendAttachmentState{
-			.blendEnable         = true,
-			.srcColorBlendFactor = vk::BlendFactor::eOne,
-			.dstColorBlendFactor = vk::BlendFactor::eZero,
-			.colorBlendOp        = vk::BlendOp::eAdd,
-			.srcAlphaBlendFactor = vk::BlendFactor::eOne,
-			.dstAlphaBlendFactor = vk::BlendFactor::eZero,
-			.alphaBlendOp        = vk::BlendOp::eAdd,
+			.blendEnable         = false,
+			.srcColorBlendFactor = {},
+			.dstColorBlendFactor = {},
+			.colorBlendOp        = {},
+			.srcAlphaBlendFactor = {},
+			.dstAlphaBlendFactor = {},
+			.alphaBlendOp        = {},
 			.colorWriteMask      = vk::ColorComponentFlagBits::eR
 				| vk::ColorComponentFlagBits::eG
 				| vk::ColorComponentFlagBits::eB

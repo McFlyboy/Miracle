@@ -3,9 +3,16 @@
 #include <Miracle/Common/MiracleError.hpp>
 
 namespace Miracle::Application {
+	struct SwapchainImageSize {
+		unsigned int width = 0;
+		unsigned int height = 0;
+	};
+
 	class ISwapchain {
 	public:
 		virtual ~ISwapchain() = default;
+
+		virtual SwapchainImageSize getImageSize() const = 0;
 
 		virtual void beginRenderPass(
 			float clearColorRed,

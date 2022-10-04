@@ -34,13 +34,15 @@ namespace Miracle::Application {
 			m_swapchain->recreate();
 		}
 
+		auto swapchainImageSize = m_swapchain->getImageSize();
+
 		m_context->recordCommands(
 			[&]() {
 				m_swapchain->beginRenderPass(0.125f, 0.125f, 0.125f);
+				m_context->setViewport(0.0f, 0.0f, swapchainImageSize.width, swapchainImageSize.height);
+				m_context->setScissor(0, 0, swapchainImageSize.width, swapchainImageSize.height);
 
 				m_pipeline->bind();
-				m_context->setViewport(0.0f, 0.0f, 800.0f, 600.0f);
-				m_context->setScissor(0, 0, 800, 600);
 
 				m_context->draw();
 
