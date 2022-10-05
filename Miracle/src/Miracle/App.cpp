@@ -101,8 +101,11 @@ namespace Miracle {
 				m_updateScript();
 				performanceCountingService.incrementUpdateCounter();
 
-				renderer.render();
-				performanceCountingService.incrementFrameCounter();
+				bool frameRendered = renderer.render();
+
+				if (frameRendered) {
+					performanceCountingService.incrementFrameCounter();
+				}
 
 				performanceCountingService.updateCounters();
 			}

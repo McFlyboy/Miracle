@@ -27,8 +27,8 @@ namespace Miracle::Application {
 		m_context->waitForDeviceIdle();
 	}
 
-	void Renderer::render() {
-		if (!m_contextTarget.isCurrentlyPresentable()) [[unlikely]] return;
+	bool Renderer::render() {
+		if (!m_contextTarget.isCurrentlyPresentable()) [[unlikely]] return false;
 
 		if (m_contextTarget.isSizeChanged()) [[unlikely]] {
 			m_context->waitForDeviceIdle();
@@ -54,5 +54,7 @@ namespace Miracle::Application {
 		m_context->submitRecording();
 
 		m_swapchain->swap();
+
+		return true;
 	}
 }

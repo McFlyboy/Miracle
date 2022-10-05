@@ -41,6 +41,6 @@ namespace Miracle::Application {
 
 		~Renderer();
 
-		void render();
+		bool render();
 	};
 }
