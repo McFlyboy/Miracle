@@ -9,6 +9,7 @@
 #include "IGraphicsContext.hpp"
 #include "ISwapchain.hpp"
 #include "IGraphicsPipeline.hpp"
+#include "IVertexBuffer.hpp"
 
 namespace Miracle::Application {
 	class IGraphicsApi {
@@ -32,6 +33,11 @@ namespace Miracle::Application {
 			IFileAccess& fileAccess,
 			IGraphicsContext& context,
 			ISwapchain& swapchain
+		) const = 0;
+
+		virtual std::unique_ptr<IVertexBuffer> createVertexBuffer(
+			ILogger& logger,
+			IGraphicsContext& context
 		) const = 0;
 	};
 }

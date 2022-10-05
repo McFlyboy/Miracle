@@ -22,5 +22,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			Application::IGraphicsContext& context,
 			Application::ISwapchain& swapchain
 		) const override;
+
+		virtual std::unique_ptr<Application::IVertexBuffer> createVertexBuffer(
+			Application::ILogger& logger,
+			Application::IGraphicsContext& context
+		) const override;
 	};
 }

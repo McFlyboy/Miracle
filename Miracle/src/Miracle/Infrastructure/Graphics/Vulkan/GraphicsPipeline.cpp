@@ -43,12 +43,25 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			}
 		};
 
+		auto vertexInputBindingDescription = vk::VertexInputBindingDescription{
+			.binding   = 0,
+			.stride    = sizeof(float) * 2,
+			.inputRate = vk::VertexInputRate::eVertex
+		};
+
+		auto vertexInputAttributeDescription = vk::VertexInputAttributeDescription{
+			.location = 0,
+			.binding  = 0,
+			.format   = vk::Format::eR32G32Sfloat,
+			.offset   = 0
+		};
+
 		auto vertexInputStateCreateInfo = vk::PipelineVertexInputStateCreateInfo{
 			.flags                           = {},
-			.vertexBindingDescriptionCount   = 0,
-			.pVertexBindingDescriptions      = nullptr,
-			.vertexAttributeDescriptionCount = 0,
-			.pVertexAttributeDescriptions    = nullptr
+			.vertexBindingDescriptionCount   = 1,
+			.pVertexBindingDescriptions      = &vertexInputBindingDescription,
+			.vertexAttributeDescriptionCount = 1,
+			.pVertexAttributeDescriptions    = &vertexInputAttributeDescription
 		};
 
 		auto inputAssemblyStateCreateInfo = vk::PipelineInputAssemblyStateCreateInfo{

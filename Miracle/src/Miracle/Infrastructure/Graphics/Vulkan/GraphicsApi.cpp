@@ -3,6 +3,7 @@
 #include "GraphicsContext.hpp"
 #include "Swapchain.hpp"
 #include "GraphicsPipeline.hpp"
+#include "VertexBuffer.hpp"
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	std::unique_ptr<Application::IGraphicsContext> GraphicsApi::createGraphicsContext(
@@ -40,6 +41,16 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			fileAccess,
 			*reinterpret_cast<GraphicsContext*>(&context),
 			*reinterpret_cast<Swapchain*>(&swapchain)
+		);
+	}
+
+	std::unique_ptr<Application::IVertexBuffer> GraphicsApi::createVertexBuffer(
+		Application::ILogger& logger,
+		Application::IGraphicsContext& context
+	) const {
+		return std::make_unique<VertexBuffer>(
+			logger,
+			*reinterpret_cast<GraphicsContext*>(&context)
 		);
 	}
 }

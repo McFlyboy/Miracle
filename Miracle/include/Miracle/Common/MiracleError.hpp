@@ -18,7 +18,8 @@ namespace Miracle {
 		graphicsContext,
 		swapchain,
 		renderPass,
-		graphicsPipeline
+		graphicsPipeline,
+		vertexBuffer
 	};
 
 	class MiracleError : public std::runtime_error {
@@ -146,6 +147,19 @@ namespace Miracle {
 
 		GraphicsPipelineError(ErrorValue errorValue, const char* message) : MiracleError(
 			ErrorCategory::graphicsPipeline,
+			static_cast<Miracle::ErrorValue>(errorValue),
+			message
+		) {}
+	};
+
+	class VertexBufferError : public MiracleError {
+	public:
+		enum class ErrorValue : Miracle::ErrorValue {
+			creationError
+		};
+
+		VertexBufferError(ErrorValue errorValue, const char* message) : MiracleError(
+			ErrorCategory::vertexBuffer,
 			static_cast<Miracle::ErrorValue>(errorValue),
 			message
 		) {}
