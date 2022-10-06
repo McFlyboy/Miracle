@@ -155,6 +155,7 @@ namespace Miracle {
 	class VertexBufferError : public MiracleError {
 	public:
 		enum class ErrorValue : Miracle::ErrorValue {
+			noVerticesProvidedError,
 			creationError,
 			allocationError,
 			bindError,

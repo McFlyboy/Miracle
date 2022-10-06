@@ -15,6 +15,14 @@ namespace Miracle::Application {
 	};
 
 	namespace VertexBufferErrors {
+		class NoVerticesProvidedError : public VertexBufferError {
+		public:
+			NoVerticesProvidedError() : VertexBufferError(
+				VertexBufferError::ErrorValue::noVerticesProvidedError,
+				"No vertices were provided for vertex buffer creation"
+			) {}
+		};
+
 		class CreationError : public VertexBufferError {
 		public:
 			CreationError() : VertexBufferError(

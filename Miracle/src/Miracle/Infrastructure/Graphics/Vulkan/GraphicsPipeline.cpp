@@ -5,6 +5,8 @@
 
 #include <fmt/format.h>
 
+#include <Miracle/Common/Math/Vector2f.hpp>
+
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	GraphicsPipeline::GraphicsPipeline(
 		Application::ILogger& logger,
@@ -45,7 +47,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		auto vertexInputBindingDescription = vk::VertexInputBindingDescription{
 			.binding   = 0,
-			.stride    = sizeof(float) * 2,
+			.stride    = sizeof(Vector2f),
 			.inputRate = vk::VertexInputRate::eVertex
 		};
 

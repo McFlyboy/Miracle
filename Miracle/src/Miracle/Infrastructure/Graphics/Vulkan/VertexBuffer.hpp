@@ -1,7 +1,10 @@
 #pragma once
 
+#include <vector>
+
 #include <vk_mem_alloc.h>
 
+#include <Miracle/Common/Math/Vector2f.hpp>
 #include <Miracle/Application/ILogger.hpp>
 #include <Miracle/Application/Graphics/IVertexBuffer.hpp>
 #include "Vulkan.hpp"
@@ -20,7 +23,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	public:
 		VertexBuffer(
 			Application::ILogger& logger,
-			GraphicsContext& context
+			GraphicsContext& context,
+			const std::vector<Vector2f>& vertices
 		);
 
 		~VertexBuffer();

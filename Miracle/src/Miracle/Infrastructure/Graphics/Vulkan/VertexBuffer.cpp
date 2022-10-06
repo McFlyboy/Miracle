@@ -1,29 +1,28 @@
 #include "VertexBuffer.hpp"
 
 #include <exception>
-#include <vector>
 
 #include <fmt/format.h>
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	VertexBuffer::VertexBuffer(
 		Application::ILogger& logger,
-		GraphicsContext& context
+		GraphicsContext& context,
+		const std::vector<Vector2f>& vertices
 	) :
 		m_logger(logger),
 		m_context(context)
 	{
-		auto vertexData = std::vector{
-			-0.5f,  0.5f,
-			 0.5f,  0.5f,
-			 0.0f, -0.5f
-		};
+		if (vertices.empty()) {
+			m_logger.error("No vertices provided for Vulkan vertex buffer creation");
+			throw Application::VertexBufferErrors::NoVerticesProvidedError();
+		}
 
 		try {
 			m_buffer = m_context.getDevice().createBuffer(
 				vk::BufferCreateInfo{
 					.flags                 = {},
-					.size                  = static_cast<vk::DeviceSize>(sizeof(vertexData.front()) * vertexData.size()),
+					.size                  = static_cast<vk::DeviceSize>(sizeof(vertices.front()) * vertices.size()),
 					.usage                 = vk::BufferUsageFlagBits::eVertexBuffer,
 					.sharingMode           = vk::SharingMode::eExclusive,
 					.queueFamilyIndexCount = 0,
@@ -78,11 +77,11 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			throw Application::VertexBufferErrors::MapError();
 		}
 
-		std::memcpy(data, vertexData.data(), sizeof(vertexData.front()) * vertexData.size());
+		std::memcpy(data, vertices.data(), sizeof(vertices.front()) * vertices.size());
 
 		vmaUnmapMemory(m_context.getAllocator(), m_allocation);
 
-		m_vertexCount = vertexData.size() / 2;
+		m_vertexCount = vertices.size();
 
 		m_logger.info("Vulkan vertex buffer created");
 	}

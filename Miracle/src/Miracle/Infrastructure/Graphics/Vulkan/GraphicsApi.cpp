@@ -50,7 +50,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	) const {
 		return std::make_unique<VertexBuffer>(
 			logger,
-			*reinterpret_cast<GraphicsContext*>(&context)
+			*reinterpret_cast<GraphicsContext*>(&context),
+			std::vector{
+				Vector2f{ .x = -0.5f, .y =  0.5f },
+				Vector2f{ .x =  0.5f, .y =  0.5f },
+				Vector2f{ .x =  0.0f, .y = -0.5f },
+			}
 		);
 	}
 }
