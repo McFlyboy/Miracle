@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <cstdint>
 
 #include <Miracle/Common/MiracleError.hpp>
 
@@ -25,7 +26,7 @@ namespace Miracle::Application {
 			unsigned int height
 		) = 0;
 
-		virtual void draw() = 0;
+		virtual void draw(uint32_t vertexCount) = 0;
 
 		virtual void recordCommands(const Recording& recording) = 0;
 

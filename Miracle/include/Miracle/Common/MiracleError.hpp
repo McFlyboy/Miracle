@@ -155,7 +155,10 @@ namespace Miracle {
 	class VertexBufferError : public MiracleError {
 	public:
 		enum class ErrorValue : Miracle::ErrorValue {
-			creationError
+			creationError,
+			allocationError,
+			bindError,
+			mapError
 		};
 
 		VertexBufferError(ErrorValue errorValue, const char* message) : MiracleError(

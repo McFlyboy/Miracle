@@ -53,11 +53,15 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_commandExecutionSignalFences.push_back(createFence(true));
 		}
 
+		m_allocator = createAllocator();
+
 		m_logger.info("Vulkan graphics context created");
 	}
 
 	GraphicsContext::~GraphicsContext() {
 		m_logger.info("Destroying Vulkan graphics context...");
+
+		vmaDestroyAllocator(m_allocator);
 	}
 
 	void GraphicsContext::setViewport(
@@ -100,8 +104,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		);
 	}
 
-	void GraphicsContext::draw() {
-		getCommandBuffer().draw(3, 1, 0, 0);
+	void GraphicsContext::draw(uint32_t vertexCount) {
+		getCommandBuffer().draw(vertexCount, 1, 0, 0);
 	}
 
 	void GraphicsContext::recordCommands(const Application::Recording& recording) {
@@ -169,7 +173,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			.applicationVersion = VK_MAKE_VERSION(0, 0, 0),
 			.pEngineName        = "Miracle",
 			.engineVersion      = VK_MAKE_VERSION(0, 0, 0),
-			.apiVersion         = VK_API_VERSION_1_0
+			.apiVersion         = s_vulkanApiVersion
 		};
 
 		auto extensionNames = std::vector<const char*>();
@@ -518,5 +522,32 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_logger.error(fmt::format("Failed to create Vulkan semaphore for context.\n{}", e.what()));
 			throw Application::GraphicsContextErrors::CreationError();
 		}
+	}
+
+	VmaAllocator GraphicsContext::createAllocator() const {
+		VmaAllocator allocator = nullptr;
+
+		auto allocatorCreateInfo = VmaAllocatorCreateInfo{
+			.flags							= {},
+			.physicalDevice					= *m_physicalDevice,
+			.device							= *m_device,
+			.preferredLargeHeapBlockSize	= {},
+			.pAllocationCallbacks			= {},
+			.pDeviceMemoryCallbacks			= {},
+			.pHeapSizeLimit					= {},
+			.pVulkanFunctions				= {},
+			.instance						= *m_instance,
+			.vulkanApiVersion				= s_vulkanApiVersion,
+			.pTypeExternalMemoryHandleTypes	= {}
+		};
+
+		auto result = vmaCreateAllocator(&allocatorCreateInfo, &allocator);
+
+		if (result != VK_SUCCESS) {
+			m_logger.error("Failed to create Vulkan memory allocator for context");
+			throw Application::GraphicsContextErrors::CreationError();
+		}
+
+		return allocator;
 	}
 }

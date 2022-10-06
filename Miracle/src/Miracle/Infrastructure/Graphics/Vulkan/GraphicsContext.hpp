@@ -5,6 +5,9 @@
 #include <utility>
 #include <array>
 #include <vector>
+#include <cstdint>
+
+#include <vk_mem_alloc.h>
 
 #include <Miracle/Definitions.hpp>
 #include <Miracle/Application/Graphics/IGraphicsContext.hpp>
@@ -17,6 +20,7 @@
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	class GraphicsContext : public Application::IGraphicsContext {
 	private:
+		static inline const uint32_t s_vulkanApiVersion = VK_API_VERSION_1_0;
 		static inline auto s_validationLayerNames = std::array{ "VK_LAYER_KHRONOS_validation" };
 
 		Application::ILogger& m_logger;
@@ -39,6 +43,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		std::vector<vk::raii::Semaphore> m_commandExecutionSignalSemaphores;
 		std::vector<vk::raii::Fence> m_commandExecutionSignalFences;
 		size_t m_currentCommandBufferIndex = 0;
+		VmaAllocator m_allocator = nullptr;
 	public:
 		GraphicsContext(
 			const std::string_view& appName,
@@ -62,7 +67,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			unsigned int height
 		) override;
 
-		virtual void draw() override;
+		virtual void draw(uint32_t vertexCount) override;
 
 		virtual void recordCommands(const Application::Recording& recording) override;
 
@@ -91,6 +96,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		inline const vk::raii::Semaphore& getCommandExecutionSignalSemaphore() const {
 			return m_commandExecutionSignalSemaphores[m_currentCommandBufferIndex];
 		}
+
+		inline VmaAllocator getAllocator() const { return m_allocator; }
 
 		SurfaceExtent getCurrentSurfaceExtent() const;
 
@@ -137,5 +144,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::Fence createFence(bool preSignaled) const;
 
 		vk::raii::Semaphore createSemaphore() const;
+
+		VmaAllocator createAllocator() const;
 	};
 }

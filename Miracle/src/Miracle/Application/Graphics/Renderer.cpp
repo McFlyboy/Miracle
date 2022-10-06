@@ -44,8 +44,9 @@ namespace Miracle::Application {
 				m_context->setScissor(0, 0, swapchainImageSize.width, swapchainImageSize.height);
 
 				m_pipeline->bind();
+				m_vertexBuffer->bind();
 
-				m_context->draw();
+				m_context->draw(m_vertexBuffer->getVertexCount());
 
 				m_swapchain->endRenderPass();
 			}

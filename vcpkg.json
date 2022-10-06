@@ -5,6 +5,7 @@
     "spdlog",
     "glfw3",
     "tinyfiledialogs",
-    "vulkan"
+    "vulkan",
+    "vulkan-memory-allocator"
   ]
 }
