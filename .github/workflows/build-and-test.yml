@@ -55,6 +55,7 @@ jobs:
     - name: Update vcpkg
       run: |
         cd $VCPKG_ROOT
+        git reset --hard HEAD
         git pull
 
     - name: Configure CMake
@@ -88,6 +89,7 @@ jobs:
     - name: Update vcpkg
       run: |
         cd $VCPKG_ROOT
+        git reset --hard HEAD
         git pull
 
     - name: Configure CMake
