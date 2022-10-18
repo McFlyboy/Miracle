@@ -7,12 +7,11 @@
 #include <vector>
 #include <cstdint>
 
-#include <vk_mem_alloc.h>
-
 #include <Miracle/Definitions.hpp>
 #include <Miracle/Application/Graphics/IGraphicsContext.hpp>
 #include <Miracle/Application/ILogger.hpp>
 #include "Vulkan.hpp"
+#include "Vma.hpp"
 #include "IContextTarget.hpp"
 #include "DeviceInfo.hpp"
 #include "SurfaceExtent.hpp"

@@ -6,6 +6,6 @@
     "glfw3",
     "tinyfiledialogs",
     "vulkan",
-    "vulkan-memory-allocator"
+    "vulkan-memory-allocator-hpp"
   ]
 }

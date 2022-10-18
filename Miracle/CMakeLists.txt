@@ -1,5 +1,5 @@
 ﻿# Target definition
-add_library(Miracle STATIC "src/Miracle/App.cpp" "src/Miracle/Infrastructure/Diagnostics/Spdlog/Logger.cpp" "src/Miracle/Application/EventDispatcher.cpp" "src/Miracle/EngineDependencies.cpp" "src/Miracle/Infrastructure/Framework/Glfw/MultimediaFramework.cpp" "src/Miracle/Infrastructure/View/Glfw/Window.cpp" "src/Miracle/Infrastructure/Input/Glfw/Keyboard.cpp" "src/Miracle/Application/TextInputService.cpp" "src/Miracle/Common/UnicodeConverter.cpp" "src/Miracle/Application/DeltaTimeService.cpp" "src/Miracle/Application/PerformanceCountingService.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/GraphicsContext.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/DeviceExplorer.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/Swapchain.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/GraphicsApi.cpp" "src/Miracle/Application/Graphics/Renderer.cpp" "src/Miracle/Infrastructure/Persistance/FileSystem/FileAccess.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/GraphicsPipeline.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/VertexBuffer.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/VmaImplementation.cpp")
+add_library(Miracle STATIC "src/Miracle/App.cpp" "src/Miracle/Infrastructure/Diagnostics/Spdlog/Logger.cpp" "src/Miracle/Application/EventDispatcher.cpp" "src/Miracle/EngineDependencies.cpp" "src/Miracle/Infrastructure/Framework/Glfw/MultimediaFramework.cpp" "src/Miracle/Infrastructure/View/Glfw/Window.cpp" "src/Miracle/Infrastructure/Input/Glfw/Keyboard.cpp" "src/Miracle/Application/TextInputService.cpp" "src/Miracle/Common/UnicodeConverter.cpp" "src/Miracle/Application/DeltaTimeService.cpp" "src/Miracle/Application/PerformanceCountingService.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/GraphicsContext.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/DeviceExplorer.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/Swapchain.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/GraphicsApi.cpp" "src/Miracle/Application/Graphics/Renderer.cpp" "src/Miracle/Infrastructure/Persistance/FileSystem/FileAccess.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/GraphicsPipeline.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/VertexBuffer.cpp" "src/Miracle/Infrastructure/Graphics/Vulkan/Vma.cpp")
 
 # Target properties
 set_target_properties(
@@ -15,7 +15,7 @@ find_package(spdlog CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(tinyfiledialogs CONFIG REQUIRED)
 find_package(Vulkan REQUIRED)
-find_package(unofficial-vulkan-memory-allocator CONFIG REQUIRED)
+find_package(unofficial-vulkan-memory-allocator-hpp CONFIG REQUIRED)
 
 # Link 3rd-party libraries
 target_link_libraries(
@@ -24,13 +24,12 @@ target_link_libraries(
 	PRIVATE glfw
 	PRIVATE tinyfiledialogs::tinyfiledialogs
 	PRIVATE Vulkan::Vulkan
-	PRIVATE unofficial::vulkan-memory-allocator::vulkan-memory-allocator
+	PRIVATE unofficial::VulkanMemoryAllocator-Hpp::VulkanMemoryAllocator-Hpp
 )
 
 # Include directories
 target_include_directories(Miracle PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_include_directories(Miracle PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
-
 
 # Dependency targets
 add_dependencies(Miracle Shaders)

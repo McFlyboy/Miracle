@@ -2,12 +2,11 @@
 
 #include <vector>
 
-#include <vk_mem_alloc.h>
-
 #include <Miracle/Common/Math/Vector2f.hpp>
 #include <Miracle/Application/ILogger.hpp>
 #include <Miracle/Application/Graphics/IVertexBuffer.hpp>
 #include "Vulkan.hpp"
+#include "Vma.hpp"
 #include "GraphicsContext.hpp"
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
