@@ -24,11 +24,6 @@ jobs:
     - name: Install Vulkan SDK
       uses: humbletim/install-vulkan-sdk@v1.1.1
 
-    - name: Update vcpkg
-      run: |
-        cd $env:VCPKG_ROOT
-        git pull
-
     - name: Configure CMake
       run: cmake --preset x64-release
 
@@ -51,12 +46,6 @@ jobs:
 
     - name: Install Vulkan SDK
       uses: humbletim/install-vulkan-sdk@v1.1.1
-
-    - name: Update vcpkg
-      run: |
-        cd $VCPKG_ROOT
-        git reset --hard HEAD
-        git pull
 
     - name: Configure CMake
       run: cmake --preset macos-release
@@ -85,12 +74,6 @@ jobs:
 
     - name: Install Vulkan SDK
       uses: humbletim/install-vulkan-sdk@v1.1.1
-
-    - name: Update vcpkg
-      run: |
-        cd $VCPKG_ROOT
-        git reset --hard HEAD
-        git pull
 
     - name: Configure CMake
       run: cmake --preset linux-release

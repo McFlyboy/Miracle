@@ -157,8 +157,6 @@ namespace Miracle {
 		enum class ErrorValue : Miracle::ErrorValue {
 			noVerticesProvidedError,
 			creationError,
-			allocationError,
-			bindError,
 			mapError
 		};
 

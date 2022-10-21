@@ -19,7 +19,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 
 		try {
-			m_buffer = m_context.getDevice().createBuffer(
+			auto [buffer, allocation] = m_context.getAllocator().createBuffer(
 				vk::BufferCreateInfo{
 					.flags                 = {},
 					.size                  = static_cast<vk::DeviceSize>(sizeof(vertices.front()) * vertices.size()),
@@ -27,59 +27,47 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 					.sharingMode           = vk::SharingMode::eExclusive,
 					.queueFamilyIndexCount = 0,
 					.pQueueFamilyIndices   = nullptr
+				},
+				vma::AllocationCreateInfo{
+					.flags			= vma::AllocationCreateFlagBits::eHostAccessSequentialWrite,
+					.usage			= vma::MemoryUsage::eAuto,
+					.requiredFlags	= {},
+					.preferredFlags	= {},
+					.memoryTypeBits	= {},
+					.pool			= {},
+					.pUserData		= {},
+					.priority		= {}
 				}
 			);
+
+			m_buffer = buffer;
+			m_allocation = allocation;
 		}
 		catch (const std::exception& e) {
 			m_logger.error(fmt::format("Failed to create Vulkan vertex buffer.\n{}", e.what()));
 			throw Application::VertexBufferErrors::CreationError();
 		}
 
-		auto allocationCreateInfo = VmaAllocationCreateInfo{
-			.flags			= {},
-			.usage			= {},
-			.requiredFlags	= VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			.preferredFlags	= {},
-			.memoryTypeBits	= {},
-			.pool			= {},
-			.pUserData		= {},
-			.priority		= {}
-		};
-
-		auto allocationCreateResult = vmaAllocateMemoryForBuffer(
-			m_context.getAllocator(),
-			*m_buffer,
-			&allocationCreateInfo,
-			&m_allocation,
-			nullptr
-		);
-
-		if (allocationCreateResult != VK_SUCCESS) {
-			m_logger.error("Failed to allocate memory for Vulkan vertex buffer");
-			throw Application::VertexBufferErrors::AllocationError();
-		}
-
-		auto bindResult = vmaBindBufferMemory(m_context.getAllocator(), m_allocation, *m_buffer);
-
-		if (bindResult != VK_SUCCESS) {
-			m_logger.error("Failed to bind allocated memory to Vulkan vertex buffer");
-			vmaFreeMemory(m_context.getAllocator(), m_allocation);
-			throw Application::VertexBufferErrors::BindError();
-		}
-
 		void* data = nullptr;
 
-		auto mapResult = vmaMapMemory(m_context.getAllocator(), m_allocation, &data);
+		try {
+			data = m_context.getAllocator().mapMemory(m_allocation);
+		}
+		catch (const std::exception& e) {
+			m_logger.error(
+				fmt::format(
+					"Failed to map allocated device memory to CPU accessible memory.\n{}",
+					e.what()
+				)
+			);
 
-		if (mapResult != VK_SUCCESS) {
-			m_logger.error("Failed to map allocated device memory to CPU accessible memory");
-			vmaFreeMemory(m_context.getAllocator(), m_allocation);
+			m_context.getAllocator().destroyBuffer(m_buffer, m_allocation);
 			throw Application::VertexBufferErrors::MapError();
 		}
 
 		std::memcpy(data, vertices.data(), sizeof(vertices.front()) * vertices.size());
 
-		vmaUnmapMemory(m_context.getAllocator(), m_allocation);
+		m_context.getAllocator().unmapMemory(m_allocation);
 
 		m_vertexCount = vertices.size();
 
@@ -89,10 +77,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	VertexBuffer::~VertexBuffer() {
 		m_logger.info("Destroying Vulkan vertex buffer...");
 
-		vmaFreeMemory(m_context.getAllocator(), m_allocation);
+		m_context.getAllocator().destroyBuffer(m_buffer, m_allocation);
 	}
 
 	void VertexBuffer::bind() {
-		m_context.getCommandBuffer().bindVertexBuffers(0, *m_buffer, {0});
+		m_context.getCommandBuffer().bindVertexBuffers(0, m_buffer, {0});
 	}
 }

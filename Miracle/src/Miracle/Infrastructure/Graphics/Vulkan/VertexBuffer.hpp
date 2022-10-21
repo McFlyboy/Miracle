@@ -15,8 +15,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		Application::ILogger& m_logger;
 		GraphicsContext& m_context;
 
-		vk::raii::Buffer m_buffer = nullptr;
-		VmaAllocation m_allocation = nullptr;
+		vk::Buffer m_buffer = nullptr;
+		vma::Allocation m_allocation = nullptr;
 		uint32_t m_vertexCount = 0;
 
 	public:

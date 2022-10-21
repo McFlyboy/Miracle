@@ -42,7 +42,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		std::vector<vk::raii::Semaphore> m_commandExecutionSignalSemaphores;
 		std::vector<vk::raii::Fence> m_commandExecutionSignalFences;
 		size_t m_currentCommandBufferIndex = 0;
-		VmaAllocator m_allocator = nullptr;
+		vma::Allocator m_allocator = nullptr;
+
 	public:
 		GraphicsContext(
 			const std::string_view& appName,
@@ -96,7 +97,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			return m_commandExecutionSignalSemaphores[m_currentCommandBufferIndex];
 		}
 
-		inline VmaAllocator getAllocator() const { return m_allocator; }
+		inline const vma::Allocator& getAllocator() const { return m_allocator; }
 
 		SurfaceExtent getCurrentSurfaceExtent() const;
 
@@ -144,6 +145,6 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		vk::raii::Semaphore createSemaphore() const;
 
-		VmaAllocator createAllocator() const;
+		vma::Allocator createAllocator() const;
 	};
 }

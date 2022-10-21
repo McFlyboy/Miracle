@@ -61,7 +61,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	GraphicsContext::~GraphicsContext() {
 		m_logger.info("Destroying Vulkan graphics context...");
 
-		vmaDestroyAllocator(m_allocator);
+		m_allocator.destroy();
 	}
 
 	void GraphicsContext::setViewport(
@@ -524,30 +524,27 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 	}
 
-	VmaAllocator GraphicsContext::createAllocator() const {
-		VmaAllocator allocator = nullptr;
-
-		auto allocatorCreateInfo = VmaAllocatorCreateInfo{
-			.flags							= {},
-			.physicalDevice					= *m_physicalDevice,
-			.device							= *m_device,
-			.preferredLargeHeapBlockSize	= {},
-			.pAllocationCallbacks			= {},
-			.pDeviceMemoryCallbacks			= {},
-			.pHeapSizeLimit					= {},
-			.pVulkanFunctions				= {},
-			.instance						= *m_instance,
-			.vulkanApiVersion				= s_vulkanApiVersion,
-			.pTypeExternalMemoryHandleTypes	= {}
-		};
-
-		auto result = vmaCreateAllocator(&allocatorCreateInfo, &allocator);
-
-		if (result != VK_SUCCESS) {
-			m_logger.error("Failed to create Vulkan memory allocator for context");
+	vma::Allocator GraphicsContext::createAllocator() const {
+		try {
+			return vma::createAllocator(
+				vma::AllocatorCreateInfo{
+					.flags							= {},
+					.physicalDevice					= *m_physicalDevice,
+					.device							= *m_device,
+					.preferredLargeHeapBlockSize	= {},
+					.pAllocationCallbacks			= {},
+					.pDeviceMemoryCallbacks			= {},
+					.pHeapSizeLimit					= {},
+					.pVulkanFunctions				= {},
+					.instance						= *m_instance,
+					.vulkanApiVersion				= s_vulkanApiVersion,
+					.pTypeExternalMemoryHandleTypes	= {}
+				}
+			);
+		}
+		catch (const std::exception& e) {
+			m_logger.error(fmt::format("Failed to create Vulkan memory allocator for context.\n{}", e.what()));
 			throw Application::GraphicsContextErrors::CreationError();
 		}
-
-		return allocator;
 	}
 }

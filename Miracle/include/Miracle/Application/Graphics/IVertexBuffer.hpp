@@ -31,22 +31,6 @@ namespace Miracle::Application {
 			) {}
 		};
 
-		class AllocationError : public VertexBufferError {
-		public:
-			AllocationError() : VertexBufferError(
-				VertexBufferError::ErrorValue::allocationError,
-				"Failed to allocate memory for vertex buffer"
-			) {}
-		};
-
-		class BindError : public VertexBufferError {
-		public:
-			BindError() : VertexBufferError(
-				VertexBufferError::ErrorValue::bindError,
-				"Failed to bind allocated memory to vertex buffer"
-			) {}
-		};
-
 		class MapError : public VertexBufferError {
 		public:
 			MapError() : VertexBufferError(
