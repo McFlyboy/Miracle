@@ -31,10 +31,10 @@ namespace Miracle::Application {
 			) {}
 		};
 
-		class MapError : public VertexBufferError {
+		class MappingError : public VertexBufferError {
 		public:
-			MapError() : VertexBufferError(
-				VertexBufferError::ErrorValue::mapError,
+			MappingError() : VertexBufferError(
+				VertexBufferError::ErrorValue::mappingError,
 				"Failed to map allocated device memory to CPU accessible memory"
 			) {}
 		};

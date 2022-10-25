@@ -83,6 +83,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		inline const vk::raii::Device& getDevice() const { return m_device; }
 
+		inline const vk::raii::Queue& getGraphicsQueue() const { return m_graphicsQueue; }
+
 		inline const vk::raii::Queue& getPresentQueue() const { return m_presentQueue; }
 
 		inline const vk::raii::CommandBuffer& getCommandBuffer() const {
