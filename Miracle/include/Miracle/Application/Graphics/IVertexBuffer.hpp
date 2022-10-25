@@ -30,13 +30,5 @@ namespace Miracle::Application {
 				"Failed to create vertex buffer"
 			) {}
 		};
-
-		class MappingError : public VertexBufferError {
-		public:
-			MappingError() : VertexBufferError(
-				VertexBufferError::ErrorValue::mappingError,
-				"Failed to map allocated device memory to CPU accessible memory"
-			) {}
-		};
 	}
 }
