@@ -25,7 +25,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		virtual std::unique_ptr<Application::IVertexBuffer> createVertexBuffer(
 			Application::ILogger& logger,
-			Application::IGraphicsContext& context
+			Application::IGraphicsContext& context,
+			std::vector<Vector2f> vertices
 		) const override;
 	};
 }

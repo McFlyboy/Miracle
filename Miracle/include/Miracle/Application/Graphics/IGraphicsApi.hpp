@@ -2,7 +2,9 @@
 
 #include <memory>
 #include <string_view>
+#include <vector>
 
+#include <Miracle/Common/Math/Vector2f.hpp>
 #include <Miracle/Application/ILogger.hpp>
 #include <Miracle/Application/IFileAccess.hpp>
 #include "IContextTarget.hpp"
@@ -37,7 +39,8 @@ namespace Miracle::Application {
 
 		virtual std::unique_ptr<IVertexBuffer> createVertexBuffer(
 			ILogger& logger,
-			IGraphicsContext& context
+			IGraphicsContext& context,
+			std::vector<Vector2f> vertices
 		) const = 0;
 	};
 }

@@ -46,16 +46,13 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 	std::unique_ptr<Application::IVertexBuffer> GraphicsApi::createVertexBuffer(
 		Application::ILogger& logger,
-		Application::IGraphicsContext& context
+		Application::IGraphicsContext& context,
+		std::vector<Vector2f> vertices
 	) const {
 		return std::make_unique<VertexBuffer>(
 			logger,
 			*reinterpret_cast<GraphicsContext*>(&context),
-			std::vector{
-				Vector2f{ .x = -0.5f, .y = -0.5f },
-				Vector2f{ .x =  0.5f, .y = -0.5f },
-				Vector2f{ .x =  0.0f, .y =  0.5f },
-			}
+			vertices
 		);
 	}
 }
