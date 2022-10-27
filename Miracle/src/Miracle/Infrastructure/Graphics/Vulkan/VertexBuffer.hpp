@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <utility>
 
 #include <Miracle/Common/Math/Vector2f.hpp>
 #include <Miracle/Application/ILogger.hpp>
@@ -32,12 +31,5 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		inline virtual uint32_t getVertexCount() const override { return m_vertexCount; }
 
 		virtual void bind() override;
-
-	private:
-		std::pair<vk::Buffer, vma::Allocation> createStagingBuffer(vk::DeviceSize bufferSize) const;
-
-		std::pair<vk::Buffer, vma::Allocation> createBuffer(vk::DeviceSize bufferSize) const;
-
-		void copyBuffer(vk::Buffer destination, vk::Buffer source, vk::DeviceSize size) const;
 	};
 }
