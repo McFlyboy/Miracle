@@ -108,6 +108,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		getCommandBuffer().draw(vertexCount, 1, 0, 0);
 	}
 
+	void GraphicsContext::drawIndexed(uint32_t indexCount) {
+		getCommandBuffer().drawIndexed(indexCount, 1, 0, 0, 0);
+	}
+
 	void GraphicsContext::recordCommands(const Application::Recording& recording) {
 		auto result = m_device.waitForFences(
 			*m_commandExecutionSignalFences[m_currentCommandBufferIndex],

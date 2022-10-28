@@ -28,6 +28,8 @@ namespace Miracle::Application {
 
 		virtual void draw(uint32_t vertexCount) = 0;
 
+		virtual void drawIndexed(uint32_t indexCount) = 0;
+
 		virtual void recordCommands(const Recording& recording) = 0;
 
 		virtual void submitRecording() = 0;

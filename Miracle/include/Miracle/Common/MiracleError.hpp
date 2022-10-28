@@ -19,7 +19,8 @@ namespace Miracle {
 		swapchain,
 		renderPass,
 		graphicsPipeline,
-		vertexBuffer
+		vertexBuffer,
+		indexBuffer
 	};
 
 	class MiracleError : public std::runtime_error {
@@ -161,6 +162,20 @@ namespace Miracle {
 
 		VertexBufferError(ErrorValue errorValue, const char* message) : MiracleError(
 			ErrorCategory::vertexBuffer,
+			static_cast<Miracle::ErrorValue>(errorValue),
+			message
+		) {}
+	};
+
+	class IndexBufferError : public MiracleError {
+	public:
+		enum class ErrorValue : Miracle::ErrorValue {
+			noIndicesProvidedError,
+			creationError
+		};
+
+		IndexBufferError(ErrorValue errorValue, const char* message) : MiracleError(
+			ErrorCategory::indexBuffer,
 			static_cast<Miracle::ErrorValue>(errorValue),
 			message
 		) {}

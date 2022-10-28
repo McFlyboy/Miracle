@@ -3,6 +3,7 @@
 #include <memory>
 #include <string_view>
 #include <vector>
+#include <cstdint>
 
 #include <Miracle/Common/Math/Vector2f.hpp>
 #include <Miracle/Application/ILogger.hpp>
@@ -12,6 +13,7 @@
 #include "ISwapchain.hpp"
 #include "IGraphicsPipeline.hpp"
 #include "IVertexBuffer.hpp"
+#include "IIndexBuffer.hpp"
 
 namespace Miracle::Application {
 	class IGraphicsApi {
@@ -41,6 +43,12 @@ namespace Miracle::Application {
 			ILogger& logger,
 			IGraphicsContext& context,
 			std::vector<Vector2f> vertices
+		) const = 0;
+
+		virtual std::unique_ptr<IIndexBuffer> createIndexBuffer(
+			ILogger& logger,
+			IGraphicsContext& context,
+			std::vector<uint32_t> indices
 		) const = 0;
 	};
 }

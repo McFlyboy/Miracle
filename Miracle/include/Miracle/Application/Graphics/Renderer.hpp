@@ -11,6 +11,7 @@
 #include "ISwapchain.hpp"
 #include "IGraphicsPipeline.hpp"
 #include "IVertexBuffer.hpp"
+#include "IIndexBuffer.hpp"
 
 namespace Miracle::Application {
 	struct RendererInitProps{
@@ -28,6 +29,7 @@ namespace Miracle::Application {
 		std::unique_ptr<ISwapchain> m_swapchain;
 		std::unique_ptr<IGraphicsPipeline> m_pipeline;
 		std::unique_ptr<IVertexBuffer> m_vertexBuffer;
+		std::unique_ptr<IIndexBuffer> m_indexBuffer;
 
 	public:
 		Renderer(

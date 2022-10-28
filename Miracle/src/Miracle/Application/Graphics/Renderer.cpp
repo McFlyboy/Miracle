@@ -23,7 +23,18 @@ namespace Miracle::Application {
 				std::vector{
 					Vector2f{ .x = -0.5f, .y = -0.5f },
 					Vector2f{ .x =  0.5f, .y = -0.5f },
-					Vector2f{ .x =  0.0f, .y =  0.5f },
+					Vector2f{ .x =  0.5f, .y =  0.5f },
+					Vector2f{ .x = -0.5f, .y =  0.5f }
+				}
+			)
+		),
+		m_indexBuffer(
+			m_api.createIndexBuffer(
+				m_logger,
+				*m_context.get(),
+				std::vector<uint32_t>{
+					0, 1, 2,
+					0, 2, 3
 				}
 			)
 		)
@@ -55,8 +66,9 @@ namespace Miracle::Application {
 
 				m_pipeline->bind();
 				m_vertexBuffer->bind();
+				m_indexBuffer->bind();
 
-				m_context->draw(m_vertexBuffer->getVertexCount());
+				m_context->drawIndexed(m_indexBuffer->getIndexCount());
 
 				m_swapchain->endRenderPass();
 			}

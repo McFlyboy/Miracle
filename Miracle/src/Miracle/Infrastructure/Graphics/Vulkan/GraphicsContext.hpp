@@ -69,6 +69,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		virtual void draw(uint32_t vertexCount) override;
 
+		virtual void drawIndexed(uint32_t indexCount) override;
+
 		virtual void recordCommands(const Application::Recording& recording) override;
 
 		virtual void submitRecording() override;

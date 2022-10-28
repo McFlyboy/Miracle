@@ -4,6 +4,7 @@
 #include "Swapchain.hpp"
 #include "GraphicsPipeline.hpp"
 #include "VertexBuffer.hpp"
+#include "IndexBuffer.hpp"
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	std::unique_ptr<Application::IGraphicsContext> GraphicsApi::createGraphicsContext(
@@ -53,6 +54,18 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			logger,
 			*reinterpret_cast<GraphicsContext*>(&context),
 			vertices
+		);
+	}
+
+	std::unique_ptr<Application::IIndexBuffer> GraphicsApi::createIndexBuffer(
+		Application::ILogger& logger,
+		Application::IGraphicsContext& context,
+		std::vector<uint32_t> indices
+	) const {
+		return std::make_unique<IndexBuffer>(
+			logger,
+			*reinterpret_cast<GraphicsContext*>(&context),
+			indices
 		);
 	}
 }
