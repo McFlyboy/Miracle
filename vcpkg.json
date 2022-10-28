@@ -4,6 +4,8 @@
   "dependencies": [
     "spdlog",
     "glfw3",
-    "vulkan"
+    "tinyfiledialogs",
+    "vulkan",
+    "vulkan-memory-allocator-hpp"
   ]
 }

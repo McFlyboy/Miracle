@@ -1,14 +1,12 @@
 # Find 3rd-party packages
-find_package(Vulkan REQUIRED)
-
-# Compiler
-set(SPIRV_COMPILER ${Vulkan_GLSLC_EXECUTABLE})
+find_package(Vulkan REQUIRED COMPONENTS glslc)
+find_program(glslc_executable NAMES glslc HINTS Vulkan::glslc)
 
 # Shader source filenames
 set(
 	SOURCE_FILENAMES
-		"default.vert"
-		"default.frag"
+		"Default.vert"
+		"Default.frag"
 )
 
 # Shader binary file suffix
@@ -22,7 +20,7 @@ list(
 )
 
 # Set binary output directory
-set(CMAKE_CURRENT_BINARY_DIR "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources/shaders")
+set(CMAKE_CURRENT_BINARY_DIR "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Assets/Shaders")
 
 # Add path to binary filenames
 list(
@@ -40,7 +38,8 @@ add_custom_target(
 foreach(SOURCE_FILENAME ${SOURCE_FILENAMES})
 	add_custom_command(
 		OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILENAME}${BINARY_SUFFIX}"
-		COMMAND ${SPIRV_COMPILER} "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILENAME}" -o "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILENAME}${BINARY_SUFFIX}"
+		COMMAND ${glslc_executable} "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILENAME}" -o "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILENAME}${BINARY_SUFFIX}"
 		DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILENAME}"
+		COMMENT "Building shader module ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILENAME}${BINARY_SUFFIX}"
 	)
 endforeach()
