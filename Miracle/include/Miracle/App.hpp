@@ -12,6 +12,7 @@
 #include "Application/ILogger.hpp"
 #include "Common/MiracleError.hpp"
 #include "Common/Models/WindowConfig.hpp"
+#include "Common/Models/RendererConfig.hpp"
 
 namespace Miracle {
 	using StartScript = std::function<void()>;
@@ -20,6 +21,7 @@ namespace Miracle {
 
 	struct AppInitProps {
 		WindowConfig windowConfig = {};
+		RendererConfig rendererConfig = {};
 		StartScript startScript = []() {};
 		UpdateScript updateScript = []() {};
 	};
@@ -29,6 +31,7 @@ namespace Miracle {
 		friend class Logger;
 		friend class Window;
 		friend class Keyboard;
+		friend class Renderer;
 		friend class TextInput;
 		friend class Clipboard;
 		friend class DeltaTime;
@@ -39,6 +42,7 @@ namespace Miracle {
 
 		const std::string m_name;
 		const WindowConfig m_windowConfig;
+		const RendererConfig m_rendererConfig;
 		const StartScript m_startScript;
 		const UpdateScript m_updateScript;
 		UserData m_userData;

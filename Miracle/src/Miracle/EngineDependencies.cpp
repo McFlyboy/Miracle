@@ -18,6 +18,7 @@ namespace Miracle {
 	EngineDependencies::EngineDependencies(
 		const std::string_view& appName,
 		const WindowConfig& windowConfig,
+		const RendererConfig& rendererConfig,
 		Application::ILogger& logger,
 		Application::EventDispatcher& eventDispatcher
 	) :
@@ -51,12 +52,7 @@ namespace Miracle {
 			*m_fileAccess.get(),
 			*m_graphicsApi.get(),
 			*reinterpret_cast<GlfwWindow*>(m_window.get()),
-			Application::RendererInitProps{
-				.swapchainInitProps = Application::SwapchainInitProps{
-					.useSrgb  = false,
-					.useVsync = false
-				}
-			}
+			Mappings::toRendererInitProps(rendererConfig)
 		),
 		m_textInputService(eventDispatcher),
 		m_deltaTimeService(*m_multimediaFramework.get()),

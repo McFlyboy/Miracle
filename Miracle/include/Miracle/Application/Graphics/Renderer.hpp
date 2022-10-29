@@ -3,6 +3,7 @@
 #include <memory>
 #include <string_view>
 
+#include <Miracle/Common/Math/Color3f.hpp>
 #include <Miracle/Application/ILogger.hpp>
 #include <Miracle/Application/IFileAccess.hpp>
 #include "IGraphicsApi.hpp"
@@ -16,6 +17,7 @@
 namespace Miracle::Application {
 	struct RendererInitProps{
 		SwapchainInitProps swapchainInitProps = {};
+		Color3f clearColor = {};
 	};
 
 	class Renderer {
@@ -30,6 +32,7 @@ namespace Miracle::Application {
 		std::unique_ptr<IGraphicsPipeline> m_pipeline;
 		std::unique_ptr<IVertexBuffer> m_vertexBuffer;
 		std::unique_ptr<IIndexBuffer> m_indexBuffer;
+		Color3f m_clearColor;
 
 	public:
 		Renderer(
@@ -42,6 +45,10 @@ namespace Miracle::Application {
 		);
 
 		~Renderer();
+
+		inline const Color3f& getClearColor() const { return m_clearColor; }
+
+		void setClearColor(const Color3f& clearColor);
 
 		bool render();
 	};

@@ -20,6 +20,7 @@ namespace Miracle {
 	) :
 		m_name(std::move(name)),
 		m_windowConfig(std::move(props.windowConfig)),
+		m_rendererConfig(std::move(props.rendererConfig)),
 		m_startScript(std::move(props.startScript)),
 		m_updateScript(std::move(props.updateScript)),
 		m_userData(std::move(userData)),
@@ -51,6 +52,7 @@ namespace Miracle {
 			dependencies = std::make_unique<EngineDependencies>(
 				m_name,
 				m_windowConfig,
+				m_rendererConfig,
 				*m_logger.get(),
 				m_dispatcher
 			);
