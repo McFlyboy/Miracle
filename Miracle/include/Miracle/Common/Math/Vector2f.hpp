@@ -2,7 +2,7 @@
 
 namespace Miracle {
 	struct Vector2f {
-		float x;
-		float y;
+		float x = {};
+		float y = {};
 	};
 }

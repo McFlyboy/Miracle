@@ -37,7 +37,8 @@ namespace Miracle::Application {
 					0, 2, 3
 				}
 			)
-		)
+		),
+		m_clearColor(initProps.clearColor)
 	{
 		m_logger.info("Renderer created");
 	}
@@ -46,6 +47,10 @@ namespace Miracle::Application {
 		m_logger.info("Destroying renderer...");
 
 		m_context->waitForDeviceIdle();
+	}
+
+	void Renderer::setClearColor(const Color3f& clearColor) {
+		m_clearColor = clearColor;
 	}
 
 	bool Renderer::render() {
@@ -60,7 +65,7 @@ namespace Miracle::Application {
 
 		m_context->recordCommands(
 			[&]() {
-				m_swapchain->beginRenderPass(0.125f, 0.125f, 0.125f);
+				m_swapchain->beginRenderPass(m_clearColor);
 				m_context->setViewport(0.0f, 0.0f, swapchainImageSize.width, swapchainImageSize.height);
 				m_context->setScissor(0, 0, swapchainImageSize.width, swapchainImageSize.height);
 

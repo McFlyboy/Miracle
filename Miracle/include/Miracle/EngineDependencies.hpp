@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "Common/Models/WindowConfig.hpp"
+#include "Common/Models/RendererConfig.hpp"
 #include "Application/ILogger.hpp"
 #include "Application/EventDispatcher.hpp"
 #include "Application/IFileAccess.hpp"
@@ -33,6 +34,7 @@ namespace Miracle {
 		EngineDependencies(
 			const std::string_view& appName,
 			const WindowConfig& windowConfig,
+			const RendererConfig& rendererConfig,
 			Application::ILogger& logger,
 			Application::EventDispatcher& eventDispatcher
 		);

@@ -12,6 +12,13 @@ int main() {
 					.height = 600
 				},
 			},
+			.rendererConfig = RendererConfig{
+				.clearColor = Color3f{
+					.red   = 0.5f,
+					.green = 0.1f,
+					.blue  = 0.1f
+				}
+			},
 			.startScript = []() {
 				PerformanceCounters::setCountersUpdatedCallback(
 					[]() {
@@ -29,6 +36,17 @@ int main() {
 
 				if (Keyboard::isKeyPressed(KeyboardKey::keyR)) {
 					Window::setResizable(!Window::isResizable());
+				}
+
+				if (Keyboard::isKeyPressedOrRepeated(KeyboardKey::keyC)) {
+					auto& currentColor = Renderer::getClearColor();
+					Renderer::setClearColor(
+						Color3f{
+							.red   = currentColor.green,
+							.green = currentColor.blue,
+							.blue  = currentColor.red
+						}
+					);
 				}
 			}
 		}
