@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <Miracle/Common/Math/Vector2f.hpp>
+#include <Miracle/Common/Models/Vertex.hpp>
 #include <Miracle/Application/ILogger.hpp>
 #include <Miracle/Application/Graphics/IVertexBuffer.hpp>
 #include "Vulkan.hpp"
@@ -23,7 +23,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		VertexBuffer(
 			Application::ILogger& logger,
 			GraphicsContext& context,
-			const std::vector<Vector2f>& vertices
+			const std::vector<Vertex>& vertices
 		);
 
 		~VertexBuffer();

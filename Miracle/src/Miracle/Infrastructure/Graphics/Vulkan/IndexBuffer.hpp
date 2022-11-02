@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vector>
-#include <cstdint>
 
+#include <Miracle/Common/Models/Face.hpp>
 #include <Miracle/Application/ILogger.hpp>
 #include <Miracle/Application/Graphics/IIndexBuffer.hpp>
 #include "Vulkan.hpp"
@@ -23,7 +23,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		IndexBuffer(
 			Application::ILogger& logger,
 			GraphicsContext& context,
-			std::vector<uint32_t> indices
+			const std::vector<Face>& faces
 		);
 
 		~IndexBuffer();

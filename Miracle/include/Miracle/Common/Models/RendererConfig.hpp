@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Miracle/Common/Math/Color3f.hpp>
+#include <Miracle/Common/Models/Mesh.hpp>
 
 namespace Miracle {
 	struct RendererConfig {
@@ -9,5 +10,7 @@ namespace Miracle {
 			.green = 0.125f,
 			.blue  = 0.125f
 		};
+
+		Mesh mesh = {};
 	};
 }

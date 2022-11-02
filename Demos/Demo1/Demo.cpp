@@ -17,6 +17,18 @@ int main() {
 					.red   = 0.5f,
 					.green = 0.1f,
 					.blue  = 0.1f
+				},
+				.mesh = Mesh{
+					.vertices = {
+						Vertex{ .position = Vector2f{ .x = -0.5f, .y = -0.5f } },
+						Vertex{ .position = Vector2f{ .x =  0.5f, .y = -0.5f } },
+						Vertex{ .position = Vector2f{ .x =  0.5f, .y =  0.5f } },
+						Vertex{ .position = Vector2f{ .x = -0.5f, .y =  0.5f } }
+					},
+					.faces = {
+						Face{ .indices = { 0, 1, 2 } },
+						Face{ .indices = { 0, 2, 3 } },
+					}
 				}
 			},
 			.startScript = []() {

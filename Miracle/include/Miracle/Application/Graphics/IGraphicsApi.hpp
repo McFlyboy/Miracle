@@ -5,7 +5,8 @@
 #include <vector>
 #include <cstdint>
 
-#include <Miracle/Common/Math/Vector2f.hpp>
+#include <Miracle/Common/Models/Vertex.hpp>
+#include <Miracle/Common/Models/Face.hpp>
 #include <Miracle/Application/ILogger.hpp>
 #include <Miracle/Application/IFileAccess.hpp>
 #include "IContextTarget.hpp"
@@ -42,13 +43,13 @@ namespace Miracle::Application {
 		virtual std::unique_ptr<IVertexBuffer> createVertexBuffer(
 			ILogger& logger,
 			IGraphicsContext& context,
-			std::vector<Vector2f> vertices
+			const std::vector<Vertex>& vertices
 		) const = 0;
 
 		virtual std::unique_ptr<IIndexBuffer> createIndexBuffer(
 			ILogger& logger,
 			IGraphicsContext& context,
-			std::vector<uint32_t> indices
+			const std::vector<Face>& faces
 		) const = 0;
 	};
 }

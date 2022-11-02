@@ -4,6 +4,7 @@
 #include <string_view>
 
 #include <Miracle/Common/Math/Color3f.hpp>
+#include <Miracle/Common/Models/Mesh.hpp>
 #include <Miracle/Application/ILogger.hpp>
 #include <Miracle/Application/IFileAccess.hpp>
 #include "IGraphicsApi.hpp"
@@ -18,6 +19,7 @@ namespace Miracle::Application {
 	struct RendererInitProps{
 		SwapchainInitProps swapchainInitProps = {};
 		Color3f clearColor = {};
+		const Mesh& mesh = {};
 	};
 
 	class Renderer {

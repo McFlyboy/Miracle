@@ -10,17 +10,17 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	IndexBuffer::IndexBuffer(
 		Application::ILogger& logger,
 		GraphicsContext& context,
-		std::vector<uint32_t> indices
+		const std::vector<Face>& faces
 	) :
 		m_logger(logger),
 		m_context(context)
 	{
-		if (indices.empty()) {
+		if (faces.empty()) {
 			m_logger.error("No indices provided for Vulkan index buffer creation");
 			throw Application::IndexBufferErrors::NoIndicesProvidedError();
 		}
 
-		auto requiredBufferSize = static_cast<vk::DeviceSize>(sizeof(indices.front()) * indices.size());
+		auto requiredBufferSize = static_cast<vk::DeviceSize>(sizeof(faces.front()) * faces.size());
 
 		auto [stagingBuffer, stagingAllocation] = std::pair<vk::Buffer, vma::Allocation>();
 
@@ -42,7 +42,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 
 		auto stagingBufferData = m_context.getAllocator().getAllocationInfo(stagingAllocation).pMappedData;
-		std::memcpy(stagingBufferData, indices.data(), requiredBufferSize);
+		std::memcpy(stagingBufferData, faces.data(), requiredBufferSize);
 
 		try {
 			auto [buffer, allocation] = BufferUtilities::createBuffer(
@@ -67,7 +67,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		m_context.getAllocator().destroyBuffer(stagingBuffer, stagingAllocation);
 
-		m_indexCount = indices.size();
+		m_indexCount = faces.front().indices.size() * faces.size();
 
 		m_logger.info("Vulkan index buffer created");
 	}
