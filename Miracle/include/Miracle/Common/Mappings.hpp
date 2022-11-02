@@ -33,7 +33,7 @@ namespace Miracle {
 					.useVsync = false
 				},
 				.clearColor         = rendererConfig.clearColor,
-				.mesh               = std::move(rendererConfig.mesh)
+				.mesh               = rendererConfig.mesh
 			};
 		}
 	};

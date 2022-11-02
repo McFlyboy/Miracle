@@ -25,7 +25,7 @@ int main() {
 						Vertex{ .position = Vector2f{ .x =  0.5f, .y =  0.5f } },
 						Vertex{ .position = Vector2f{ .x = -0.5f, .y =  0.5f } }
 					},
-					.faces    = {
+					.faces = {
 						Face{ .indices = { 0, 1, 2 } },
 						Face{ .indices = { 0, 2, 3 } },
 					}

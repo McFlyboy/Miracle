@@ -19,7 +19,7 @@ namespace Miracle::Application {
 	struct RendererInitProps{
 		SwapchainInitProps swapchainInitProps = {};
 		Color3f clearColor = {};
-		Mesh mesh = {};
+		const Mesh& mesh = {};
 	};
 
 	class Renderer {
