@@ -17,26 +17,14 @@ namespace Miracle::Application {
 		m_swapchain(m_api.createSwapchain(m_logger, *m_context.get(), initProps.swapchainInitProps)),
 		m_pipeline(m_api.createGraphicsPipeline(m_logger, m_fileAccess, *m_context.get(), *m_swapchain.get())),
 		m_vertexBuffer(
-			m_api.createVertexBuffer(
-				m_logger,
-				*m_context.get(),
-				std::vector{
-					Vector2f{ .x = -0.5f, .y = -0.5f },
-					Vector2f{ .x =  0.5f, .y = -0.5f },
-					Vector2f{ .x =  0.5f, .y =  0.5f },
-					Vector2f{ .x = -0.5f, .y =  0.5f }
-				}
-			)
+			!initProps.mesh.vertices.empty()
+				? m_api.createVertexBuffer(m_logger, *m_context.get(), initProps.mesh.vertices)
+				: nullptr
 		),
 		m_indexBuffer(
-			m_api.createIndexBuffer(
-				m_logger,
-				*m_context.get(),
-				std::vector<uint32_t>{
-					0, 1, 2,
-					0, 2, 3
-				}
-			)
+			!initProps.mesh.faces.empty()
+				? m_api.createIndexBuffer(m_logger, *m_context.get(), initProps.mesh.faces)
+				: nullptr
 		),
 		m_clearColor(initProps.clearColor)
 	{
@@ -70,10 +58,13 @@ namespace Miracle::Application {
 				m_context->setScissor(0, 0, swapchainImageSize.width, swapchainImageSize.height);
 
 				m_pipeline->bind();
-				m_vertexBuffer->bind();
-				m_indexBuffer->bind();
 
-				m_context->drawIndexed(m_indexBuffer->getIndexCount());
+				if (m_vertexBuffer != nullptr && m_indexBuffer != nullptr) {
+					m_vertexBuffer->bind();
+					m_indexBuffer->bind();
+
+					m_context->drawIndexed(m_indexBuffer->getIndexCount());
+				}
 
 				m_swapchain->endRenderPass();
 			}

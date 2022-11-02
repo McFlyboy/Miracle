@@ -10,7 +10,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	VertexBuffer::VertexBuffer(
 		Application::ILogger& logger,
 		GraphicsContext& context,
-		const std::vector<Vector2f>& vertices
+		const std::vector<Vertex>& vertices
 	) :
 		m_logger(logger),
 		m_context(context)

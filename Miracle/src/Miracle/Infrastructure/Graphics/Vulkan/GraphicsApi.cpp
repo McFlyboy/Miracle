@@ -48,7 +48,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	std::unique_ptr<Application::IVertexBuffer> GraphicsApi::createVertexBuffer(
 		Application::ILogger& logger,
 		Application::IGraphicsContext& context,
-		std::vector<Vector2f> vertices
+		const std::vector<Vertex>& vertices
 	) const {
 		return std::make_unique<VertexBuffer>(
 			logger,
@@ -60,12 +60,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	std::unique_ptr<Application::IIndexBuffer> GraphicsApi::createIndexBuffer(
 		Application::ILogger& logger,
 		Application::IGraphicsContext& context,
-		std::vector<uint32_t> indices
+		const std::vector<Face>& faces
 	) const {
 		return std::make_unique<IndexBuffer>(
 			logger,
 			*reinterpret_cast<GraphicsContext*>(&context),
-			indices
+			faces
 		);
 	}
 }

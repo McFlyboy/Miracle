@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string_view>
+#include <utility>
 
 #include <Miracle/Application/IWindow.hpp>
 #include <Miracle/Application/Graphics/Renderer.hpp>
@@ -31,7 +32,8 @@ namespace Miracle {
 					.useSrgb  = false,
 					.useVsync = false
 				},
-				.clearColor         = rendererConfig.clearColor
+				.clearColor         = rendererConfig.clearColor,
+				.mesh               = std::move(rendererConfig.mesh)
 			};
 		}
 	};

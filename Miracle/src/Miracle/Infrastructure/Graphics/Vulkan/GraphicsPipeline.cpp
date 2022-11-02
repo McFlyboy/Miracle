@@ -1,11 +1,12 @@
 #include "GraphicsPipeline.hpp"
 
+#include <cstddef>
 #include <exception>
 #include <array>
 
 #include <fmt/format.h>
 
-#include <Miracle/Common/Math/Vector2f.hpp>
+#include <Miracle/Common/Models/Vertex.hpp>
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	GraphicsPipeline::GraphicsPipeline(
@@ -47,7 +48,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		auto vertexInputBindingDescription = vk::VertexInputBindingDescription{
 			.binding   = 0,
-			.stride    = sizeof(Vector2f),
+			.stride    = sizeof(Vertex),
 			.inputRate = vk::VertexInputRate::eVertex
 		};
 
@@ -55,7 +56,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			.location = 0,
 			.binding  = 0,
 			.format   = vk::Format::eR32G32Sfloat,
-			.offset   = 0
+			.offset   = offsetof(Vertex, position)
 		};
 
 		auto vertexInputStateCreateInfo = vk::PipelineVertexInputStateCreateInfo{

@@ -26,13 +26,13 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		virtual std::unique_ptr<Application::IVertexBuffer> createVertexBuffer(
 			Application::ILogger& logger,
 			Application::IGraphicsContext& context,
-			std::vector<Vector2f> vertices
+			const std::vector<Vertex>& vertices
 		) const override;
 
 		virtual std::unique_ptr<Application::IIndexBuffer> createIndexBuffer(
 			Application::ILogger& logger,
 			Application::IGraphicsContext& context,
-			std::vector<uint32_t> indices
+			const std::vector<Face>& faces
 		) const override;
 	};
 }
