@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Miracle/Common/MiracleError.hpp>
+#include "PushConstants.hpp"
 
 namespace Miracle::Application {
 	class IGraphicsPipeline {
@@ -8,6 +9,8 @@ namespace Miracle::Application {
 		virtual ~IGraphicsPipeline() = default;
 
 		virtual void bind() = 0;
+
+		virtual void pushConstants(const PushConstants& constants) = 0;
 	};
 
 	namespace GraphicsPipelineErrors {

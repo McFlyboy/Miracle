@@ -85,6 +85,7 @@ namespace Miracle {
 		auto& performanceCountingService = m_dependencies->getPerformanceCountingService();
 
 		m_running = true;
+		deltaTimeService.updateDeltaTime();
 
 		try {
 			m_startScript();

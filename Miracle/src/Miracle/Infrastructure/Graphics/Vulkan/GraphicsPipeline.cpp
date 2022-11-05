@@ -7,6 +7,7 @@
 #include <fmt/format.h>
 
 #include <Miracle/Common/Models/Vertex.hpp>
+#include <Miracle/Application/Graphics/PushConstants.hpp>
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	GraphicsPipeline::GraphicsPipeline(
@@ -139,14 +140,20 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			.pDynamicStates    = dynamicStates.data()
 		};
 
+		auto pushConstantRange = vk::PushConstantRange{
+			.stageFlags = vk::ShaderStageFlagBits::eVertex,
+			.offset     = 0,
+			.size       = sizeof(Application::PushConstants)
+		};
+
 		try {
 			m_layout = m_context.getDevice().createPipelineLayout(
 				vk::PipelineLayoutCreateInfo{
 					.flags                  = {},
 					.setLayoutCount         = 0,
 					.pSetLayouts            = nullptr,
-					.pushConstantRangeCount = 0,
-					.pPushConstantRanges    = nullptr
+					.pushConstantRangeCount = 1,
+					.pPushConstantRanges    = &pushConstantRange
 				}
 			);
 		}
@@ -193,6 +200,15 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 	void GraphicsPipeline::bind() {
 		m_context.getCommandBuffer().bindPipeline(vk::PipelineBindPoint::eGraphics, *m_pipeline);
+	}
+
+	void GraphicsPipeline::pushConstants(const Application::PushConstants& constants) {
+		m_context.getCommandBuffer().pushConstants<Application::PushConstants>(
+			*m_layout,
+			vk::ShaderStageFlagBits::eVertex,
+			0,
+			constants
+		);
 	}
 
 	vk::raii::ShaderModule GraphicsPipeline::createShaderModule(const std::vector<char>& bytecode) const {

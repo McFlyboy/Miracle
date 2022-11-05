@@ -32,6 +32,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		virtual void bind() override;
 
+		virtual void pushConstants(const Application::PushConstants& constants) override;
+
 	private:
 		vk::raii::ShaderModule createShaderModule(const std::vector<char>& bytecode) const;
 	};

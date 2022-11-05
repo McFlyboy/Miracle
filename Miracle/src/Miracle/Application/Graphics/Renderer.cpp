@@ -28,6 +28,12 @@ namespace Miracle::Application {
 		),
 		m_clearColor(initProps.clearColor)
 	{
+		auto swapchainImageSize = m_swapchain->getImageSize();
+
+		if (swapchainImageSize.width != 0 && swapchainImageSize.height != 0) {
+			m_constants.aspectRatio = ((float)swapchainImageSize.width) / ((float)swapchainImageSize.height);
+		}
+
 		m_logger.info("Renderer created");
 	}
 
@@ -41,6 +47,10 @@ namespace Miracle::Application {
 		m_clearColor = clearColor;
 	}
 
+	void Renderer::setTranslation(const Vector2f& translation) {
+		m_constants.translation = translation;
+	}
+
 	bool Renderer::render() {
 		if (!m_contextTarget.isCurrentlyPresentable()) [[unlikely]] return false;
 
@@ -50,6 +60,7 @@ namespace Miracle::Application {
 		}
 
 		auto swapchainImageSize = m_swapchain->getImageSize();
+		m_constants.aspectRatio = ((float)swapchainImageSize.width) / ((float)swapchainImageSize.height);
 
 		m_context->recordCommands(
 			[&]() {
@@ -58,6 +69,7 @@ namespace Miracle::Application {
 				m_context->setScissor(0, 0, swapchainImageSize.width, swapchainImageSize.height);
 
 				m_pipeline->bind();
+				m_pipeline->pushConstants(m_constants);
 
 				if (m_vertexBuffer != nullptr && m_indexBuffer != nullptr) {
 					m_vertexBuffer->bind();
