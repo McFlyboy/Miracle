@@ -27,7 +27,7 @@ int main() {
 					},
 					.faces = {
 						Face{ .indices = { 0, 1, 2 } },
-						Face{ .indices = { 0, 2, 3 } },
+						Face{ .indices = { 0, 2, 3 } }
 					}
 				}
 			},
@@ -60,6 +60,26 @@ int main() {
 						}
 					);
 				}
+
+				auto translation = Renderer::getTranslation();
+
+				if (Keyboard::isKeyHeld(KeyboardKey::keyW)) {
+					translation.y += 0.5f * DeltaTime::get();
+				}
+
+				if (Keyboard::isKeyHeld(KeyboardKey::keyS)) {
+					translation.y -= 0.5f * DeltaTime::get();
+				}
+
+				if (Keyboard::isKeyHeld(KeyboardKey::keyD)) {
+					translation.x += 0.5f * DeltaTime::get();
+				}
+
+				if (Keyboard::isKeyHeld(KeyboardKey::keyA)) {
+					translation.x -= 0.5f * DeltaTime::get();
+				}
+
+				Renderer::setTranslation(translation);
 			}
 		}
 	);

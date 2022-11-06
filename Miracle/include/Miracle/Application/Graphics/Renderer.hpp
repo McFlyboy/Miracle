@@ -4,6 +4,7 @@
 #include <string_view>
 
 #include <Miracle/Common/Math/Color3f.hpp>
+#include <Miracle/Common/Math/Vector2f.hpp>
 #include <Miracle/Common/Models/Mesh.hpp>
 #include <Miracle/Application/ILogger.hpp>
 #include <Miracle/Application/IFileAccess.hpp>
@@ -14,6 +15,7 @@
 #include "IGraphicsPipeline.hpp"
 #include "IVertexBuffer.hpp"
 #include "IIndexBuffer.hpp"
+#include "PushConstants.hpp"
 
 namespace Miracle::Application {
 	struct RendererInitProps{
@@ -35,6 +37,7 @@ namespace Miracle::Application {
 		std::unique_ptr<IVertexBuffer> m_vertexBuffer;
 		std::unique_ptr<IIndexBuffer> m_indexBuffer;
 		Color3f m_clearColor;
+		PushConstants m_constants = {};
 
 	public:
 		Renderer(
@@ -51,6 +54,10 @@ namespace Miracle::Application {
 		inline const Color3f& getClearColor() const { return m_clearColor; }
 
 		void setClearColor(const Color3f& clearColor);
+
+		inline const Vector2f& getTranslation() const { return m_constants.translation; }
+
+		void setTranslation(const Vector2f& translation);
 
 		bool render();
 	};
