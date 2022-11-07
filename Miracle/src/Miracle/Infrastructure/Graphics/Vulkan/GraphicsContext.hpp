@@ -71,13 +71,13 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		virtual void drawIndexed(uint32_t indexCount) override;
 
+		inline IContextTarget& getTarget() override { return m_target; }
+
 		virtual void recordCommands(const Application::Recording& recording) override;
 
 		virtual void submitRecording() override;
 
 		virtual void waitForDeviceIdle() override;
-
-		inline const IContextTarget& getTarget() const { return m_target; }
 
 		inline const vk::raii::SurfaceKHR& getSurface() const { return m_surface; }
 

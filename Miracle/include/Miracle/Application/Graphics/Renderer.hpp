@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <string_view>
 
 #include <Miracle/Common/Math/Color3f.hpp>
 #include <Miracle/Common/Math/Vector2f.hpp>
@@ -9,7 +8,6 @@
 #include <Miracle/Application/ILogger.hpp>
 #include <Miracle/Application/IFileAccess.hpp>
 #include "IGraphicsApi.hpp"
-#include "IContextTarget.hpp"
 #include "IGraphicsContext.hpp"
 #include "ISwapchain.hpp"
 #include "IGraphicsPipeline.hpp"
@@ -29,9 +27,8 @@ namespace Miracle::Application {
 		ILogger& m_logger;
 		IFileAccess& m_fileAccess;
 		IGraphicsApi& m_api;
-		IContextTarget& m_contextTarget;
+		IGraphicsContext& m_context;
 
-		std::unique_ptr<IGraphicsContext> m_context;
 		std::unique_ptr<ISwapchain> m_swapchain;
 		std::unique_ptr<IGraphicsPipeline> m_pipeline;
 		std::unique_ptr<IVertexBuffer> m_vertexBuffer;
@@ -41,11 +38,10 @@ namespace Miracle::Application {
 
 	public:
 		Renderer(
-			const std::string_view& appName,
 			ILogger& logger,
 			IFileAccess& fileAccess,
 			IGraphicsApi& api,
-			IContextTarget& contextTarget,
+			IGraphicsContext& context,
 			const RendererInitProps& initProps
 		);
 

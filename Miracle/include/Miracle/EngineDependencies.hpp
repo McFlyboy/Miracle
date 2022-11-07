@@ -12,6 +12,7 @@
 #include "Application/IWindow.hpp"
 #include "Application/IKeyboard.hpp"
 #include "Application/Graphics/IGraphicsApi.hpp"
+#include "Application/Graphics/IGraphicsContext.hpp"
 #include "Application/Graphics/Renderer.hpp"
 #include "Application/TextInputService.hpp"
 #include "Application/DeltaTimeService.hpp"
@@ -25,6 +26,7 @@ namespace Miracle {
 		std::unique_ptr<Application::IWindow> m_window;
 		std::unique_ptr<Application::IKeyboard> m_keyboard;
 		std::unique_ptr<Application::IGraphicsApi> m_graphicsApi;
+		std::unique_ptr<Application::IGraphicsContext> m_graphicsContext;
 		Application::Renderer m_renderer;
 		Application::TextInputService m_textInputService;
 		Application::DeltaTimeService m_deltaTimeService;

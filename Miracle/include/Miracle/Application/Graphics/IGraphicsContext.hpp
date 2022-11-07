@@ -4,6 +4,7 @@
 #include <cstdint>
 
 #include <Miracle/Common/MiracleError.hpp>
+#include "IContextTarget.hpp"
 
 namespace Miracle::Application {
 	using Recording = std::function<void()>;
@@ -29,6 +30,8 @@ namespace Miracle::Application {
 		virtual void draw(uint32_t vertexCount) = 0;
 
 		virtual void drawIndexed(uint32_t indexCount) = 0;
+
+		virtual inline IContextTarget& getTarget() = 0;
 
 		virtual void recordCommands(const Recording& recording) = 0;
 

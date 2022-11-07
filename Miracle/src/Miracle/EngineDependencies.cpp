@@ -7,6 +7,7 @@
 #include "Infrastructure/View/Glfw/Window.hpp"
 #include "Infrastructure/Input/Glfw/Keyboard.hpp"
 #include "Infrastructure/Graphics/Vulkan/GraphicsApi.hpp"
+#include "Infrastructure/Graphics/Vulkan/GraphicsContext.hpp"
 
 namespace Miracle {
 	using FileSystemFileAccess = Infrastructure::Persistance::FileSystem::FileAccess;
@@ -14,6 +15,7 @@ namespace Miracle {
 	using GlfwWindow = Infrastructure::View::Glfw::Window;
 	using GlfwKeyboard = Infrastructure::Input::Glfw::Keyboard;
 	using VulkanGraphicsApi = Infrastructure::Graphics::Vulkan::GraphicsApi;
+	using VulkanGraphicsContext = Infrastructure::Graphics::Vulkan::GraphicsContext;
 
 	EngineDependencies::EngineDependencies(
 		const std::string_view& appName,
@@ -44,14 +46,19 @@ namespace Miracle {
 				)
 		),
 		m_graphicsApi(
-			std::make_unique<VulkanGraphicsApi>()
+			std::make_unique<VulkanGraphicsApi>(logger)
+		),
+		m_graphicsContext(
+			m_graphicsApi->createGraphicsContext(
+				appName,
+				*reinterpret_cast<GlfwWindow*>(m_window.get())
+			)
 		),
 		m_renderer(
-			appName,
 			logger,
 			*m_fileAccess.get(),
 			*m_graphicsApi.get(),
-			*reinterpret_cast<GlfwWindow*>(m_window.get()),
+			*m_graphicsContext.get(),
 			Mappings::toRendererInitProps(rendererConfig)
 		),
 		m_textInputService(eventDispatcher),
