@@ -19,7 +19,7 @@
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	class GraphicsContext : public Application::IGraphicsContext {
 	private:
-		static inline const uint32_t s_vulkanApiVersion = VK_API_VERSION_1_0;
+		static inline const uint32_t s_vulkanApiVersion = VK_API_VERSION_1_1;
 		static inline auto s_validationLayerNames = std::array{ "VK_LAYER_KHRONOS_validation" };
 
 		Application::ILogger& m_logger;
@@ -112,6 +112,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		inline void nextCommandBuffer() {
 			++m_currentCommandBufferIndex %= m_commandBuffers.size();
 		}
+
+		void recreateSemaphores();
 
 	private:
 		vk::raii::Instance createInstance(const std::string_view& appName);

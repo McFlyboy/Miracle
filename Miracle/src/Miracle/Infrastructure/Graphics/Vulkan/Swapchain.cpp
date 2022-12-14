@@ -127,6 +127,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_frameBuffers.push_back(createFrameBuffer(imageView));
 		}
 
+		m_context.recreateSemaphores();
+
 		m_imageIndex = getNextImageIndex();
 
 		m_logger.info("Vulkan swapchain re-created");

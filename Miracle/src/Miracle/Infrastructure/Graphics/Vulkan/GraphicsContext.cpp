@@ -171,6 +171,14 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		};
 	}
 
+	void GraphicsContext::recreateSemaphores() {
+		m_commandExecutionWaitSemaphores.clear();
+
+		for (auto& commandBuffer : m_commandBuffers) {
+			m_commandExecutionWaitSemaphores.push_back(createSemaphore());
+		}
+	}
+
 	vk::raii::Instance GraphicsContext::createInstance(const std::string_view& appName) {
 		auto appInfo = vk::ApplicationInfo{
 			.pApplicationName   = appName.data(),
