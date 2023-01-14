@@ -5,8 +5,10 @@
 
 #include <Miracle/Application/IWindow.hpp>
 #include <Miracle/Application/Graphics/Renderer.hpp>
+#include <Miracle/Application/Models/Scene.hpp>
 #include "Models/WindowConfig.hpp"
 #include "Models/RendererConfig.hpp"
+#include "Models/SceneConfig.hpp"
 
 namespace Miracle {
 	class Mappings {
@@ -32,8 +34,16 @@ namespace Miracle {
 					.useSrgb  = false,
 					.useVsync = false
 				},
-				.clearColor         = rendererConfig.clearColor,
 				.mesh               = rendererConfig.mesh
+			};
+		}
+
+		static inline Application::SceneInitProps toSceneInitProps(
+			const SceneConfig& sceneConfig
+		) {
+			return Application::SceneInitProps{
+				.backgroundColor = sceneConfig.backgroundColor,
+				.entityPosition  = sceneConfig.entityPosition
 			};
 		}
 	};

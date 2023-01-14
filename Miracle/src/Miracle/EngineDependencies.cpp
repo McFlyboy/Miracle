@@ -8,6 +8,7 @@
 #include "Infrastructure/Input/Glfw/Keyboard.hpp"
 #include "Infrastructure/Graphics/Vulkan/GraphicsApi.hpp"
 #include "Infrastructure/Graphics/Vulkan/GraphicsContext.hpp"
+#include "Infrastructure/Ecs/Entt/Ecs.hpp"
 
 namespace Miracle {
 	using FileSystemFileAccess = Infrastructure::Persistance::FileSystem::FileAccess;
@@ -16,11 +17,13 @@ namespace Miracle {
 	using GlfwKeyboard = Infrastructure::Input::Glfw::Keyboard;
 	using VulkanGraphicsApi = Infrastructure::Graphics::Vulkan::GraphicsApi;
 	using VulkanGraphicsContext = Infrastructure::Graphics::Vulkan::GraphicsContext;
+	using EnttEcs = Infrastructure::Ecs::Entt::Ecs;
 
 	EngineDependencies::EngineDependencies(
 		const std::string_view& appName,
 		const WindowConfig& windowConfig,
 		const RendererConfig& rendererConfig,
+		const SceneConfig& sceneConfig,
 		Application::ILogger& logger,
 		Application::EventDispatcher& eventDispatcher
 	) :
@@ -54,12 +57,19 @@ namespace Miracle {
 				*reinterpret_cast<GlfwWindow*>(m_window.get())
 			)
 		),
+		m_ecs(
+			std::make_unique<EnttEcs>()
+		),
 		m_renderer(
 			logger,
 			*m_fileAccess.get(),
 			*m_graphicsApi.get(),
 			*m_graphicsContext.get(),
 			Mappings::toRendererInitProps(rendererConfig)
+		),
+		m_sceneManager(
+			*m_ecs.get(),
+			Mappings::toSceneInitProps(sceneConfig)
 		),
 		m_textInputService(eventDispatcher),
 		m_deltaTimeService(*m_multimediaFramework.get()),

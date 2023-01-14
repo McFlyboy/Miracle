@@ -23,14 +23,9 @@ namespace Miracle::Application {
 			!initProps.mesh.faces.empty()
 				? m_api.createIndexBuffer(m_context, initProps.mesh.faces)
 				: nullptr
-		),
-		m_clearColor(initProps.clearColor)
+		)
 	{
 		auto swapchainImageSize = m_swapchain->getImageSize();
-
-		if (swapchainImageSize.width != 0 && swapchainImageSize.height != 0) {
-			m_constants.aspectRatio = ((float)swapchainImageSize.width) / ((float)swapchainImageSize.height);
-		}
 
 		m_logger.info("Renderer created");
 	}
@@ -41,15 +36,7 @@ namespace Miracle::Application {
 		m_context.waitForDeviceIdle();
 	}
 
-	void Renderer::setClearColor(const Color3f& clearColor) {
-		m_clearColor = clearColor;
-	}
-
-	void Renderer::setTranslation(const Vector2f& translation) {
-		m_constants.translation = translation;
-	}
-
-	bool Renderer::render() {
+	bool Renderer::render(const Scene& scene) {
 		if (!m_context.getTarget().isCurrentlyPresentable()) [[unlikely]] return false;
 
 		if (m_context.getTarget().isSizeChanged()) [[unlikely]] {
@@ -58,16 +45,22 @@ namespace Miracle::Application {
 		}
 
 		auto swapchainImageSize = m_swapchain->getImageSize();
-		m_constants.aspectRatio = ((float)swapchainImageSize.width) / ((float)swapchainImageSize.height);
+		auto aspectRatio = static_cast<float>(swapchainImageSize.width)
+			/ static_cast<float>(swapchainImageSize.height);
 
 		m_context.recordCommands(
 			[&]() {
-				m_swapchain->beginRenderPass(m_clearColor);
+				m_swapchain->beginRenderPass(scene.getBackgroundColor());
 				m_context.setViewport(0.0f, 0.0f, swapchainImageSize.width, swapchainImageSize.height);
 				m_context.setScissor(0, 0, swapchainImageSize.width, swapchainImageSize.height);
 
 				m_pipeline->bind();
-				m_pipeline->pushConstants(m_constants);
+				m_pipeline->pushConstants(
+					PushConstants{
+						.translation = scene.getEntityPosition(),
+						.aspectRatio = aspectRatio
+					}
+				);
 
 				if (m_vertexBuffer != nullptr && m_indexBuffer != nullptr) {
 					m_vertexBuffer->bind();

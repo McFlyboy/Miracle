@@ -15,14 +15,11 @@ namespace Miracle {
 
 	App::App(
 		std::string&& name,
-		AppInitProps&& props,
+		AppConfig&& config,
 		UserData&& userData
 	) :
 		m_name(std::move(name)),
-		m_windowConfig(std::move(props.windowConfig)),
-		m_rendererConfig(std::move(props.rendererConfig)),
-		m_startScript(std::move(props.startScript)),
-		m_updateScript(std::move(props.updateScript)),
+		m_config(std::move(config)),
 		m_userData(std::move(userData)),
 		m_logger(std::make_unique<LoggerBackend>())
 	{}
@@ -51,8 +48,9 @@ namespace Miracle {
 		try {
 			dependencies = std::make_unique<EngineDependencies>(
 				m_name,
-				m_windowConfig,
-				m_rendererConfig,
+				m_config.windowConfig,
+				m_config.rendererConfig,
+				m_config.sceneConfig,
 				*m_logger.get(),
 				m_dispatcher
 			);
@@ -81,6 +79,7 @@ namespace Miracle {
 		auto& window = m_dependencies->getWindow();
 		auto& keyboard = m_dependencies->getKeyboard();
 		auto& renderer = m_dependencies->getRenderer();
+		auto& sceneManager = m_dependencies->getSceneManager();
 		auto& deltaTimeService = m_dependencies->getDeltaTimeService();
 		auto& performanceCountingService = m_dependencies->getPerformanceCountingService();
 
@@ -88,7 +87,7 @@ namespace Miracle {
 		deltaTimeService.updateDeltaTime();
 
 		try {
-			m_startScript();
+			m_config.startScript();
 
 			while (m_running) {
 				keyboard.setAllKeyStatesAsDated();
@@ -101,10 +100,10 @@ namespace Miracle {
 
 				deltaTimeService.updateDeltaTime();
 
-				m_updateScript();
+				m_config.updateScript();
 				performanceCountingService.incrementUpdateCounter();
 
-				bool frameRendered = renderer.render();
+				bool frameRendered = renderer.render(sceneManager.getCurrentScene());
 
 				if (frameRendered) {
 					performanceCountingService.incrementFrameCounter();

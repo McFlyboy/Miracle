@@ -28,9 +28,9 @@ namespace Miracle::Application {
 	};
 
 	struct WindowInitProps {
-		std::u8string_view title;
-		WindowSize size;
-		bool resizable;
+		std::u8string_view title = {};
+		WindowSize size = {};
+		bool resizable = {};
 	};
 
 	namespace WindowErrors {

@@ -5,7 +5,7 @@ using namespace Miracle;
 int main() {
 	auto app = App(
 		"Demo 1",
-		AppInitProps{
+		AppConfig{
 			.windowConfig = WindowConfig{
 				.size = WindowSize{
 					.width  = 800,
@@ -13,11 +13,6 @@ int main() {
 				},
 			},
 			.rendererConfig = RendererConfig{
-				.clearColor = Color3f{
-					.red   = 0.5f,
-					.green = 0.1f,
-					.blue  = 0.1f
-				},
 				.mesh = Mesh{
 					.vertices = {
 						Vertex{ .position = Vector2f{ .x = -0.5f, .y = -0.5f } },
@@ -30,6 +25,13 @@ int main() {
 						Face{ .indices = { 0, 2, 3 } }
 					}
 				}
+			},
+			.sceneConfig = SceneConfig{
+				.backgroundColor = Color3f{
+					.red   = 0.5f,
+					.green = 0.1f,
+					.blue  = 0.1f
+				},
 			},
 			.startScript = []() {
 				PerformanceCounters::setCountersUpdatedCallback(
@@ -51,8 +53,8 @@ int main() {
 				}
 
 				if (Keyboard::isKeyPressedOrRepeated(KeyboardKey::keyC)) {
-					auto& currentColor = Renderer::getClearColor();
-					Renderer::setClearColor(
+					auto& currentColor = Scene::getBackgroundColor();
+					Scene::setBackgroundColor(
 						Color3f{
 							.red   = currentColor.green,
 							.green = currentColor.blue,
@@ -61,25 +63,25 @@ int main() {
 					);
 				}
 
-				auto translation = Renderer::getTranslation();
+				auto position = Scene::getEntityPosition();
 
 				if (Keyboard::isKeyHeld(KeyboardKey::keyW)) {
-					translation.y += 0.5f * DeltaTime::get();
+					position.y += 0.5f * DeltaTime::get();
 				}
 
 				if (Keyboard::isKeyHeld(KeyboardKey::keyS)) {
-					translation.y -= 0.5f * DeltaTime::get();
+					position.y -= 0.5f * DeltaTime::get();
 				}
 
 				if (Keyboard::isKeyHeld(KeyboardKey::keyD)) {
-					translation.x += 0.5f * DeltaTime::get();
+					position.x += 0.5f * DeltaTime::get();
 				}
 
 				if (Keyboard::isKeyHeld(KeyboardKey::keyA)) {
-					translation.x -= 0.5f * DeltaTime::get();
+					position.x -= 0.5f * DeltaTime::get();
 				}
 
-				Renderer::setTranslation(translation);
+				Scene::setEntityPosition(position);
 			}
 		}
 	);
