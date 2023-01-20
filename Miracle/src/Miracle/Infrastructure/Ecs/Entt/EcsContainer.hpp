@@ -17,5 +17,9 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 		}
 
 		virtual void setEntityPosition(const Vector2f& position) override;
+
+		virtual void addEntityBehaviour(std::unique_ptr<Behaviour>&& behaviour) override;
+
+		virtual void forEachEntityBehaviour(const std::function<void(Behaviour&)>& forEach) override;
 	};
 }

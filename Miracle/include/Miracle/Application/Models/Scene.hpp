@@ -1,9 +1,11 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include <Miracle/Common/Math/Vector2f.hpp>
 #include <Miracle/Common/Math/Color3f.hpp>
+#include <Miracle/Common/BehaviourFactory.hpp>
 #include <Miracle/Application/IEcs.hpp>
 #include <Miracle/Application/IEcsContainer.hpp>
 
@@ -11,6 +13,7 @@ namespace Miracle::Application {
 	struct SceneInitProps {
 		Color3f backgroundColor = {};
 		Vector2f entityPosition = {};
+		std::optional<BehaviourFactory> entityBehaviourFactory = {};
 	};
 
 	class Scene {
@@ -31,5 +34,9 @@ namespace Miracle::Application {
 		inline const Vector2f& getEntityPosition() const { return m_container->getEntityPosition(); }
 
 		void setEntityPosition(const Vector2f& position);
+
+		void start();
+
+		void update();
 	};
 }

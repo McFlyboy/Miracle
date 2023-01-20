@@ -48,7 +48,7 @@ namespace Miracle::Application {
 		auto aspectRatio = static_cast<float>(swapchainImageSize.width)
 			/ static_cast<float>(swapchainImageSize.height);
 
-		m_context.recordCommands(
+		m_context.recordCommands({
 			[&]() {
 				m_swapchain->beginRenderPass(scene.getBackgroundColor());
 				m_context.setViewport(0.0f, 0.0f, swapchainImageSize.width, swapchainImageSize.height);
@@ -71,7 +71,7 @@ namespace Miracle::Application {
 
 				m_swapchain->endRenderPass();
 			}
-		);
+		});
 
 		m_context.submitRecording();
 

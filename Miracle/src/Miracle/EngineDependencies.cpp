@@ -39,14 +39,14 @@ namespace Miracle {
 				eventDispatcher,
 				*reinterpret_cast<GlfwMultimediaFramework*>(m_multimediaFramework.get()),
 				Mappings::toWindowInitProps(windowConfig, UnicodeConverter::toUtf8(appName))
-				)
+			)
 		),
 		m_keyboard(
 			std::make_unique<GlfwKeyboard>(
 				eventDispatcher,
 				*m_multimediaFramework.get(),
 				*reinterpret_cast<GlfwWindow*>(m_window.get())
-				)
+			)
 		),
 		m_graphicsApi(
 			std::make_unique<VulkanGraphicsApi>(logger)

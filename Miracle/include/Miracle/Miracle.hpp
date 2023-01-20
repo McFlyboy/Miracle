@@ -14,3 +14,4 @@
 #include "Interface/PerformanceCounters.hpp"
 
 #include "Common/UnicodeConverter.hpp"
+#include "Common/Behaviour.hpp"

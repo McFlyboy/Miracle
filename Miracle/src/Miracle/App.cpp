@@ -88,6 +88,7 @@ namespace Miracle {
 
 		try {
 			m_config.startScript();
+			sceneManager.getCurrentScene().start();
 
 			while (m_running) {
 				keyboard.setAllKeyStatesAsDated();
@@ -101,6 +102,7 @@ namespace Miracle {
 				deltaTimeService.updateDeltaTime();
 
 				m_config.updateScript();
+				sceneManager.getCurrentScene().update();
 				performanceCountingService.incrementUpdateCounter();
 
 				bool frameRendered = renderer.render(sceneManager.getCurrentScene());

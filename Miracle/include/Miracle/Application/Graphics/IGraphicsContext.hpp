@@ -7,7 +7,13 @@
 #include "IContextTarget.hpp"
 
 namespace Miracle::Application {
-	using Recording = std::function<void()>;
+	struct Recording {
+		std::function<void()> recording;
+
+		void operator()() const {
+			recording();
+		}
+	};
 
 	class IGraphicsContext {
 	public:

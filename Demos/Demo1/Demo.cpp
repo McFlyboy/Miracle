@@ -2,6 +2,30 @@
 
 using namespace Miracle;
 
+class PlayerBehaviour : public Behaviour {
+	virtual void update() override {
+		auto position = Scene::getEntityPosition();
+
+		if (Keyboard::isKeyHeld(KeyboardKey::keyW)) {
+			position.y += 0.5f * DeltaTime::get();
+		}
+
+		if (Keyboard::isKeyHeld(KeyboardKey::keyS)) {
+			position.y -= 0.5f * DeltaTime::get();
+		}
+
+		if (Keyboard::isKeyHeld(KeyboardKey::keyD)) {
+			position.x += 0.5f * DeltaTime::get();
+		}
+
+		if (Keyboard::isKeyHeld(KeyboardKey::keyA)) {
+			position.x -= 0.5f * DeltaTime::get();
+		}
+
+		Scene::setEntityPosition(position);
+	}
+};
+
 int main() {
 	auto app = App(
 		"Demo 1",
@@ -32,6 +56,7 @@ int main() {
 					.green = 0.1f,
 					.blue  = 0.1f
 				},
+				.entityBehaviourFactory = []() { return std::make_unique<PlayerBehaviour>(); }
 			},
 			.startScript = []() {
 				PerformanceCounters::setCountersUpdatedCallback(
@@ -62,26 +87,6 @@ int main() {
 						}
 					);
 				}
-
-				auto position = Scene::getEntityPosition();
-
-				if (Keyboard::isKeyHeld(KeyboardKey::keyW)) {
-					position.y += 0.5f * DeltaTime::get();
-				}
-
-				if (Keyboard::isKeyHeld(KeyboardKey::keyS)) {
-					position.y -= 0.5f * DeltaTime::get();
-				}
-
-				if (Keyboard::isKeyHeld(KeyboardKey::keyD)) {
-					position.x += 0.5f * DeltaTime::get();
-				}
-
-				if (Keyboard::isKeyHeld(KeyboardKey::keyA)) {
-					position.x -= 0.5f * DeltaTime::get();
-				}
-
-				Scene::setEntityPosition(position);
 			}
 		}
 	);

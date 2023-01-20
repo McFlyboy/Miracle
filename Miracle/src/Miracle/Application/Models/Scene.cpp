@@ -9,6 +9,10 @@ namespace Miracle::Application {
 		m_backgroundColor(initProps.backgroundColor)
 	{
 		m_container->setEntityPosition(initProps.entityPosition);
+
+		if (initProps.entityBehaviourFactory.has_value()) {
+			m_container->addEntityBehaviour(initProps.entityBehaviourFactory.value()());
+		}
 	}
 
 	void Scene::setBackgroundColor(const Color3f& color) {
@@ -17,5 +21,21 @@ namespace Miracle::Application {
 
 	void Scene::setEntityPosition(const Vector2f& position) {
 		m_container->setEntityPosition(position);
+	}
+
+	void Scene::start() {
+		m_container->forEachEntityBehaviour(
+			[](Behaviour& behaviour) {
+				behaviour.start();
+			}
+		);
+	}
+
+	void Scene::update() {
+		m_container->forEachEntityBehaviour(
+			[](Behaviour& behaviour) {
+				behaviour.update();
+			}
+		);
 	}
 }
