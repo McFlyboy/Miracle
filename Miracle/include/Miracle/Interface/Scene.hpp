@@ -2,7 +2,7 @@
 
 #include <Miracle/App.hpp>
 #include <Miracle/Common/Math/Color3f.hpp>
-#include <Miracle/Common/Math/Vector2f.hpp>
+#include <Miracle/Common/Models/EntityConfig.hpp>
 
 namespace Miracle {
 	class Scene {
@@ -25,20 +25,12 @@ namespace Miracle {
 				.setBackgroundColor(color);
 		}
 
-		static inline const Vector2f& getEntityPosition() {
-			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
-
-			return App::s_currentApp->m_dependencies->getSceneManager()
-				.getCurrentScene()
-				.getEntityPosition();
-		}
-
-		static inline void setEntityPosition(const Vector2f& position) {
+		static inline void addEntity(const EntityConfig& config) {
 			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			App::s_currentApp->m_dependencies->getSceneManager()
 				.getCurrentScene()
-				.setEntityPosition(position);
+				.addEntity(config);
 		}
 	};
 }

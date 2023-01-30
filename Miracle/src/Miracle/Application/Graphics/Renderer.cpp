@@ -54,20 +54,24 @@ namespace Miracle::Application {
 				m_context.setViewport(0.0f, 0.0f, swapchainImageSize.width, swapchainImageSize.height);
 				m_context.setScissor(0, 0, swapchainImageSize.width, swapchainImageSize.height);
 
-				m_pipeline->bind();
-				m_pipeline->pushConstants(
-					PushConstants{
-						.translation = scene.getEntityPosition(),
-						.aspectRatio = aspectRatio
+				scene.forEachPosition(
+					[&](const Vector2f& position) {
+						m_pipeline->bind();
+						m_pipeline->pushConstants(
+							PushConstants{
+								.translation = position,
+								.aspectRatio = aspectRatio
+							}
+						);
+
+						if (m_vertexBuffer != nullptr && m_indexBuffer != nullptr) {
+							m_vertexBuffer->bind();
+							m_indexBuffer->bind();
+
+							m_context.drawIndexed(m_indexBuffer->getIndexCount());
+						}
 					}
 				);
-
-				if (m_vertexBuffer != nullptr && m_indexBuffer != nullptr) {
-					m_vertexBuffer->bind();
-					m_indexBuffer->bind();
-
-					m_context.drawIndexed(m_indexBuffer->getIndexCount());
-				}
 
 				m_swapchain->endRenderPass();
 			}

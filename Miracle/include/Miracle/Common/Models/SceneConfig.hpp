@@ -1,10 +1,9 @@
 #pragma once
 
-#include <optional>
+#include <vector>
 
 #include <Miracle/Common/Math/Color3f.hpp>
-#include <Miracle/Common/Math/Vector2f.hpp>
-#include <Miracle/Common/BehaviourFactory.hpp>
+#include "EntityConfig.hpp"
 
 namespace Miracle {
 	struct SceneConfig {
@@ -13,7 +12,6 @@ namespace Miracle {
 			.green = 0.125f,
 			.blue  = 0.125f
 		};
-		Vector2f entityPosition = {};
-		std::optional<BehaviourFactory> entityBehaviourFactory = {};
+		std::vector<EntityConfig> entityConfigs = {};
 	};
 }

@@ -88,7 +88,6 @@ namespace Miracle {
 
 		try {
 			m_config.startScript();
-			sceneManager.getCurrentScene().start();
 
 			while (m_running) {
 				keyboard.setAllKeyStatesAsDated();

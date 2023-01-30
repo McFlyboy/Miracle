@@ -1,19 +1,19 @@
 #pragma once
 
 #include <memory>
-#include <optional>
+#include <vector>
+#include <functional>
 
-#include <Miracle/Common/Math/Vector2f.hpp>
 #include <Miracle/Common/Math/Color3f.hpp>
-#include <Miracle/Common/BehaviourFactory.hpp>
+#include <Miracle/Common/Math/Vector2f.hpp>
+#include <Miracle/Common/Models/EntityConfig.hpp>
 #include <Miracle/Application/IEcs.hpp>
 #include <Miracle/Application/IEcsContainer.hpp>
 
 namespace Miracle::Application {
 	struct SceneInitProps {
 		Color3f backgroundColor = {};
-		Vector2f entityPosition = {};
-		std::optional<BehaviourFactory> entityBehaviourFactory = {};
+		std::vector<EntityConfig> entityConfigs = {};
 	};
 
 	class Scene {
@@ -31,12 +31,10 @@ namespace Miracle::Application {
 
 		void setBackgroundColor(const Color3f& color);
 
-		inline const Vector2f& getEntityPosition() const { return m_container->getEntityPosition(); }
-
-		void setEntityPosition(const Vector2f& position);
-
-		void start();
-
 		void update();
+
+		void forEachPosition(const std::function<void(const Vector2f&)>& forEach) const;
+
+		void addEntity(const EntityConfig& config);
 	};
 }

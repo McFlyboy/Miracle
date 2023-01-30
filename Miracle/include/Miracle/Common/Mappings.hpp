@@ -43,8 +43,7 @@ namespace Miracle {
 		) {
 			return Application::SceneInitProps{
 				.backgroundColor        = sceneConfig.backgroundColor,
-				.entityPosition         = sceneConfig.entityPosition,
-				.entityBehaviourFactory = sceneConfig.entityBehaviourFactory
+				.entityConfigs          = sceneConfig.entityConfigs
 			};
 		}
 	};

@@ -8,10 +8,8 @@ namespace Miracle::Application {
 		m_container(ecs.createContainer()),
 		m_backgroundColor(initProps.backgroundColor)
 	{
-		m_container->setEntityPosition(initProps.entityPosition);
-
-		if (initProps.entityBehaviourFactory.has_value()) {
-			m_container->addEntityBehaviour(initProps.entityBehaviourFactory.value()());
+		for (auto& entityConfig : initProps.entityConfigs) {
+			m_container->createEntity(entityConfig);
 		}
 	}
 
@@ -19,23 +17,19 @@ namespace Miracle::Application {
 		m_backgroundColor = color;
 	}
 
-	void Scene::setEntityPosition(const Vector2f& position) {
-		m_container->setEntityPosition(position);
-	}
-
-	void Scene::start() {
-		m_container->forEachEntityBehaviour(
-			[](Behaviour& behaviour) {
-				behaviour.start();
-			}
-		);
-	}
-
 	void Scene::update() {
-		m_container->forEachEntityBehaviour(
+		m_container->forEachBehaviour(
 			[](Behaviour& behaviour) {
-				behaviour.update();
+				behaviour.act();
 			}
 		);
+	}
+
+	void Scene::forEachPosition(const std::function<void(const Vector2f&)>& forEach) const {
+		m_container->forEachPosition(forEach);
+	}
+
+	void Scene::addEntity(const EntityConfig& config) {
+		m_container->createEntity(config);
 	}
 }

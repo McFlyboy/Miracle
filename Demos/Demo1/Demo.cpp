@@ -2,27 +2,61 @@
 
 using namespace Miracle;
 
-class PlayerBehaviour : public Behaviour {
-	virtual void update() override {
-		auto position = Scene::getEntityPosition();
+class BullettBehaviour : public Behaviour {
+private:
+	float m_direction;
 
+public:
+	BullettBehaviour(
+		const EntityProps& entityProps,
+		float direction
+	) : Behaviour(entityProps),
+		m_direction(direction)
+	{}
+
+	virtual void act() override {
+		m_entityProps.position.x += 5.0f * m_direction * DeltaTime::get();
+	}
+};
+
+class Player1Behaviour : public Behaviour {
+private:
+	float m_direction;
+
+public:
+	Player1Behaviour(const EntityProps& entityProps) : Behaviour(entityProps),
+		m_direction(1.0f)
+	{}
+
+	virtual void act() override {
 		if (Keyboard::isKeyHeld(KeyboardKey::keyW)) {
-			position.y += 0.5f * DeltaTime::get();
+			m_entityProps.position.y += 0.5f * DeltaTime::get();
 		}
 
 		if (Keyboard::isKeyHeld(KeyboardKey::keyS)) {
-			position.y -= 0.5f * DeltaTime::get();
+			m_entityProps.position.y -= 0.5f * DeltaTime::get();
 		}
 
 		if (Keyboard::isKeyHeld(KeyboardKey::keyD)) {
-			position.x += 0.5f * DeltaTime::get();
+			m_entityProps.position.x += 0.5f * DeltaTime::get();
+			m_direction = 1.0f;
 		}
 
 		if (Keyboard::isKeyHeld(KeyboardKey::keyA)) {
-			position.x -= 0.5f * DeltaTime::get();
+			m_entityProps.position.x -= 0.5f * DeltaTime::get();
+			m_direction = -1.0f;
 		}
 
-		Scene::setEntityPosition(position);
+		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
+			Scene::addEntity(
+				EntityConfig{
+					.position = m_entityProps.position,
+					.behaviourFactory = [&](const EntityProps& entityProps) {
+						return std::make_unique<BullettBehaviour>(entityProps, m_direction);
+					}
+				}
+			);
+		}
 	}
 };
 
@@ -56,7 +90,17 @@ int main() {
 					.green = 0.1f,
 					.blue  = 0.1f
 				},
-				.entityBehaviourFactory = []() { return std::make_unique<PlayerBehaviour>(); }
+				.entityConfigs = std::vector<EntityConfig>{
+					{
+						.position = Vector2f{
+							.x = 0.5f,
+							.y = 0.2f
+						},
+						.behaviourFactory = [](const EntityProps& entityProps) {
+							return std::make_unique<Player1Behaviour>(entityProps);
+						}
+					}
+				}
 			},
 			.startScript = []() {
 				PerformanceCounters::setCountersUpdatedCallback(
