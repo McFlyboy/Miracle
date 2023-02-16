@@ -13,15 +13,17 @@
 #include "Common/MiracleError.hpp"
 #include "Common/Models/WindowConfig.hpp"
 #include "Common/Models/RendererConfig.hpp"
+#include "Common/Models/SceneConfig.hpp"
 
 namespace Miracle {
 	using StartScript = std::function<void()>;
 	using UpdateScript = std::function<void()>;
 	using UserData = std::optional<std::any>;
 
-	struct AppInitProps {
+	struct AppConfig {
 		WindowConfig windowConfig = {};
 		RendererConfig rendererConfig = {};
+		SceneConfig sceneConfig = {};
 		StartScript startScript = []() {};
 		UpdateScript updateScript = []() {};
 	};
@@ -31,7 +33,7 @@ namespace Miracle {
 		friend class Logger;
 		friend class Window;
 		friend class Keyboard;
-		friend class Renderer;
+		friend class CurrentScene;
 		friend class TextInput;
 		friend class Clipboard;
 		friend class DeltaTime;
@@ -41,10 +43,7 @@ namespace Miracle {
 		static inline App* s_currentApp = nullptr;
 
 		const std::string m_name;
-		const WindowConfig m_windowConfig;
-		const RendererConfig m_rendererConfig;
-		const StartScript m_startScript;
-		const UpdateScript m_updateScript;
+		const AppConfig m_config;
 		UserData m_userData;
 		Application::EventDispatcher m_dispatcher;
 		const std::unique_ptr<Application::ILogger> m_logger;
@@ -55,7 +54,7 @@ namespace Miracle {
 	public:
 		App(
 			std::string&& name,
-			AppInitProps&& props = {},
+			AppConfig&& config = {},
 			UserData&& userData = {}
 		);
 

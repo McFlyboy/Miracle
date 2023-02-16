@@ -1,11 +1,10 @@
 {
-  "name": "miracle",
-  "version-string": "0.0.0-unofficial",
   "dependencies": [
     "spdlog",
     "glfw3",
     "tinyfiledialogs",
     "vulkan",
-    "vulkan-memory-allocator-hpp"
+    "vulkan-memory-allocator-hpp",
+    "entt"
   ]
 }

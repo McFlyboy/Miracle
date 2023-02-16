@@ -2,22 +2,80 @@
 
 using namespace Miracle;
 
+class ProjectileBehaviour : public Behaviour {
+private:
+	float m_horizontalVelocity;
+
+public:
+	ProjectileBehaviour(
+		const BehaviourDependencies& dependencies,
+		float horizontalVelocity
+	) : Behaviour(dependencies),
+		m_horizontalVelocity(horizontalVelocity)
+	{}
+
+	virtual void act() override {
+		m_entityPosition.x += m_horizontalVelocity * DeltaTime::get();
+	}
+};
+
+class PlayerBehaviour : public Behaviour {
+private:
+	float m_movementSpeed;
+	float m_horizontalDirection = 1.0f;
+
+public:
+	PlayerBehaviour(
+		const BehaviourDependencies& dependencies,
+		float movementSpeed = 0.5f
+	) : Behaviour(dependencies),
+		m_movementSpeed(movementSpeed)
+	{}
+
+	virtual void act() override {
+		if (Keyboard::isKeyHeld(KeyboardKey::keyW)) {
+			m_entityPosition.y += m_movementSpeed * DeltaTime::get();
+		}
+
+		if (Keyboard::isKeyHeld(KeyboardKey::keyS)) {
+			m_entityPosition.y -= m_movementSpeed * DeltaTime::get();
+		}
+
+		if (Keyboard::isKeyHeld(KeyboardKey::keyD)) {
+			m_entityPosition.x += m_movementSpeed * DeltaTime::get();
+			m_horizontalDirection = 1.0f;
+		}
+
+		if (Keyboard::isKeyHeld(KeyboardKey::keyA)) {
+			m_entityPosition.x -= m_movementSpeed * DeltaTime::get();
+			m_horizontalDirection = -1.0f;
+		}
+
+		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
+			CurrentScene::addEntity(
+				EntityConfig{
+					.position = m_entityPosition,
+					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(
+						m_horizontalDirection * 5.0f
+					)
+				}
+			);
+		}
+	}
+};
+
 int main() {
 	auto app = App(
 		"Demo 1",
-		AppInitProps{
+		AppConfig{
 			.windowConfig = WindowConfig{
 				.size = WindowSize{
 					.width  = 800,
 					.height = 600
 				},
+				.resizable = true
 			},
 			.rendererConfig = RendererConfig{
-				.clearColor = Color3f{
-					.red   = 0.5f,
-					.green = 0.1f,
-					.blue  = 0.1f
-				},
 				.mesh = Mesh{
 					.vertices = {
 						Vertex{ .position = Vector2f{ .x = -0.5f, .y = -0.5f } },
@@ -28,6 +86,13 @@ int main() {
 					.faces = {
 						Face{ .indices = { 0, 1, 2 } },
 						Face{ .indices = { 0, 2, 3 } }
+					}
+				}
+			},
+			.sceneConfig = SceneConfig{
+				.entityConfigs = std::vector<EntityConfig>{
+					{
+						.behaviourFactory = BehaviourFactory::createFactoryFor<PlayerBehaviour>(3.0f)
 					}
 				}
 			},
@@ -45,41 +110,6 @@ int main() {
 				if (Keyboard::isKeyPressed(KeyboardKey::keyEscape)) {
 					CurrentApp::close();
 				}
-
-				if (Keyboard::isKeyPressed(KeyboardKey::keyR)) {
-					Window::setResizable(!Window::isResizable());
-				}
-
-				if (Keyboard::isKeyPressedOrRepeated(KeyboardKey::keyC)) {
-					auto& currentColor = Renderer::getClearColor();
-					Renderer::setClearColor(
-						Color3f{
-							.red   = currentColor.green,
-							.green = currentColor.blue,
-							.blue  = currentColor.red
-						}
-					);
-				}
-
-				auto translation = Renderer::getTranslation();
-
-				if (Keyboard::isKeyHeld(KeyboardKey::keyW)) {
-					translation.y += 0.5f * DeltaTime::get();
-				}
-
-				if (Keyboard::isKeyHeld(KeyboardKey::keyS)) {
-					translation.y -= 0.5f * DeltaTime::get();
-				}
-
-				if (Keyboard::isKeyHeld(KeyboardKey::keyD)) {
-					translation.x += 0.5f * DeltaTime::get();
-				}
-
-				if (Keyboard::isKeyHeld(KeyboardKey::keyA)) {
-					translation.x -= 0.5f * DeltaTime::get();
-				}
-
-				Renderer::setTranslation(translation);
 			}
 		}
 	);
