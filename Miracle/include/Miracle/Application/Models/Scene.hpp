@@ -31,10 +31,10 @@ namespace Miracle::Application {
 
 		void setBackgroundColor(const Color3f& color);
 
-		void update();
-
-		void forEachPosition(const std::function<void(const Vector2f&)>& forEach) const;
-
 		void addEntity(const EntityConfig& config);
+
+		void forEachEntityPosition(const std::function<void(const Vector2f&)>& forEach) const;
+
+		void update();
 	};
 }

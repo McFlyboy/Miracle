@@ -2,58 +2,62 @@
 
 using namespace Miracle;
 
-class BullettBehaviour : public Behaviour {
+class ProjectileBehaviour : public Behaviour {
 private:
-	float m_direction;
+	float m_horizontalMovement;
 
 public:
-	BullettBehaviour(
-		const EntityProps& entityProps,
-		float direction
-	) : Behaviour(entityProps),
-		m_direction(direction)
+	ProjectileBehaviour(
+		const BehaviourDependencies& dependencies,
+		float horizontalMovement
+	) : Behaviour(dependencies),
+		m_horizontalMovement(horizontalMovement)
 	{}
 
 	virtual void act() override {
-		m_entityProps.position.x += 5.0f * m_direction * DeltaTime::get();
+		m_entityPosition.x += m_horizontalMovement * DeltaTime::get();
 	}
 };
 
-class Player1Behaviour : public Behaviour {
+class PlayerBehaviour : public Behaviour {
 private:
-	float m_direction;
+	float m_movementSpeed;
+	float m_horizontalDirection = 1.0f;
 
 public:
-	Player1Behaviour(const EntityProps& entityProps) : Behaviour(entityProps),
-		m_direction(1.0f)
+	PlayerBehaviour(
+		const BehaviourDependencies& dependencies,
+		float movementSpeed = 0.5f
+	) : Behaviour(dependencies),
+		m_movementSpeed(movementSpeed)
 	{}
 
 	virtual void act() override {
 		if (Keyboard::isKeyHeld(KeyboardKey::keyW)) {
-			m_entityProps.position.y += 0.5f * DeltaTime::get();
+			m_entityPosition.y += m_movementSpeed * DeltaTime::get();
 		}
 
 		if (Keyboard::isKeyHeld(KeyboardKey::keyS)) {
-			m_entityProps.position.y -= 0.5f * DeltaTime::get();
+			m_entityPosition.y -= m_movementSpeed * DeltaTime::get();
 		}
 
 		if (Keyboard::isKeyHeld(KeyboardKey::keyD)) {
-			m_entityProps.position.x += 0.5f * DeltaTime::get();
-			m_direction = 1.0f;
+			m_entityPosition.x += m_movementSpeed * DeltaTime::get();
+			m_horizontalDirection = 1.0f;
 		}
 
 		if (Keyboard::isKeyHeld(KeyboardKey::keyA)) {
-			m_entityProps.position.x -= 0.5f * DeltaTime::get();
-			m_direction = -1.0f;
+			m_entityPosition.x -= m_movementSpeed * DeltaTime::get();
+			m_horizontalDirection = -1.0f;
 		}
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
-			Scene::addEntity(
+			CurrentScene::addEntity(
 				EntityConfig{
-					.position = m_entityProps.position,
-					.behaviourFactory = [&](const EntityProps& entityProps) {
-						return std::make_unique<BullettBehaviour>(entityProps, m_direction);
-					}
+					.position = m_entityPosition,
+					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(
+						m_horizontalDirection * 5.0f
+					)
 				}
 			);
 		}
@@ -69,6 +73,7 @@ int main() {
 					.width  = 800,
 					.height = 600
 				},
+				.resizable = true
 			},
 			.rendererConfig = RendererConfig{
 				.mesh = Mesh{
@@ -85,20 +90,9 @@ int main() {
 				}
 			},
 			.sceneConfig = SceneConfig{
-				.backgroundColor = Color3f{
-					.red   = 0.5f,
-					.green = 0.1f,
-					.blue  = 0.1f
-				},
 				.entityConfigs = std::vector<EntityConfig>{
 					{
-						.position = Vector2f{
-							.x = 0.5f,
-							.y = 0.2f
-						},
-						.behaviourFactory = [](const EntityProps& entityProps) {
-							return std::make_unique<Player1Behaviour>(entityProps);
-						}
+						.behaviourFactory = BehaviourFactory::createFactoryFor<PlayerBehaviour>(3.0f)
 					}
 				}
 			},
@@ -115,21 +109,6 @@ int main() {
 			.updateScript = []() {
 				if (Keyboard::isKeyPressed(KeyboardKey::keyEscape)) {
 					CurrentApp::close();
-				}
-
-				if (Keyboard::isKeyPressed(KeyboardKey::keyR)) {
-					Window::setResizable(!Window::isResizable());
-				}
-
-				if (Keyboard::isKeyPressedOrRepeated(KeyboardKey::keyC)) {
-					auto& currentColor = Scene::getBackgroundColor();
-					Scene::setBackgroundColor(
-						Color3f{
-							.red   = currentColor.green,
-							.green = currentColor.blue,
-							.blue  = currentColor.red
-						}
-					);
 				}
 			}
 		}

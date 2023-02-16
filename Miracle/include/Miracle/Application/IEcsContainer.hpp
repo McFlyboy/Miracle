@@ -2,12 +2,12 @@
 
 #include <functional>
 
+#include <Miracle/Common/IEcsContainer.hpp>
 #include <Miracle/Common/Models/EntityConfig.hpp>
-#include <Miracle/Common/Math/Vector2f.hpp>
 #include <Miracle/Common/Behaviour.hpp>
 
 namespace Miracle::Application {
-	class IEcsContainer {
+	class IEcsContainer : public Miracle::IEcsContainer {
 	public:
 		virtual ~IEcsContainer() = default;
 

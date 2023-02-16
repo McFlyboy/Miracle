@@ -17,19 +17,19 @@ namespace Miracle::Application {
 		m_backgroundColor = color;
 	}
 
+	void Scene::addEntity(const EntityConfig& config) {
+		m_container->createEntity(config);
+	}
+
+	void Scene::forEachEntityPosition(const std::function<void(const Vector2f&)>& forEach) const {
+		m_container->forEachPosition(forEach);
+	}
+
 	void Scene::update() {
 		m_container->forEachBehaviour(
 			[](Behaviour& behaviour) {
 				behaviour.act();
 			}
 		);
-	}
-
-	void Scene::forEachPosition(const std::function<void(const Vector2f&)>& forEach) const {
-		m_container->forEachPosition(forEach);
-	}
-
-	void Scene::addEntity(const EntityConfig& config) {
-		m_container->createEntity(config);
 	}
 }

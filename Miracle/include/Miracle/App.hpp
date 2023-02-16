@@ -33,7 +33,7 @@ namespace Miracle {
 		friend class Logger;
 		friend class Window;
 		friend class Keyboard;
-		friend class Scene;
+		friend class CurrentScene;
 		friend class TextInput;
 		friend class Clipboard;
 		friend class DeltaTime;

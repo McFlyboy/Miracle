@@ -54,7 +54,7 @@ namespace Miracle::Application {
 				m_context.setViewport(0.0f, 0.0f, swapchainImageSize.width, swapchainImageSize.height);
 				m_context.setScissor(0, 0, swapchainImageSize.width, swapchainImageSize.height);
 
-				scene.forEachPosition(
+				scene.forEachEntityPosition(
 					[&](const Vector2f& position) {
 						m_pipeline->bind();
 						m_pipeline->pushConstants(

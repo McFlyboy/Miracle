@@ -5,9 +5,9 @@
 #include <Miracle/Common/Models/EntityConfig.hpp>
 
 namespace Miracle {
-	class Scene {
+	class CurrentScene {
 	public:
-		Scene() = delete;
+		CurrentScene() = delete;
 
 		static inline const Color3f& getBackgroundColor() {
 			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
