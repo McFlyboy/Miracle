@@ -4,18 +4,18 @@ using namespace Miracle;
 
 class ProjectileBehaviour : public Behaviour {
 private:
-	float m_horizontalMovement;
+	float m_horizontalVelocity;
 
 public:
 	ProjectileBehaviour(
 		const BehaviourDependencies& dependencies,
-		float horizontalMovement
+		float horizontalVelocity
 	) : Behaviour(dependencies),
-		m_horizontalMovement(horizontalMovement)
+		m_horizontalVelocity(horizontalVelocity)
 	{}
 
 	virtual void act() override {
-		m_entityPosition.x += m_horizontalMovement * DeltaTime::get();
+		m_entityPosition.x += m_horizontalVelocity * DeltaTime::get();
 	}
 };
 
