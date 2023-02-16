@@ -2,6 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
+#include <Miracle/Definitions.hpp>
 #include <Miracle/Application/Models/Events/KeyInputEvent.hpp>
 #include <Miracle/Application/Models/Events/TextInputEvent.hpp>
 #include <Miracle/Common/UnicodeConverter.hpp>
@@ -66,7 +67,11 @@ namespace Miracle::Infrastructure::Input::Glfw {
 			);
 		}
 		else if (
+#ifdef MIRACLE_PLATFORM_MACOS
+			keyInputEvent.getModifiers() == KeyboardModifierKeys::modSuper
+#else
 			keyInputEvent.getModifiers() == KeyboardModifierKeys::modControl
+#endif
 				&& keyInputEvent.getKey() == KeyboardKey::keyV
 				&& keyInputEvent.getAction() != Application::KeyInputAction::keyReleased
 		) {

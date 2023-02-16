@@ -8,7 +8,7 @@
 #elif defined(__linux__)
 #define MIRACLE_PLATFORM_LINUX
 #else
-#error Miracle does not support this platform! Platforms supported: Windows, MacOS, Linux
+#error Miracle does not support this platform! Platforms supported: Windows, macOS, Linux
 #endif
 
 // ----- Configuration definitions -----

@@ -42,7 +42,7 @@
     },
     {
       "name": "macos-debug",
-      "displayName": "Mac OS Debug",
+      "displayName": "macOS Debug",
       "inherits": "base",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
@@ -56,7 +56,7 @@
     },
     {
       "name": "macos-release",
-      "displayName": "Mac OS Release",
+      "displayName": "macOS Release",
       "inherits": "macos-debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
@@ -94,7 +94,7 @@
     },
     {
       "name": "macos-release-build",
-      "displayName": "Mac OS Release Build",
+      "displayName": "macOS Release Build",
       "configurePreset": "macos-release",
       "configuration": "Release"
     },
@@ -114,7 +114,7 @@
     },
     {
       "name": "macos-release-tests",
-      "displayName": "Mac OS Release Tests",
+      "displayName": "macOS Release Tests",
       "configurePreset": "macos-release",
       "configuration": "Release"
     },
