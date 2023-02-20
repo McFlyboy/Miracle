@@ -96,7 +96,7 @@ namespace Miracle {
 		/* ----- MISC. ----- */
 
 		inline float getLenght() const {
-			return std::sqrtf(x * x + y * y);
+			return std::sqrt(x * x + y * y);
 		}
 
 		inline Vector2f toNormalized() const {
