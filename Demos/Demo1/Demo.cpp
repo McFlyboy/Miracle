@@ -33,23 +33,26 @@ public:
 	{}
 
 	virtual void act() override {
+		auto velocity = Vector2f{};
+
 		if (Keyboard::isKeyHeld(KeyboardKey::keyW)) {
-			m_entityPosition.y += m_movementSpeed * DeltaTime::get();
+			velocity.y += 1.0f;
 		}
 
 		if (Keyboard::isKeyHeld(KeyboardKey::keyS)) {
-			m_entityPosition.y -= m_movementSpeed * DeltaTime::get();
+			velocity.y -= 1.0f;
 		}
 
 		if (Keyboard::isKeyHeld(KeyboardKey::keyD)) {
-			m_entityPosition.x += m_movementSpeed * DeltaTime::get();
+			velocity.x += 1.0f;
 			m_horizontalDirection = 1.0f;
 		}
 
 		if (Keyboard::isKeyHeld(KeyboardKey::keyA)) {
-			m_entityPosition.x -= m_movementSpeed * DeltaTime::get();
+			velocity.x -= 1.0f;
 			m_horizontalDirection = -1.0f;
 		}
+		m_entityPosition += velocity.toNormalized() * m_movementSpeed * DeltaTime::get();
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
 			CurrentScene::addEntity(

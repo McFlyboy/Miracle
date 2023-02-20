@@ -1,7 +1,7 @@
 #include <Miracle/EngineDependencies.hpp>
 
-#include <Miracle/Common/Mappings.hpp>
 #include <Miracle/Common/UnicodeConverter.hpp>
+#include <Miracle/Application/Mappings.hpp>
 #include "Infrastructure/Persistance/FileSystem/FileAccess.hpp"
 #include "Infrastructure/Framework/Glfw/MultimediaFramework.hpp"
 #include "Infrastructure/View/Glfw/Window.hpp"
@@ -38,7 +38,7 @@ namespace Miracle {
 				logger,
 				eventDispatcher,
 				*reinterpret_cast<GlfwMultimediaFramework*>(m_multimediaFramework.get()),
-				Mappings::toWindowInitProps(windowConfig, UnicodeConverter::toUtf8(appName))
+				Application::Mappings::toWindowInitProps(windowConfig, UnicodeConverter::toUtf8(appName))
 			)
 		),
 		m_keyboard(
@@ -65,11 +65,11 @@ namespace Miracle {
 			*m_fileAccess.get(),
 			*m_graphicsApi.get(),
 			*m_graphicsContext.get(),
-			Mappings::toRendererInitProps(rendererConfig)
+			Application::Mappings::toRendererInitProps(rendererConfig)
 		),
 		m_sceneManager(
 			*m_ecs.get(),
-			Mappings::toSceneInitProps(sceneConfig)
+			Application::Mappings::toSceneInitProps(sceneConfig)
 		),
 		m_textInputService(eventDispatcher),
 		m_deltaTimeService(*m_multimediaFramework.get()),
