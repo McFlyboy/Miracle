@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 
 namespace Miracle::Application {
@@ -15,7 +16,7 @@ namespace Miracle::Application {
 		static constexpr EventTypesBase::type allBits() {
 			EventTypesBase::type result = 0;
 
-			for (std::size_t i = 0; i < sizeof(EventTypesBase::type) * static_cast<std::size_t>(8); i++) {
+			for (size_t i = 0; i < sizeof(EventTypesBase::type) * static_cast<size_t>(8); i++) {
 				result |= bit(static_cast<int>(i));
 			}
 
