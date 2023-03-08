@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cmath>
-#include <compare>
 
 namespace Miracle {
 	struct Vector2 {
@@ -13,7 +12,7 @@ namespace Miracle {
 
 		/* ----- COMPARISON ----- */
 
-		constexpr auto operator<=>(const Vector2&) const = default;
+		constexpr bool operator==(const Vector2&) const = default;
 
 		/* ----- ADDITION ----- */
 
