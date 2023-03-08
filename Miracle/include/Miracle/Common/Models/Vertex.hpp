@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Miracle/Common/Math/Vector2f.hpp>
+#include <Miracle/Common/Math/Vector3.hpp>
 
 namespace Miracle {
 	struct Vertex {
-		Vector2f position = {};
+		Vector3 position = {};
 	};
 }

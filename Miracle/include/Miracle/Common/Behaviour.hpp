@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math/Vector2f.hpp"
+#include "Math/Vector3.hpp"
 #include "Models/EntityId.hpp"
 #include "IEcsContainer.hpp"
 
@@ -12,7 +12,7 @@ namespace Miracle {
 
 	class Behaviour {
 	protected:
-		Vector2f& m_entityPosition;
+		Vector3& m_entityPosition;
 
 	public:
 		Behaviour(const BehaviourDependencies& dependencies) :

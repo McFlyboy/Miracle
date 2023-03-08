@@ -4,22 +4,22 @@
 #include <vector>
 #include <functional>
 
-#include <Miracle/Common/Math/Color3f.hpp>
-#include <Miracle/Common/Math/Vector2f.hpp>
+#include <Miracle/Common/Math/ColorRgb.hpp>
+#include <Miracle/Common/Math/Vector3.hpp>
 #include <Miracle/Common/Models/EntityConfig.hpp>
 #include <Miracle/Application/IEcs.hpp>
 #include <Miracle/Application/IEcsContainer.hpp>
 
 namespace Miracle::Application {
 	struct SceneInitProps {
-		Color3f backgroundColor = {};
+		ColorRgb backgroundColor = {};
 		std::vector<EntityConfig> entityConfigs = {};
 	};
 
 	class Scene {
 	private:
 		std::unique_ptr<IEcsContainer> m_container;
-		Color3f m_backgroundColor;
+		ColorRgb m_backgroundColor;
 
 	public:
 		Scene(
@@ -27,13 +27,13 @@ namespace Miracle::Application {
 			const SceneInitProps& initProps
 		);
 
-		inline const Color3f& getBackgroundColor() const { return m_backgroundColor; }
+		inline const ColorRgb& getBackgroundColor() const { return m_backgroundColor; }
 
-		void setBackgroundColor(const Color3f& color);
+		void setBackgroundColor(const ColorRgb& color);
 
 		void addEntity(const EntityConfig& config);
 
-		void forEachEntityPosition(const std::function<void(const Vector2f&)>& forEach) const;
+		void forEachEntityPosition(const std::function<void(const Vector3&)>& forEach) const;
 
 		void update();
 	};

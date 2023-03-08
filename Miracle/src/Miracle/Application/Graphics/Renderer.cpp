@@ -55,7 +55,7 @@ namespace Miracle::Application {
 				m_context.setScissor(0, 0, swapchainImageSize.width, swapchainImageSize.height);
 
 				scene.forEachEntityPosition(
-					[&](const Vector2f& position) {
+					[&](const Vector3& position) {
 						m_pipeline->bind();
 						m_pipeline->pushConstants(
 							PushConstants{

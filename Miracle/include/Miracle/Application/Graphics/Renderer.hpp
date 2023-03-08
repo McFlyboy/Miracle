@@ -2,8 +2,7 @@
 
 #include <memory>
 
-#include <Miracle/Common/Math/Color3f.hpp>
-#include <Miracle/Common/Math/Vector2f.hpp>
+#include <Miracle/Common/Math/ColorRgb.hpp>
 #include <Miracle/Common/Models/Mesh.hpp>
 #include <Miracle/Application/Models/Scene.hpp>
 #include <Miracle/Application/ILogger.hpp>

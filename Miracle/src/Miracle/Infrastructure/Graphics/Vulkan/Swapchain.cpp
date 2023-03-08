@@ -52,14 +52,14 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		};
 	}
 
-	void Swapchain::beginRenderPass(Color3f clearColor) {
+	void Swapchain::beginRenderPass(ColorRgb clearColor) {
 		auto clearValues = std::array{
 			vk::ClearValue(
 				vk::ClearColorValue(
 					std::array{
-						clearColor.red,
-						clearColor.green,
-						clearColor.blue,
+						clearColor.redChannel,
+						clearColor.greenChannel,
+						clearColor.blueChannel,
 						1.0f
 					}
 				)

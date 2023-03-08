@@ -4,27 +4,27 @@
 #include <compare>
 
 namespace Miracle {
-	struct Vector2f {
+	struct Vector2 {
 		float x = {};
 		float y = {};
 
-		static const Vector2f right;
-		static const Vector2f up;
+		static const Vector2 right;
+		static const Vector2 up;
 
 		/* ----- COMPARISON ----- */
 
-		constexpr auto operator<=>(const Vector2f&) const = default;
+		constexpr auto operator<=>(const Vector2&) const = default;
 
 		/* ----- ADDITION ----- */
 
-		constexpr inline Vector2f operator+(const Vector2f& rhs) const {
-			return Vector2f{
+		constexpr inline Vector2 operator+(const Vector2& rhs) const {
+			return Vector2{
 				.x = x + rhs.x,
 				.y = y + rhs.y
 			};
 		}
 
-		constexpr inline Vector2f operator+=(const Vector2f& rhs) {
+		constexpr inline Vector2 operator+=(const Vector2& rhs) {
 			x += rhs.x;
 			y += rhs.y;
 
@@ -33,14 +33,14 @@ namespace Miracle {
 
 		/* ----- SUBTRACTION ----- */
 
-		constexpr inline Vector2f operator-(const Vector2f& rhs) const {
-			return Vector2f{
+		constexpr inline Vector2 operator-(const Vector2& rhs) const {
+			return Vector2{
 				.x = x - rhs.x,
 				.y = y - rhs.y
 			};
 		}
 
-		constexpr inline Vector2f operator-=(const Vector2f& rhs) {
+		constexpr inline Vector2 operator-=(const Vector2& rhs) {
 			x -= rhs.x;
 			y -= rhs.y;
 
@@ -49,21 +49,21 @@ namespace Miracle {
 
 		/* ----- SCALAR MULTIPLICATION ----- */
 
-		constexpr inline Vector2f operator*(float rhs) const {
-			return Vector2f{
+		constexpr inline Vector2 operator*(float rhs) const {
+			return Vector2{
 				.x = x * rhs,
 				.y = y * rhs
 			};
 		}
 
-		constexpr inline friend Vector2f operator*(float lhs, const Vector2f& rhs) {
-			return Vector2f{
+		constexpr inline friend Vector2 operator*(float lhs, const Vector2& rhs) {
+			return Vector2{
 				.x = lhs * rhs.x,
 				.y = lhs * rhs.y
 			};
 		}
 
-		constexpr inline Vector2f operator*=(float rhs) {
+		constexpr inline Vector2 operator*=(float rhs) {
 			x *= rhs;
 			y *= rhs;
 
@@ -72,21 +72,21 @@ namespace Miracle {
 
 		/* ----- SCALAR DIVISION ----- */
 
-		constexpr inline Vector2f operator/(float rhs) const {
-			return Vector2f{
+		constexpr inline Vector2 operator/(float rhs) const {
+			return Vector2{
 				.x = x / rhs,
 				.y = y / rhs
 			};
 		}
 
-		constexpr inline friend Vector2f operator/(float lhs, const Vector2f& rhs) {
-			return Vector2f{
+		constexpr inline friend Vector2 operator/(float lhs, const Vector2& rhs) {
+			return Vector2{
 				.x = lhs / rhs.x,
 				.y = lhs / rhs.y
 			};
 		}
 
-		constexpr inline Vector2f operator/=(float rhs) {
+		constexpr inline Vector2 operator/=(float rhs) {
 			x /= rhs;
 			y /= rhs;
 
@@ -99,15 +99,15 @@ namespace Miracle {
 			return std::sqrt(x * x + y * y);
 		}
 
-		inline Vector2f toNormalized() const {
+		inline Vector2 toNormalized() const {
 			auto length = getLenght();
 
 			return length != 0.0f
-				? Vector2f{ .x = x / length, .y = y / length }
-				: Vector2f{};
+				? Vector2{ .x = x / length, .y = y / length }
+				: Vector2{};
 		}
 
-		inline Vector2f normalize() {
+		inline Vector2 normalize() {
 			auto length = getLenght();
 
 			if (length != 0.0f) {
@@ -118,7 +118,7 @@ namespace Miracle {
 			return *this;
 		}
 
-		constexpr inline float dot(const Vector2f& rhs) const {
+		constexpr inline float dot(const Vector2& rhs) const {
 			return x * rhs.x + y * rhs.y;
 		}
 	};

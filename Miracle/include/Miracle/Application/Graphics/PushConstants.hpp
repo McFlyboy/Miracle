@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Miracle/Common/Math/Vector2f.hpp>
+#include <Miracle/Common/Math/Vector3.hpp>
 
 namespace Miracle::Application {
 	struct PushConstants {
-		Vector2f translation = {};
+		Vector3 translation = {};
 		float aspectRatio = 1.0f;
 	};
 }

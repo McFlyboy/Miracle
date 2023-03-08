@@ -13,7 +13,7 @@ namespace Miracle::Application {
 		}
 	}
 
-	void Scene::setBackgroundColor(const Color3f& color) {
+	void Scene::setBackgroundColor(const ColorRgb& color) {
 		m_backgroundColor = color;
 	}
 
@@ -21,7 +21,7 @@ namespace Miracle::Application {
 		m_container->createEntity(config);
 	}
 
-	void Scene::forEachEntityPosition(const std::function<void(const Vector2f&)>& forEach) const {
+	void Scene::forEachEntityPosition(const std::function<void(const Vector3&)>& forEach) const {
 		m_container->forEachPosition(forEach);
 	}
 

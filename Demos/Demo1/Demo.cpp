@@ -31,9 +31,9 @@ public:
 	) : Behaviour(dependencies),
 		m_movementSpeed(movementSpeed)
 	{}
-
+	
 	virtual void act() override {
-		auto velocity = Vector2f{};
+		auto velocity = Vector3{};
 
 		if (Keyboard::isKeyHeld(KeyboardKey::keyW)) {
 			velocity.y += 1.0f;
@@ -52,6 +52,7 @@ public:
 			velocity.x -= 1.0f;
 			m_horizontalDirection = -1.0f;
 		}
+
 		m_entityPosition += velocity.toNormalized() * m_movementSpeed * DeltaTime::get();
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
@@ -81,10 +82,10 @@ int main() {
 			.rendererConfig = RendererConfig{
 				.mesh = Mesh{
 					.vertices = {
-						Vertex{ .position = Vector2f{ .x = -0.5f, .y = -0.5f } },
-						Vertex{ .position = Vector2f{ .x =  0.5f, .y = -0.5f } },
-						Vertex{ .position = Vector2f{ .x =  0.5f, .y =  0.5f } },
-						Vertex{ .position = Vector2f{ .x = -0.5f, .y =  0.5f } }
+						Vertex{ .position = Vector3{ .x = -0.5f, .y = -0.5f, .z = 0.0f } },
+						Vertex{ .position = Vector3{ .x =  0.5f, .y = -0.5f, .z = 0.0f } },
+						Vertex{ .position = Vector3{ .x =  0.5f, .y =  0.5f, .z = 0.0f } },
+						Vertex{ .position = Vector3{ .x = -0.5f, .y =  0.5f, .z = 0.0f } }
 					},
 					.faces = {
 						Face{ .indices = { 0, 1, 2 } },

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Miracle/App.hpp>
-#include <Miracle/Common/Math/Color3f.hpp>
+#include <Miracle/Common/Math/ColorRgb.hpp>
 #include <Miracle/Common/Models/EntityConfig.hpp>
 
 namespace Miracle {
@@ -9,7 +9,7 @@ namespace Miracle {
 	public:
 		CurrentScene() = delete;
 
-		static inline const Color3f& getBackgroundColor() {
+		static inline const ColorRgb& getBackgroundColor() {
 			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			return App::s_currentApp->m_dependencies->getSceneManager()
@@ -17,7 +17,7 @@ namespace Miracle {
 				.getBackgroundColor();
 		}
 
-		static inline void setBackgroundColor(const Color3f& color) {
+		static inline void setBackgroundColor(const ColorRgb& color) {
 			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			App::s_currentApp->m_dependencies->getSceneManager()
