@@ -99,22 +99,33 @@ namespace Miracle {
 		}
 
 		inline Vector2 toNormalized() const {
+			if (x == 0.0f && y == 0.0f) {
+				return Vector2{};
+			}
+
 			auto length = getLenght();
 
-			return length != 0.0f
-				? Vector2{ .x = x / length, .y = y / length }
-				: Vector2{};
+			return Vector2{
+				.x = x / length,
+				.y = y / length
+			};
 		}
 
 		inline Vector2 normalize() {
-			auto length = getLenght();
-
-			if (length != 0.0f) {
-				x /= length;
-				y /= length;
+			if (x == 0.0f && y == 0.0f) {
+				return *this;
 			}
 
+			auto length = getLenght();
+
+			x /= length;
+			y /= length;
+
 			return *this;
+		}
+
+		inline float distanceTo(const Vector2& vector) const {
+			return (vector - *this).getLenght();
 		}
 
 		constexpr inline float dot(const Vector2& rhs) const {

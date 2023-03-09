@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include "Vector2.hpp"
+
 namespace Miracle {
 	struct Vector3 {
 		float x = {};
@@ -15,6 +17,15 @@ namespace Miracle {
 		/* ----- COMPARISON ----- */
 
 		constexpr bool operator==(const Vector3&) const = default;
+
+		/* ----- CONVERTERS ----- */
+		static constexpr inline Vector3 createFromVector2(const Vector2& xy, float z) {
+			return Vector3{
+				.x = xy.x,
+				.y = xy.y,
+				.z = z
+			};
+		}
 
 		/* ----- ADDITION ----- */
 
@@ -111,23 +122,35 @@ namespace Miracle {
 		}
 
 		inline Vector3 toNormalized() const {
+			if (x == 0.0f && y == 0.0f && z == 0.0f) {
+				return Vector3{};
+			}
+
 			auto length = getLenght();
 
-			return length != 0.0f
-				? Vector3{ .x = x / length, .y = y / length, .z = z / length }
-				: Vector3{};
+			return Vector3{
+				.x = x / length,
+				.y = y / length,
+				.z = z / length
+			};
 		}
 
 		inline Vector3 normalize() {
-			auto length = getLenght();
-
-			if (length != 0.0f) {
-				x /= length;
-				y /= length;
-				z /= length;
+			if (x == 0.0f && y == 0.0f && z == 0.0f) {
+				return *this;
 			}
 
+			auto length = getLenght();
+
+			x /= length;
+			y /= length;
+			z /= length;
+
 			return *this;
+		}
+
+		inline float distanceTo(const Vector3& vector) const {
+			return (vector - *this).getLenght();
 		}
 
 		constexpr inline float dot(const Vector3& rhs) const {
