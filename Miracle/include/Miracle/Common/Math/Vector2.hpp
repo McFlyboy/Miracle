@@ -14,6 +14,19 @@ namespace Miracle {
 
 		constexpr bool operator==(const Vector2&) const = default;
 
+		/* ----- SIGNED CONVERTION ----- */
+
+		constexpr inline Vector2 operator+() const {
+			return *this;
+		}
+
+		constexpr inline Vector2 operator-() const {
+			return Vector2{
+				.x = -x,
+				.y = -y
+			};
+		}
+
 		/* ----- ADDITION ----- */
 
 		constexpr inline Vector2 operator+(const Vector2& rhs) const {

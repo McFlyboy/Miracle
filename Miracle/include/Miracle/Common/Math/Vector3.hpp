@@ -27,6 +27,20 @@ namespace Miracle {
 			};
 		}
 
+		/* ----- SIGNED CONVERTION ----- */
+
+		constexpr inline Vector3 operator+() const {
+			return *this;
+		}
+
+		constexpr inline Vector3 operator-() const {
+			return Vector3{
+				.x = -x,
+				.y = -y,
+				.z = -z
+			};
+		}
+
 		/* ----- ADDITION ----- */
 
 		constexpr inline Vector3 operator+(const Vector3& rhs) const {
