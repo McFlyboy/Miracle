@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <cstddef>
 
 namespace Miracle {
 	struct Vector2 {
@@ -9,6 +10,16 @@ namespace Miracle {
 
 		static const Vector2 right;
 		static const Vector2 up;
+
+		/* ----- ARRAY-STYLE ACCESSING ----- */
+
+		inline float& operator[](size_t index) {
+			return *(reinterpret_cast<float*>(this) + index);
+		}
+
+		inline float operator[](size_t index) const {
+			return *(reinterpret_cast<const float*>(this) + index);
+		}
 
 		/* ----- COMPARISON ----- */
 

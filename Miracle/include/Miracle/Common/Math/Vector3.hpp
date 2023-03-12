@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <cstddef>
 
 #include "Vector2.hpp"
 
@@ -13,6 +14,16 @@ namespace Miracle {
 		static const Vector3 right;
 		static const Vector3 up;
 		static const Vector3 forward;
+
+		/* ----- ARRAY-STYLE ACCESSING ----- */
+
+		inline float& operator[](size_t index) {
+			return *(reinterpret_cast<float*>(this) + index);
+		}
+
+		inline float operator[](size_t index) const {
+			return *(reinterpret_cast<const float*>(this) + index);
+		}
 
 		/* ----- COMPARISON ----- */
 

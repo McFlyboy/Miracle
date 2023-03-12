@@ -59,7 +59,7 @@ namespace Miracle::Application {
 						m_pipeline->bind();
 						m_pipeline->pushConstants(
 							PushConstants{
-								.translation = position,
+								.transform = Matrix4::createTranslation(position).toTransposed(),
 								.aspectRatio = aspectRatio
 							}
 						);

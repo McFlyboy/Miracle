@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+
 #include "Vector3.hpp"
 
 namespace Miracle {
@@ -8,6 +10,16 @@ namespace Miracle {
 		float y = {};
 		float z = {};
 		float w = {};
+
+		/* ----- ARRAY-STYLE ACCESSING ----- */
+
+		inline float& operator[](size_t index) {
+			return *(reinterpret_cast<float*>(this) + index);
+		}
+
+		inline float operator[](size_t index) const {
+			return *(reinterpret_cast<const float*>(this) + index);
+		}
 
 		/* ----- COMPARISON ----- */
 
