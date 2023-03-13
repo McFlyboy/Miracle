@@ -15,7 +15,9 @@ public:
 	{}
 
 	virtual void act() override {
-		m_entityPosition.x += m_horizontalVelocity * DeltaTime::get();
+		m_entityTransform *= Matrix4::createTranslation(
+			Vector3{ .x = m_horizontalVelocity * DeltaTime::get() }
+		);
 	}
 };
 
@@ -53,12 +55,16 @@ public:
 			m_horizontalDirection = -1.0f;
 		}
 
-		m_entityPosition += velocity.toNormalized() * m_movementSpeed * DeltaTime::get();
+		m_entityTransform *= Matrix4::createTranslation(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
 			CurrentScene::addEntity(
 				EntityConfig{
-					.position = m_entityPosition,
+					.position = Vector3{
+						.x = m_entityTransform.m41,
+						.y = m_entityTransform.m42,
+						.z = m_entityTransform.m43
+					},
 					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(
 						m_horizontalDirection * 5.0f
 					)

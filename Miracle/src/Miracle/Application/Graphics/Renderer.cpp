@@ -54,12 +54,12 @@ namespace Miracle::Application {
 				m_context.setViewport(0.0f, 0.0f, swapchainImageSize.width, swapchainImageSize.height);
 				m_context.setScissor(0, 0, swapchainImageSize.width, swapchainImageSize.height);
 
-				scene.forEachEntityPosition(
-					[&](const Vector3& position) {
+				scene.forEachEntityTransform(
+					[&](const Matrix4& transform) {
 						m_pipeline->bind();
 						m_pipeline->pushConstants(
 							PushConstants{
-								.transform = Matrix4::createTranslation(position).toTransposed(),
+								.transform = transform.toTransposed(),
 								.aspectRatio = aspectRatio
 							}
 						);

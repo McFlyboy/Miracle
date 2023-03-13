@@ -8,7 +8,7 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 	void EcsContainer::createEntity(const EntityConfig& config) {
 		auto entity = m_registry.create();
 
-		m_registry.emplace<Vector3>(entity, config.position);
+		m_registry.emplace<Matrix4>(entity, Matrix4::createTranslation(config.position));
 
 		if (config.behaviourFactory.has_value()) {
 			m_registry.emplace<std::unique_ptr<Behaviour>>(
@@ -23,12 +23,12 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 		}
 	}
 
-	Vector3& EcsContainer::getPosition(EntityId owner) {
-		return m_registry.get<Vector3>(static_cast<entt::entity>(owner));
+	Matrix4& EcsContainer::getTransform(EntityId owner) {
+		return m_registry.get<Matrix4>(static_cast<entt::entity>(owner));
 	}
 
-	void EcsContainer::forEachPosition(const std::function<void(const Vector3&)>& forEach) const {
-		for (auto [entity, position] : m_registry.view<Vector3>().each()) {
+	void EcsContainer::forEachTransform(const std::function<void(const Matrix4&)>& forEach) const {
+		for (auto [entity, position] : m_registry.view<Matrix4>().each()) {
 			forEach(position);
 		}
 	}

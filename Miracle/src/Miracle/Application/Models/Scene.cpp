@@ -21,8 +21,8 @@ namespace Miracle::Application {
 		m_container->createEntity(config);
 	}
 
-	void Scene::forEachEntityPosition(const std::function<void(const Vector3&)>& forEach) const {
-		m_container->forEachPosition(forEach);
+	void Scene::forEachEntityTransform(const std::function<void(const Matrix4&)>& forEach) const {
+		m_container->forEachTransform(forEach);
 	}
 
 	void Scene::update() {
