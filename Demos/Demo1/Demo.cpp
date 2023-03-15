@@ -4,20 +4,18 @@ using namespace Miracle;
 
 class ProjectileBehaviour : public Behaviour {
 private:
-	float m_horizontalVelocity;
+	Vector3 m_velocity;
 
 public:
 	ProjectileBehaviour(
 		const BehaviourDependencies& dependencies,
-		float horizontalVelocity
+		const Vector3& velocity
 	) : Behaviour(dependencies),
-		m_horizontalVelocity(horizontalVelocity)
+		m_velocity(velocity)
 	{}
 
 	virtual void act() override {
-		m_entityTransform *= Matrix4::createTranslation(
-			Vector3{ .x = m_horizontalVelocity * DeltaTime::get() }
-		);
+		m_entityTransform.translate(m_velocity * DeltaTime::get());
 	}
 };
 
@@ -55,18 +53,18 @@ public:
 			m_horizontalDirection = -1.0f;
 		}
 
-		m_entityTransform *= Matrix4::createTranslation(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
+		m_entityTransform.translate(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
 			CurrentScene::addEntity(
 				EntityConfig{
 					.position = Vector3{
-						.x = m_entityTransform.m41,
-						.y = m_entityTransform.m42,
-						.z = m_entityTransform.m43
+						.x = m_entityTransform.getMatrix().m41,
+						.y = m_entityTransform.getMatrix().m42,
+						.z = m_entityTransform.getMatrix().m43
 					},
 					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(
-						m_horizontalDirection * 5.0f
+						Vector3{ .x = m_horizontalDirection * 5.0f }
 					)
 				}
 			);

@@ -15,6 +15,7 @@
 
 #include "Common/UnicodeConverter.hpp"
 #include "Common/Behaviour.hpp"
+#include "Common/Transform.hpp"
 #include "Common/Math/ColorRgb.hpp"
 #include "Common/Math/Vector2.hpp"
 #include "Common/Math/Vector3.hpp"

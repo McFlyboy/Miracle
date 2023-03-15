@@ -21,7 +21,7 @@ namespace Miracle::Application {
 		m_container->createEntity(config);
 	}
 
-	void Scene::forEachEntityTransform(const std::function<void(const Matrix4&)>& forEach) const {
+	void Scene::forEachEntityTransform(const std::function<void(const Transform&)>& forEach) const {
 		m_container->forEachTransform(forEach);
 	}
 

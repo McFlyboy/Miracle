@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Math/Matrix4.hpp"
 #include "Models/EntityId.hpp"
 #include "IEcsContainer.hpp"
+#include "Transform.hpp"
 
 namespace Miracle {
 	struct BehaviourDependencies {
@@ -12,7 +12,7 @@ namespace Miracle {
 
 	class Behaviour {
 	protected:
-		Matrix4& m_entityTransform;
+		Transform& m_entityTransform;
 
 	public:
 		Behaviour(const BehaviourDependencies& dependencies) :

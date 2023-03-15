@@ -55,11 +55,11 @@ namespace Miracle::Application {
 				m_context.setScissor(0, 0, swapchainImageSize.width, swapchainImageSize.height);
 
 				scene.forEachEntityTransform(
-					[&](const Matrix4& transform) {
+					[&](const Transform& transform) {
 						m_pipeline->bind();
 						m_pipeline->pushConstants(
 							PushConstants{
-								.transform = transform.toTransposed(),
+								.transform = transform.getMatrix().toTransposed(),
 								.aspectRatio = aspectRatio
 							}
 						);

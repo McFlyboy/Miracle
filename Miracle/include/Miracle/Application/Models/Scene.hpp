@@ -5,8 +5,8 @@
 #include <functional>
 
 #include <Miracle/Common/Math/ColorRgb.hpp>
-#include <Miracle/Common/Math/Matrix4.hpp>
 #include <Miracle/Common/Models/EntityConfig.hpp>
+#include <Miracle/Common/Transform.hpp>
 #include <Miracle/Application/IEcs.hpp>
 #include <Miracle/Application/IEcsContainer.hpp>
 
@@ -33,7 +33,7 @@ namespace Miracle::Application {
 
 		void addEntity(const EntityConfig& config);
 
-		void forEachEntityTransform(const std::function<void(const Matrix4&)>& forEach) const;
+		void forEachEntityTransform(const std::function<void(const Transform&)>& forEach) const;
 
 		void update();
 	};

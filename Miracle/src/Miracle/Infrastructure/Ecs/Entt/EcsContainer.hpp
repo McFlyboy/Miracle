@@ -12,9 +12,9 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 	public:
 		virtual void createEntity(const EntityConfig& config) override;
 
-		virtual Matrix4& getTransform(EntityId owner) override;
+		virtual Transform& getTransform(EntityId owner) override;
 
-		virtual void forEachTransform(const std::function<void(const Matrix4&)>& forEach) const override;
+		virtual void forEachTransform(const std::function<void(const Transform&)>& forEach) const override;
 
 		virtual void forEachBehaviour(const std::function<void(Behaviour&)>& forEach) override;
 	};
