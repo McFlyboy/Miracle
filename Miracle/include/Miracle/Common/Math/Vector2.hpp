@@ -123,27 +123,19 @@ namespace Miracle {
 		}
 
 		inline Vector2 toNormalized() const {
-			if (x == 0.0f && y == 0.0f) {
+			if (*this == Vector2{}) {
 				return Vector2{};
 			}
 
-			auto length = getLenght();
-
-			return Vector2{
-				.x = x / length,
-				.y = y / length
-			};
+			return *this / getLenght();
 		}
 
 		inline Vector2 normalize() {
-			if (x == 0.0f && y == 0.0f) {
+			if (*this == Vector2{}) {
 				return *this;
 			}
 
-			auto length = getLenght();
-
-			x /= length;
-			y /= length;
+			*this /= getLenght();
 
 			return *this;
 		}

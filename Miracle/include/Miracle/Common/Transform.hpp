@@ -1,18 +1,20 @@
 #pragma once
 
-#include "Math/Vector3.hpp"
 #include "Math/Matrix4.hpp"
 
 namespace Miracle {
 	class Transform {
 	private:
-		Matrix4 m_transformationMatrix;
+		Matrix4 m_transformation;
 
 	public:
-		Transform(const Vector3& translation);
+		Transform(
+			const Vector3& translation,
+			const Vector3& scale
+		);
 
-		inline const Matrix4& getMatrix() const { return m_transformationMatrix; }
+		inline const Matrix4& getTransformation() const { return m_transformation; }
 
-		void translate(const Vector3& translation);
+		inline Matrix4& getTransformation() { return m_transformation; }
 	};
 }

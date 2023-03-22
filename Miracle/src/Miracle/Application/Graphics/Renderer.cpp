@@ -59,7 +59,7 @@ namespace Miracle::Application {
 						m_pipeline->bind();
 						m_pipeline->pushConstants(
 							PushConstants{
-								.transform = transform.getMatrix().toTransposed(),
+								.transform = transform.getTransformation().toTransposed(),
 								.aspectRatio = aspectRatio
 							}
 						);

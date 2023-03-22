@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cmath>
 #include <utility>
 
 #include "Vector3.hpp"
@@ -180,22 +181,22 @@ namespace Miracle {
 		}
 
 		constexpr inline Matrix4 operator*=(const Matrix4& rhs) {
-			auto newM11 = m11 * rhs.m11 + m12 * rhs.m21 + m13 * rhs.m31 + m14 * rhs.m41;
-			auto newM12 = m11 * rhs.m12 + m12 * rhs.m22 + m13 * rhs.m32 + m14 * rhs.m42;
-			auto newM13 = m11 * rhs.m13 + m12 * rhs.m23 + m13 * rhs.m33 + m14 * rhs.m43;
-			auto newM14 = m11 * rhs.m14 + m12 * rhs.m24 + m13 * rhs.m34 + m14 * rhs.m44;
-			auto newM21 = m21 * rhs.m11 + m22 * rhs.m21 + m23 * rhs.m31 + m24 * rhs.m41;
-			auto newM22 = m21 * rhs.m12 + m22 * rhs.m22 + m23 * rhs.m32 + m24 * rhs.m42;
-			auto newM23 = m21 * rhs.m13 + m22 * rhs.m23 + m23 * rhs.m33 + m24 * rhs.m43;
-			auto newM24 = m21 * rhs.m14 + m22 * rhs.m24 + m23 * rhs.m34 + m24 * rhs.m44;
-			auto newM31 = m31 * rhs.m11 + m32 * rhs.m21 + m33 * rhs.m31 + m34 * rhs.m41;
-			auto newM32 = m31 * rhs.m12 + m32 * rhs.m22 + m33 * rhs.m32 + m34 * rhs.m42;
-			auto newM33 = m31 * rhs.m13 + m32 * rhs.m23 + m33 * rhs.m33 + m34 * rhs.m43;
-			auto newM34 = m31 * rhs.m14 + m32 * rhs.m24 + m33 * rhs.m34 + m34 * rhs.m44;
-			auto newM41 = m41 * rhs.m11 + m42 * rhs.m21 + m43 * rhs.m31 + m44 * rhs.m41;
-			auto newM42 = m41 * rhs.m12 + m42 * rhs.m22 + m43 * rhs.m32 + m44 * rhs.m42;
-			auto newM43 = m41 * rhs.m13 + m42 * rhs.m23 + m43 * rhs.m33 + m44 * rhs.m43;
-			auto newM44 = m41 * rhs.m14 + m42 * rhs.m24 + m43 * rhs.m34 + m44 * rhs.m44;
+			float newM11 = m11 * rhs.m11 + m12 * rhs.m21 + m13 * rhs.m31 + m14 * rhs.m41;
+			float newM12 = m11 * rhs.m12 + m12 * rhs.m22 + m13 * rhs.m32 + m14 * rhs.m42;
+			float newM13 = m11 * rhs.m13 + m12 * rhs.m23 + m13 * rhs.m33 + m14 * rhs.m43;
+			float newM14 = m11 * rhs.m14 + m12 * rhs.m24 + m13 * rhs.m34 + m14 * rhs.m44;
+			float newM21 = m21 * rhs.m11 + m22 * rhs.m21 + m23 * rhs.m31 + m24 * rhs.m41;
+			float newM22 = m21 * rhs.m12 + m22 * rhs.m22 + m23 * rhs.m32 + m24 * rhs.m42;
+			float newM23 = m21 * rhs.m13 + m22 * rhs.m23 + m23 * rhs.m33 + m24 * rhs.m43;
+			float newM24 = m21 * rhs.m14 + m22 * rhs.m24 + m23 * rhs.m34 + m24 * rhs.m44;
+			float newM31 = m31 * rhs.m11 + m32 * rhs.m21 + m33 * rhs.m31 + m34 * rhs.m41;
+			float newM32 = m31 * rhs.m12 + m32 * rhs.m22 + m33 * rhs.m32 + m34 * rhs.m42;
+			float newM33 = m31 * rhs.m13 + m32 * rhs.m23 + m33 * rhs.m33 + m34 * rhs.m43;
+			float newM34 = m31 * rhs.m14 + m32 * rhs.m24 + m33 * rhs.m34 + m34 * rhs.m44;
+			float newM41 = m41 * rhs.m11 + m42 * rhs.m21 + m43 * rhs.m31 + m44 * rhs.m41;
+			float newM42 = m41 * rhs.m12 + m42 * rhs.m22 + m43 * rhs.m32 + m44 * rhs.m42;
+			float newM43 = m41 * rhs.m13 + m42 * rhs.m23 + m43 * rhs.m33 + m44 * rhs.m43;
+			float newM44 = m41 * rhs.m14 + m42 * rhs.m24 + m43 * rhs.m34 + m44 * rhs.m44;
 
 			m11 = newM11;
 			m12 = newM12;
@@ -238,10 +239,10 @@ namespace Miracle {
 		}
 
 		constexpr inline friend Vector4 operator*=(Vector4& lhs, const Matrix4& rhs) {
-			auto newX = lhs.x * rhs.m11 + lhs.y * rhs.m21 + lhs.z * rhs.m31 + lhs.w * rhs.m41;
-			auto newY = lhs.x * rhs.m12 + lhs.y * rhs.m22 + lhs.z * rhs.m32 + lhs.w * rhs.m42;
-			auto newZ = lhs.x * rhs.m13 + lhs.y * rhs.m23 + lhs.z * rhs.m33 + lhs.w * rhs.m43;
-			auto newW = lhs.x * rhs.m14 + lhs.y * rhs.m24 + lhs.z * rhs.m34 + lhs.w * rhs.m44;
+			float newX = lhs.x * rhs.m11 + lhs.y * rhs.m21 + lhs.z * rhs.m31 + lhs.w * rhs.m41;
+			float newY = lhs.x * rhs.m12 + lhs.y * rhs.m22 + lhs.z * rhs.m32 + lhs.w * rhs.m42;
+			float newZ = lhs.x * rhs.m13 + lhs.y * rhs.m23 + lhs.z * rhs.m33 + lhs.w * rhs.m43;
+			float newW = lhs.x * rhs.m14 + lhs.y * rhs.m24 + lhs.z * rhs.m34 + lhs.w * rhs.m44;
 
 			lhs.x = newX;
 			lhs.y = newY;
@@ -404,6 +405,94 @@ namespace Miracle {
 			};
 		}
 
+		static inline Matrix4 createRotationX(float radians) {
+			return Matrix4{
+				.m11 =  1.0f,
+				.m12 =  0.0f,
+				.m13 =  0.0f,
+				.m14 =  0.0f,
+				.m21 =  0.0f,
+				.m22 =  std::cos(radians),
+				.m23 =  std::sin(radians),
+				.m24 =  0.0f,
+				.m31 =  0.0f,
+				.m32 = -std::sin(radians),
+				.m33 =  std::cos(radians),
+				.m34 =  0.0f,
+				.m41 =  0.0f,
+				.m42 =  0.0f,
+				.m43 =  0.0f,
+				.m44 =  1.0f
+			};
+		}
+
+		static inline Matrix4 createRotationY(float radians) {
+			return Matrix4{
+				.m11 =  std::cos(radians),
+				.m12 =  0.0f,
+				.m13 = -std::sin(radians),
+				.m14 =  0.0f,
+				.m21 =  0.0f,
+				.m22 =  1.0f,
+				.m23 =  0.0f,
+				.m24 =  0.0f,
+				.m31 =  std::sin(radians),
+				.m32 =  0.0f,
+				.m33 =  std::cos(radians),
+				.m34 =  0.0f,
+				.m41 =  0.0f,
+				.m42 =  0.0f,
+				.m43 =  0.0f,
+				.m44 =  1.0f
+			};
+		}
+
+		static inline Matrix4 createRotationZ(float radians) {
+			return Matrix4{
+				.m11 =  std::cos(radians),
+				.m12 =  std::sin(radians),
+				.m13 =  0.0f,
+				.m14 =  0.0f,
+				.m21 = -std::sin(radians),
+				.m22 =  std::cos(radians),
+				.m23 =  0.0f,
+				.m24 =  0.0f,
+				.m31 =  0.0f,
+				.m32 =  0.0f,
+				.m33 =  1.0f,
+				.m34 =  0.0f,
+				.m41 =  0.0f,
+				.m42 =  0.0f,
+				.m43 =  0.0f,
+				.m44 =  1.0f
+			};
+		}
+
+		static inline Matrix4 createRotation(const Vector3& axis, float radians) {
+			float cosAngle = std::cos(radians);
+			float sinAngle = std::sin(radians);
+			float oneMinusCosAngle = 1.0f - cosAngle;
+
+			return Matrix4{
+				.m11 = axis.x * axis.x * oneMinusCosAngle + cosAngle,
+				.m12 = axis.x * axis.y * oneMinusCosAngle + axis.z * sinAngle,
+				.m13 = axis.x * axis.z * oneMinusCosAngle - axis.y * sinAngle,
+				.m14 = 0.0f,
+				.m21 = axis.x * axis.y * oneMinusCosAngle - axis.z * sinAngle,
+				.m22 = axis.y * axis.y * oneMinusCosAngle + cosAngle,
+				.m23 = axis.y * axis.z * oneMinusCosAngle + axis.x * sinAngle,
+				.m24 = 0.0f,
+				.m31 = axis.x * axis.z * oneMinusCosAngle + axis.y * sinAngle,
+				.m32 = axis.y * axis.z * oneMinusCosAngle - axis.x * sinAngle,
+				.m33 = axis.z * axis.z * oneMinusCosAngle + cosAngle,
+				.m34 = 0.0f,
+				.m41 = 0.0f,
+				.m42 = 0.0f,
+				.m43 = 0.0f,
+				.m44 = 1.0f
+			};
+		}
+
 		static constexpr inline Matrix4 createScale(const Vector3& scale) {
 			return Matrix4{
 				.m11 = scale.x,
@@ -426,26 +515,18 @@ namespace Miracle {
 		}
 
 		static constexpr inline Matrix4 createScale(float uniformScale) {
-			return createScale(Vector3{ .x = uniformScale, .y = uniformScale, .z = uniformScale });
-		}
-
-		static constexpr inline Matrix4 createShear(
-			std::pair<float, float> shearYZ,
-			std::pair<float, float> shearXZ,
-			std::pair<float, float> shearXY
-		) {
 			return Matrix4{
-				.m11 = 1.0f,
-				.m12 = shearYZ.first,
-				.m13 = shearYZ.second,
+				.m11 = uniformScale,
+				.m12 = 0.0f,
+				.m13 = 0.0f,
 				.m14 = 0.0f,
-				.m21 = shearXZ.first,
-				.m22 = 1.0f,
-				.m23 = shearXZ.second,
+				.m21 = 0.0f,
+				.m22 = uniformScale,
+				.m23 = 0.0f,
 				.m24 = 0.0f,
-				.m31 = shearXY.first,
-				.m32 = shearXY.second,
-				.m33 = 1.0f,
+				.m31 = 0.0f,
+				.m32 = 0.0f,
+				.m33 = uniformScale,
 				.m34 = 0.0f,
 				.m41 = 0.0f,
 				.m42 = 0.0f,

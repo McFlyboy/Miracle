@@ -147,29 +147,19 @@ namespace Miracle {
 		}
 
 		inline Vector3 toNormalized() const {
-			if (x == 0.0f && y == 0.0f && z == 0.0f) {
+			if (*this == Vector3{}) {
 				return Vector3{};
 			}
 
-			auto length = getLenght();
-
-			return Vector3{
-				.x = x / length,
-				.y = y / length,
-				.z = z / length
-			};
+			return *this / getLenght();
 		}
 
 		inline Vector3 normalize() {
-			if (x == 0.0f && y == 0.0f && z == 0.0f) {
+			if (*this == Vector3{}) {
 				return *this;
 			}
 
-			auto length = getLenght();
-
-			x /= length;
-			y /= length;
-			z /= length;
+			*this /= getLenght();
 
 			return *this;
 		}

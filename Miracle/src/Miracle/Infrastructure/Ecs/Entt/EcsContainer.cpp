@@ -8,7 +8,11 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 	void EcsContainer::createEntity(const EntityConfig& config) {
 		auto entity = m_registry.create();
 
-		m_registry.emplace<Transform>(entity, config.position);
+		m_registry.emplace<Transform>(
+			entity,
+			config.transformConfig.translation,
+			config.transformConfig.scale
+		);
 
 		if (config.behaviourFactory.has_value()) {
 			m_registry.emplace<std::unique_ptr<Behaviour>>(
