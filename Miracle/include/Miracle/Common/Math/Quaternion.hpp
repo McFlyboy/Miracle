@@ -159,5 +159,9 @@ namespace Miracle {
 
 			return *this;
 		}
+
+		inline Quaternion slerp(const Quaternion& quaternion, float t) const {
+			return getDifference(quaternion).toExponentiated(t) * *this;
+		}
 	};
 }

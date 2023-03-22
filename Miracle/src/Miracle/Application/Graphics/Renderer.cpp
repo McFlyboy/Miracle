@@ -59,7 +59,8 @@ namespace Miracle::Application {
 						m_pipeline->bind();
 						m_pipeline->pushConstants(
 							PushConstants{
-								.transform = transform.getTransformation().toTransposed(),
+								.transform = (transform.getTransformation() * Matrix4::createOrthographicProjection())
+									.toTransposed(),
 								.aspectRatio = aspectRatio
 							}
 						);

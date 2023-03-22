@@ -6,6 +6,7 @@
 
 #include "Vector3.hpp"
 #include "Vector4.hpp"
+#include "Quaternion.hpp"
 
 namespace Miracle {
 	struct Matrix4 {
@@ -527,6 +528,55 @@ namespace Miracle {
 				.m31 = 0.0f,
 				.m32 = 0.0f,
 				.m33 = uniformScale,
+				.m34 = 0.0f,
+				.m41 = 0.0f,
+				.m42 = 0.0f,
+				.m43 = 0.0f,
+				.m44 = 1.0f
+			};
+		}
+
+		static constexpr inline Matrix4 createOrthographicProjection() {
+			return Matrix4{
+				.m11 = 1.0f,
+				.m12 = 0.0f,
+				.m13 = 0.0f,
+				.m14 = 0.0f,
+				.m21 = 0.0f,
+				.m22 = 1.0f,
+				.m23 = 0.0f,
+				.m24 = 0.0f,
+				.m31 = 0.0f,
+				.m32 = 0.0f,
+				.m33 = 0.0f,
+				.m34 = 0.0f,
+				.m41 = 0.0f,
+				.m42 = 0.0f,
+				.m43 = 0.0f,
+				.m44 = 1.0f
+			};
+		}
+
+		/* ----- CONVERTERS ----- */
+
+		static constexpr inline Matrix4 createFromQuaternion(const Quaternion& quaternion) {
+			auto& w = quaternion.w;
+			auto& x = quaternion.v.x;
+			auto& y = quaternion.v.y;
+			auto& z = quaternion.v.z;
+
+			return Matrix4{
+				.m11 = 1.0f - 2.0f * y * y - 2.0f * z * z,
+				.m12 = 2.0f * x * y + 2.0f * w * z,
+				.m13 = 2.0f * x * z - 2.0f * w * y,
+				.m14 = 0.0f,
+				.m21 = 2.0f * x * y - 2.0f * w * z,
+				.m22 = 1.0f - 2.0f * z * z - 2.0f * x * x,
+				.m23 = 2.0f * y * z + 2.0f * w * x,
+				.m24 = 0.0f,
+				.m31 = 2.0f * x * z + 2.0f * w * y,
+				.m32 = 2.0f * y * z - 2.0f * w * x,
+				.m33 = 1.0f - 2.0f * x * x - 2.0f * y * y,
 				.m34 = 0.0f,
 				.m41 = 0.0f,
 				.m42 = 0.0f,
