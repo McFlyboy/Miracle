@@ -1,6 +1,8 @@
 #pragma once
 
+#include "Math/Vector3.hpp"
 #include "Math/Matrix4.hpp"
+#include "Math/Quaternion.hpp"
 
 namespace Miracle {
 	class Transform {
@@ -10,6 +12,7 @@ namespace Miracle {
 	public:
 		Transform(
 			const Vector3& translation,
+			const Quaternion& rotation,
 			const Vector3& scale
 		);
 

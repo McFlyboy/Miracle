@@ -30,6 +30,7 @@ namespace Miracle {
 		constexpr bool operator==(const Vector3&) const = default;
 
 		/* ----- CONVERTERS ----- */
+
 		static constexpr inline Vector3 createFromVector2(const Vector2& xy, float z) {
 			return Vector3{
 				.x = xy.x,

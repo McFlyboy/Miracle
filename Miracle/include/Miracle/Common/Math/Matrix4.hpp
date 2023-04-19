@@ -4,6 +4,7 @@
 #include <cmath>
 #include <utility>
 
+#include "Angle.hpp"
 #include "Vector3.hpp"
 #include "Vector4.hpp"
 #include "Quaternion.hpp"
@@ -406,7 +407,10 @@ namespace Miracle {
 			};
 		}
 
-		static inline Matrix4 createRotationX(float radians) {
+		template<Angle TAngle>
+		static inline Matrix4 createRotationX(TAngle angle) {
+			float radians = AngleUtilities::castToRadians(angle).value;
+
 			return Matrix4{
 				.m11 =  1.0f,
 				.m12 =  0.0f,
@@ -427,7 +431,10 @@ namespace Miracle {
 			};
 		}
 
-		static inline Matrix4 createRotationY(float radians) {
+		template<Angle TAngle>
+		static inline Matrix4 createRotationY(TAngle angle) {
+			float radians = AngleUtilities::castToRadians(angle).value;
+
 			return Matrix4{
 				.m11 =  std::cos(radians),
 				.m12 =  0.0f,
@@ -448,7 +455,10 @@ namespace Miracle {
 			};
 		}
 
-		static inline Matrix4 createRotationZ(float radians) {
+		template<Angle TAngle>
+		static inline Matrix4 createRotationZ(TAngle angle) {
+			float radians = AngleUtilities::castToRadians(angle).value;
+
 			return Matrix4{
 				.m11 =  std::cos(radians),
 				.m12 =  std::sin(radians),
@@ -469,7 +479,9 @@ namespace Miracle {
 			};
 		}
 
-		static inline Matrix4 createRotation(const Vector3& axis, float radians) {
+		template<Angle TAngle>
+		static inline Matrix4 createRotation(const Vector3& axis, TAngle angle) {
+			float radians = AngleUtilities::castToRadians(angle).value;
 			float cosAngle = std::cos(radians);
 			float sinAngle = std::sin(radians);
 			float oneMinusCosAngle = 1.0f - cosAngle;

@@ -11,6 +11,7 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 		m_registry.emplace<Transform>(
 			entity,
 			config.transformConfig.translation,
+			config.transformConfig.rotation,
 			config.transformConfig.scale
 		);
 

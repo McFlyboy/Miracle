@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include "Angle.hpp"
 #include "Vector3.hpp"
 
 namespace Miracle {
@@ -95,8 +96,9 @@ namespace Miracle {
 
 		/* ----- ROTATION ----- */
 
-		static inline Quaternion createRotation(const Vector3& axis, float radians) {
-			float halfAngle = radians / 2.0f;
+		template<Angle TAngle>
+		static inline Quaternion createRotation(const Vector3& axis, TAngle angle) {
+			float halfAngle = AngleUtilities::castToRadians(angle).value / 2.0f;
 
 			return Quaternion{
 				.w = std::cos(halfAngle),
