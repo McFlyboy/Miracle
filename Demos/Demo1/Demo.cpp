@@ -58,7 +58,7 @@ public:
 		auto translation = *reinterpret_cast<Vector3*>(&m_entityTransform.getTransformation()[3]);
 
 		m_entityTransform.getTransformation() *= Matrix4::createTranslation(-translation)
-			* Matrix4::createRotation(Vector3::forward, 90.0_deg * DeltaTime::get())
+			* Matrix4::createRotationZ(90.0_deg * DeltaTime::get())
 			* Matrix4::createTranslation(translation);
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {

@@ -8,7 +8,7 @@ namespace Miracle {
 	) :
 		m_transformation(
 			Matrix4::createScale(scale)
-				* Matrix4::createFromQuaternion(rotation)
+				* Matrix4::createRotation(rotation)
 				* Matrix4::createTranslation(translation)
 		)
 	{}
