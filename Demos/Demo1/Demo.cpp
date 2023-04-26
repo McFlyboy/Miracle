@@ -15,7 +15,7 @@ public:
 	{}
 
 	virtual void act() override {
-		*reinterpret_cast<Vector3*>(&m_entityTransform.getTransformation()[3]) += m_velocity * DeltaTime::get();
+		m_entityTransform.getTranslation() += m_velocity * DeltaTime::get();
 	}
 };
 
@@ -53,19 +53,17 @@ public:
 			m_horizontalDirection = -1.0f;
 		}
 
-		*reinterpret_cast<Vector3*>(&m_entityTransform.getTransformation()[3]) += velocity.toNormalized() * m_movementSpeed * DeltaTime::get();
+		m_entityTransform.getTranslation() += velocity.toNormalized() * m_movementSpeed * DeltaTime::get();
 
-		auto translation = *reinterpret_cast<Vector3*>(&m_entityTransform.getTransformation()[3]);
-
-		m_entityTransform.getTransformation() *= Matrix4::createTranslation(-translation)
+		m_entityTransform.getTransformation() *= Matrix4::createTranslation(-m_entityTransform.getTranslation())
 			* Matrix4::createRotationZ(90.0_deg * DeltaTime::get())
-			* Matrix4::createTranslation(translation);
+			* Matrix4::createTranslation(m_entityTransform.getTranslation());
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
 			CurrentScene::addEntity(
 				EntityConfig{
 					.transformConfig = TransformConfig{
-						.translation = *reinterpret_cast<Vector3*>(&m_entityTransform.getTransformation()[3]),
+						.translation = m_entityTransform.getTranslation(),
 						.scale = Vector3{ .x = 0.25f, .y = 0.125f, .z = 1.0f }
 					},
 					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(

@@ -31,7 +31,7 @@ namespace Miracle {
 			return Degrees{ .value = value + rhs.value };
 		}
 
-		constexpr inline Degrees operator+=(const Degrees& rhs) {
+		constexpr inline Degrees& operator+=(const Degrees& rhs) {
 			value += rhs.value;
 
 			return *this;
@@ -43,7 +43,7 @@ namespace Miracle {
 			return Degrees{ .value = value - rhs.value };
 		}
 
-		constexpr inline Degrees operator-=(const Degrees& rhs) {
+		constexpr inline Degrees& operator-=(const Degrees& rhs) {
 			value -= rhs.value;
 
 			return *this;
@@ -59,7 +59,7 @@ namespace Miracle {
 			return Degrees{ .value = lhs * rhs.value };
 		}
 
-		constexpr inline Degrees operator*=(float rhs) {
+		constexpr inline Degrees& operator*=(float rhs) {
 			value *= rhs;
 
 			return *this;
@@ -75,7 +75,7 @@ namespace Miracle {
 			return Degrees{ .value = lhs / rhs.value };
 		}
 
-		constexpr inline Degrees operator/=(float rhs) {
+		constexpr inline Degrees& operator/=(float rhs) {
 			value /= rhs;
 
 			return *this;
@@ -109,7 +109,7 @@ namespace Miracle {
 			return Radians{ .value = value + rhs.value };
 		}
 
-		constexpr inline Radians operator+=(const Radians& rhs) {
+		constexpr inline Radians& operator+=(const Radians& rhs) {
 			value += rhs.value;
 
 			return *this;
@@ -121,7 +121,7 @@ namespace Miracle {
 			return Radians{ .value = value - rhs.value };
 		}
 
-		constexpr inline Radians operator-=(const Radians& rhs) {
+		constexpr inline Radians& operator-=(const Radians& rhs) {
 			value -= rhs.value;
 
 			return *this;
@@ -137,7 +137,7 @@ namespace Miracle {
 			return Radians{ .value = lhs * rhs.value };
 		}
 
-		constexpr inline Radians operator*=(float rhs) {
+		constexpr inline Radians& operator*=(float rhs) {
 			value *= rhs;
 
 			return *this;
@@ -153,7 +153,7 @@ namespace Miracle {
 			return Radians{ .value = lhs / rhs.value };
 		}
 
-		constexpr inline Radians operator/=(float rhs) {
+		constexpr inline Radians& operator/=(float rhs) {
 			value /= rhs;
 
 			return *this;

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <compare>
 
 namespace Miracle {
 	struct ColorRgb {
@@ -20,7 +19,7 @@ namespace Miracle {
 
 		/* ----- COMPARISON ----- */
 
-		constexpr auto operator<=>(const ColorRgb&) const = default;
+		constexpr bool operator==(const ColorRgb&) const = default;
 
 		/* ----- CONVERTERS ----- */
 

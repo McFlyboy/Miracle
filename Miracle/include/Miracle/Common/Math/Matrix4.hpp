@@ -30,16 +30,6 @@ namespace Miracle {
 
 		static const Matrix4 identity;
 
-		/* ----- ARRAY-STYLE ACCESSING ----- */
-
-		inline Vector4& operator[](size_t index) {
-			return *(reinterpret_cast<Vector4*>(this) + index);
-		}
-
-		inline const Vector4& operator[](size_t index) const {
-			return *(reinterpret_cast<const Vector4*>(this) + index);
-		}
-
 		/* ----- COMPARISON ----- */
 
 		constexpr bool operator==(const Matrix4&) const = default;
@@ -94,7 +84,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Matrix4 operator+=(const Matrix4& rhs) {
+		constexpr inline Matrix4& operator+=(const Matrix4& rhs) {
 			m11 += rhs.m11;
 			m12 += rhs.m12;
 			m13 += rhs.m13;
@@ -138,7 +128,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Matrix4 operator-=(const Matrix4& rhs) {
+		constexpr inline Matrix4& operator-=(const Matrix4& rhs) {
 			m11 -= rhs.m11;
 			m12 -= rhs.m12;
 			m13 -= rhs.m13;
@@ -182,7 +172,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Matrix4 operator*=(const Matrix4& rhs) {
+		constexpr inline Matrix4& operator*=(const Matrix4& rhs) {
 			float newM11 = m11 * rhs.m11 + m12 * rhs.m21 + m13 * rhs.m31 + m14 * rhs.m41;
 			float newM12 = m11 * rhs.m12 + m12 * rhs.m22 + m13 * rhs.m32 + m14 * rhs.m42;
 			float newM13 = m11 * rhs.m13 + m12 * rhs.m23 + m13 * rhs.m33 + m14 * rhs.m43;
@@ -240,7 +230,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline friend Vector4 operator*=(Vector4& lhs, const Matrix4& rhs) {
+		constexpr inline friend Vector4& operator*=(Vector4& lhs, const Matrix4& rhs) {
 			float newX = lhs.x * rhs.m11 + lhs.y * rhs.m21 + lhs.z * rhs.m31 + lhs.w * rhs.m41;
 			float newY = lhs.x * rhs.m12 + lhs.y * rhs.m22 + lhs.z * rhs.m32 + lhs.w * rhs.m42;
 			float newZ = lhs.x * rhs.m13 + lhs.y * rhs.m23 + lhs.z * rhs.m33 + lhs.w * rhs.m43;
@@ -298,7 +288,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Matrix4 operator*=(float rhs) {
+		constexpr inline Matrix4& operator*=(float rhs) {
 			m11 *= rhs;
 			m12 *= rhs;
 			m13 *= rhs;
@@ -363,7 +353,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Matrix4 operator/=(float rhs) {
+		constexpr inline Matrix4& operator/=(float rhs) {
 			m11 /= rhs;
 			m12 /= rhs;
 			m13 /= rhs;

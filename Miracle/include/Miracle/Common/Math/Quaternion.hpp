@@ -38,7 +38,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Quaternion operator*=(const Quaternion& rhs) {
+		constexpr inline Quaternion& operator*=(const Quaternion& rhs) {
 			auto newW = w * rhs.w - v.dot(rhs.v);
 			auto newV = w * rhs.v + v * rhs.w + v.cross(rhs.v);
 
@@ -64,7 +64,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Quaternion operator*=(float rhs) {
+		constexpr inline Quaternion& operator*=(float rhs) {
 			w *= rhs;
 			v *= rhs;
 
@@ -87,7 +87,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Quaternion operator/=(float rhs) {
+		constexpr inline Quaternion& operator/=(float rhs) {
 			w /= rhs;
 			v /= rhs;
 
@@ -147,7 +147,7 @@ namespace Miracle {
 			};
 		}
 
-		inline Quaternion exponentiate(float exponent) {
+		inline Quaternion& exponentiate(float exponent) {
 			float halfAngle = std::acos(w);
 
 			if (halfAngle == 0.0f) {

@@ -15,16 +15,6 @@ namespace Miracle {
 		static const Vector3 up;
 		static const Vector3 forward;
 
-		/* ----- ARRAY-STYLE ACCESSING ----- */
-
-		inline float& operator[](size_t index) {
-			return *(reinterpret_cast<float*>(this) + index);
-		}
-
-		inline float operator[](size_t index) const {
-			return *(reinterpret_cast<const float*>(this) + index);
-		}
-
 		/* ----- COMPARISON ----- */
 
 		constexpr bool operator==(const Vector3&) const = default;
@@ -63,7 +53,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Vector3 operator+=(const Vector3& rhs) {
+		constexpr inline Vector3& operator+=(const Vector3& rhs) {
 			x += rhs.x;
 			y += rhs.y;
 			z += rhs.z;
@@ -81,7 +71,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Vector3 operator-=(const Vector3& rhs) {
+		constexpr inline Vector3& operator-=(const Vector3& rhs) {
 			x -= rhs.x;
 			y -= rhs.y;
 			z -= rhs.z;
@@ -107,7 +97,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Vector3 operator*=(float rhs) {
+		constexpr inline Vector3& operator*=(float rhs) {
 			x *= rhs;
 			y *= rhs;
 			z *= rhs;
@@ -133,7 +123,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Vector3 operator/=(float rhs) {
+		constexpr inline Vector3& operator/=(float rhs) {
 			x /= rhs;
 			y /= rhs;
 			z /= rhs;
@@ -155,7 +145,7 @@ namespace Miracle {
 			return *this / getLenght();
 		}
 
-		inline Vector3 normalize() {
+		inline Vector3& normalize() {
 			if (*this == Vector3{}) {
 				return *this;
 			}
