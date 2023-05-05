@@ -22,7 +22,6 @@ public:
 class PlayerBehaviour : public Behaviour {
 private:
 	float m_movementSpeed;
-	float m_horizontalDirection = 1.0f;
 
 public:
 	PlayerBehaviour(
@@ -34,6 +33,7 @@ public:
 	
 	virtual void act() override {
 		auto velocity = Vector3{};
+		float rotation = 0.0f;
 
 		if (Keyboard::isKeyHeld(KeyboardKey::keyW)) {
 			velocity.y += 1.0f;
@@ -45,29 +45,41 @@ public:
 
 		if (Keyboard::isKeyHeld(KeyboardKey::keyD)) {
 			velocity.x += 1.0f;
-			m_horizontalDirection = 1.0f;
 		}
 
 		if (Keyboard::isKeyHeld(KeyboardKey::keyA)) {
 			velocity.x -= 1.0f;
-			m_horizontalDirection = -1.0f;
 		}
 
-		m_entityTransform.getTranslation() += velocity.toNormalized() * m_movementSpeed * DeltaTime::get();
+		if (Keyboard::isKeyHeld(KeyboardKey::keyE)) {
+			rotation -= 1.0f;
+		}
 
-		m_entityTransform.getTransformation() *= Matrix4::createTranslation(-m_entityTransform.getTranslation())
-			* Matrix4::createRotationZ(90.0_deg * DeltaTime::get())
-			* Matrix4::createTranslation(m_entityTransform.getTranslation());
+		if (Keyboard::isKeyHeld(KeyboardKey::keyQ)) {
+			rotation += 1.0f;
+		}
+
+		m_entityTransform.getRotation() *= Quaternion::createRotation(Vector3::forward, 180.0_deg * rotation * DeltaTime::get());
+		m_entityTransform.getTranslation() += (
+			m_entityTransform.getRotation()
+				* Quaternion{ .w = 0.0f, .v = velocity.toNormalized() * m_movementSpeed * DeltaTime::get() }
+				* m_entityTransform.getRotation().getInverse()
+		).v;
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
 			CurrentScene::addEntity(
 				EntityConfig{
 					.transformConfig = TransformConfig{
 						.translation = m_entityTransform.getTranslation(),
-						.scale = Vector3{ .x = 0.25f, .y = 0.125f, .z = 1.0f }
+						.rotation = m_entityTransform.getRotation(),
+						.scale = Vector3{ .x = 0.0625f, .y = 0.125f, .z = 1.0f }
 					},
 					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(
-						Vector3{ .x = m_horizontalDirection * 5.0f }
+						(
+							m_entityTransform.getRotation()
+								* Quaternion{ .w = 0.0f, .v = Vector3::up }
+								* m_entityTransform.getRotation().getInverse()
+						).v * 3.0f
 					)
 				}
 			);
@@ -103,7 +115,10 @@ int main() {
 			.sceneConfig = SceneConfig{
 				.entityConfigs = std::vector<EntityConfig>{
 					{
-						.behaviourFactory = BehaviourFactory::createFactoryFor<PlayerBehaviour>(3.0f)
+						.transformConfig = TransformConfig{
+							.scale = Vector3{.x = 0.25f, .y = 0.25f, .z = 0.25f }
+						},
+						.behaviourFactory = BehaviourFactory::createFactoryFor<PlayerBehaviour>(2.0f)
 					}
 				}
 			},
