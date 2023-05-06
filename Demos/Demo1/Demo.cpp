@@ -60,11 +60,10 @@ public:
 		}
 
 		m_entityTransform.getRotation() *= Quaternion::createRotation(Vector3::forward, 180.0_deg * rotation * DeltaTime::get());
-		m_entityTransform.getTranslation() += (
+		m_entityTransform.getTranslation() += MathUtils::rotateVector(
+			velocity.toNormalized() * m_movementSpeed * DeltaTime::get(),
 			m_entityTransform.getRotation()
-				* Quaternion{ .w = 0.0f, .v = velocity.toNormalized() * m_movementSpeed * DeltaTime::get() }
-				* m_entityTransform.getRotation().getInverse()
-		).v;
+		);
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
 			CurrentScene::addEntity(
@@ -75,11 +74,7 @@ public:
 						.scale = Vector3{ .x = 0.0625f, .y = 0.125f, .z = 1.0f }
 					},
 					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(
-						(
-							m_entityTransform.getRotation()
-								* Quaternion{ .w = 0.0f, .v = Vector3::up }
-								* m_entityTransform.getRotation().getInverse()
-						).v * 3.0f
+						MathUtils::rotateVector(Vector3::up * 3.0f, m_entityTransform.getRotation())
 					)
 				}
 			);
