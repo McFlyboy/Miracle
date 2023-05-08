@@ -98,7 +98,7 @@ namespace Miracle {
 
 		template<Angle TAngle>
 		static inline Quaternion createRotation(const Vector3& axis, TAngle angle) {
-			float halfAngle = AngleUtilities::castToRadians(angle).value / 2.0f;
+			float halfAngle = static_cast<Radians>(angle).value / 2.0f;
 
 			return Quaternion{
 				.w = std::cos(halfAngle),

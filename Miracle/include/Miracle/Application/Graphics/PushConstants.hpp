@@ -5,6 +5,5 @@
 namespace Miracle::Application {
 	struct PushConstants {
 		Matrix4 transform = Matrix4::identity;
-		float aspectRatio = 1.0f;
 	};
 }

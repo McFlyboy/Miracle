@@ -84,6 +84,8 @@ namespace Miracle {
 		/* ----- CONVERTERS ----- */
 
 		constexpr inline Radians toRadians() const;
+
+		constexpr explicit inline operator Radians() const;
 	};
 
 	struct Radians {
@@ -162,14 +164,24 @@ namespace Miracle {
 		/* ----- CONVERTERS ----- */
 
 		constexpr inline Degrees toDegrees() const;
+
+		constexpr explicit inline operator Degrees() const;
 	};
 
 	constexpr inline Radians Degrees::toRadians() const {
 		return Radians{ .value = value * std::numbers::pi_v<float> / 180.0f };
 	}
 
+	constexpr inline Degrees::operator Radians() const {
+		return toRadians();
+	}
+
 	constexpr inline Degrees Radians::toDegrees() const {
 		return Degrees{ .value = value * 180.0f / std::numbers::pi_v<float> };
+	}
+
+	constexpr inline Radians::operator Degrees() const {
+		return toDegrees();
 	}
 
 	constexpr inline Degrees operator""_deg(long double value) {
@@ -182,19 +194,4 @@ namespace Miracle {
 
 	template<typename T>
 	concept Angle = std::is_same_v<T, Degrees> || std::is_same_v<T, Radians>;
-
-	class AngleUtilities {
-	public:
-		AngleUtilities() = delete;
-
-		template<Angle TAngle>
-		static constexpr inline Radians castToRadians(TAngle angle) {
-			if constexpr (std::is_same_v<TAngle, Degrees>) {
-				return angle.toRadians();
-			}
-			else {
-				return angle;
-			}
-		}
-	};
 }

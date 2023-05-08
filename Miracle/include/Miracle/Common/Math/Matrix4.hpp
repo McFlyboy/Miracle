@@ -399,7 +399,7 @@ namespace Miracle {
 
 		template<Angle TAngle>
 		static inline Matrix4 createRotationX(TAngle angle) {
-			float radians = AngleUtilities::castToRadians(angle).value;
+			float radians = static_cast<Radians>(angle).value;
 
 			return Matrix4{
 				.m11 =  1.0f,
@@ -423,7 +423,7 @@ namespace Miracle {
 
 		template<Angle TAngle>
 		static inline Matrix4 createRotationY(TAngle angle) {
-			float radians = AngleUtilities::castToRadians(angle).value;
+			float radians = static_cast<Radians>(angle).value;
 
 			return Matrix4{
 				.m11 =  std::cos(radians),
@@ -447,7 +447,7 @@ namespace Miracle {
 
 		template<Angle TAngle>
 		static inline Matrix4 createRotationZ(TAngle angle) {
-			float radians = AngleUtilities::castToRadians(angle).value;
+			float radians = static_cast<Radians>(angle).value;
 
 			return Matrix4{
 				.m11 =  std::cos(radians),
@@ -471,7 +471,7 @@ namespace Miracle {
 
 		template<Angle TAngle>
 		static inline Matrix4 createRotation(const Vector3& axis, TAngle angle) {
-			float radians = AngleUtilities::castToRadians(angle).value;
+			float radians = static_cast<Radians>(angle).value;
 			float cosAngle = std::cos(radians);
 			float sinAngle = std::sin(radians);
 			float oneMinusCosAngle = 1.0f - cosAngle;
@@ -564,9 +564,9 @@ namespace Miracle {
 			};
 		}
 
-		static constexpr inline Matrix4 createOrthographicProjection() {
+		static constexpr inline Matrix4 createOrthographicProjection(float aspectRatio) {
 			return Matrix4{
-				.m11 = 1.0f,
+				.m11 = 1.0f / aspectRatio,
 				.m12 = 0.0f,
 				.m13 = 0.0f,
 				.m14 = 0.0f,
