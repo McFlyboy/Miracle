@@ -137,5 +137,9 @@ namespace Miracle {
 		constexpr inline float dot(const Vector2& rhs) const {
 			return x * rhs.x + y * rhs.y;
 		}
+
+		constexpr inline Vector2 lerp(const Vector2& vector, float t) const {
+			return *this + (vector - *this) * t;
+		}
 	};
 }

@@ -32,38 +32,16 @@ public:
 	{}
 	
 	virtual void act() override {
-		auto velocity = Vector3{};
-		float rotation = 0.0f;
+		auto velocity = Vector3{
+			.x = static_cast<float>(Keyboard::isKeyHeld(KeyboardKey::keyD) - Keyboard::isKeyHeld(KeyboardKey::keyA)),
+			.y = static_cast<float>(Keyboard::isKeyHeld(KeyboardKey::keyW) - Keyboard::isKeyHeld(KeyboardKey::keyS)),
+		};
 
-		if (Keyboard::isKeyHeld(KeyboardKey::keyW)) {
-			velocity.y += 1.0f;
-		}
-
-		if (Keyboard::isKeyHeld(KeyboardKey::keyS)) {
-			velocity.y -= 1.0f;
-		}
-
-		if (Keyboard::isKeyHeld(KeyboardKey::keyD)) {
-			velocity.x += 1.0f;
-		}
-
-		if (Keyboard::isKeyHeld(KeyboardKey::keyA)) {
-			velocity.x -= 1.0f;
-		}
-
-		if (Keyboard::isKeyHeld(KeyboardKey::keyE)) {
-			rotation -= 1.0f;
-		}
-
-		if (Keyboard::isKeyHeld(KeyboardKey::keyQ)) {
-			rotation += 1.0f;
-		}
+		float rotation = Keyboard::isKeyHeld(KeyboardKey::keyQ) - Keyboard::isKeyHeld(KeyboardKey::keyE);
 
 		m_entityTransform.getRotation() *= Quaternion::createRotation(Vector3::forward, 180.0_deg * rotation * DeltaTime::get());
-		m_entityTransform.getTranslation() += MathUtils::rotateVector(
-			velocity.toNormalized() * m_movementSpeed * DeltaTime::get(),
-			m_entityTransform.getRotation()
-		);
+		m_entityTransform.getTranslation() += MathUtilities::rotateVector(velocity.toNormalized(), m_entityTransform.getRotation())
+			* m_movementSpeed * DeltaTime::get();
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
 			CurrentScene::addEntity(
@@ -74,7 +52,7 @@ public:
 						.scale = Vector3{ .x = 0.0625f, .y = 0.125f, .z = 1.0f }
 					},
 					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(
-						MathUtils::rotateVector(Vector3::up * 3.0f, m_entityTransform.getRotation())
+						MathUtilities::rotateVector(Vector3::up, m_entityTransform.getRotation()) * 3.0f
 					)
 				}
 			);

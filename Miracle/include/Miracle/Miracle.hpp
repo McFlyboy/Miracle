@@ -22,4 +22,4 @@
 #include "Common/Math/Vector4.hpp"
 #include "Common/Math/Matrix4.hpp"
 #include "Common/Math/Quaternion.hpp"
-#include "Common/Math/MathUtils.hpp"
+#include "Common/Math/MathUtilities.hpp"

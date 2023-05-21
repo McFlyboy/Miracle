@@ -170,5 +170,9 @@ namespace Miracle {
 				.z = x * rhs.y - y * rhs.x
 			};
 		}
+
+		constexpr inline Vector3 lerp(const Vector3& vector, float t) const {
+			return *this + (vector - *this) * t;
+		}
 	};
 }
