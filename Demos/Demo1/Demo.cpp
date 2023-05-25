@@ -22,13 +22,16 @@ public:
 class PlayerBehaviour : public Behaviour {
 private:
 	float m_movementSpeed;
+	Degrees m_turnSpeed;
 
 public:
 	PlayerBehaviour(
 		const BehaviourDependencies& dependencies,
-		float movementSpeed
+		float movementSpeed,
+		Degrees turnSpeed
 	) : Behaviour(dependencies),
-		m_movementSpeed(movementSpeed)
+		m_movementSpeed(movementSpeed),
+		m_turnSpeed(turnSpeed)
 	{}
 	
 	virtual void act() override {
@@ -39,7 +42,7 @@ public:
 
 		float rotation = Keyboard::isKeyHeld(KeyboardKey::keyQ) - Keyboard::isKeyHeld(KeyboardKey::keyE);
 
-		m_entityTransform.rotate(Quaternion::createRotation(Vector3::forward, 180.0_deg * rotation * DeltaTime::get()));
+		m_entityTransform.rotate(Quaternion::createRotation(Vector3::forward, rotation * m_turnSpeed * DeltaTime::get()));
 		m_entityTransform.translate(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
@@ -48,9 +51,9 @@ public:
 					.transformConfig = TransformConfig{
 						.translation = m_entityTransform.getTranslation(),
 						.rotation    = m_entityTransform.getRotation(),
-						.scale       = Vector3{ .x = 0.0625f, .y = 0.125f, .z = 1.0f }
+						.scale       = Vector3{ .x = 0.25f, .y = 0.5f, .z = 1.0f }
 					},
-					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(3.0f)
+					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(15.0f)
 				}
 			);
 		}
@@ -85,10 +88,7 @@ int main() {
 			.sceneConfig = SceneConfig{
 				.entityConfigs = std::vector<EntityConfig>{
 					{
-						.transformConfig = TransformConfig{
-							.scale = Vector3{ .x = 0.25f, .y = 0.25f, .z = 0.25f }
-						},
-						.behaviourFactory = BehaviourFactory::createFactoryFor<PlayerBehaviour>(2.0f)
+						.behaviourFactory = BehaviourFactory::createFactoryFor<PlayerBehaviour>(10.0f, 270.0_deg)
 					}
 				}
 			},

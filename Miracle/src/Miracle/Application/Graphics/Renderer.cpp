@@ -48,6 +48,8 @@ namespace Miracle::Application {
 		auto aspectRatio = static_cast<float>(swapchainImageSize.width)
 			/ static_cast<float>(swapchainImageSize.height);
 
+		auto projection = Matrix4::createOrthographicProjection(aspectRatio, 0.2f);
+
 		m_context.recordCommands({
 			[&]() {
 				m_swapchain->beginRenderPass(scene.getBackgroundColor());
@@ -59,10 +61,7 @@ namespace Miracle::Application {
 						m_pipeline->bind();
 						m_pipeline->pushConstants(
 							PushConstants{
-								.transform = (
-									transform.getTransformation()
-										* Matrix4::createOrthographicProjection(aspectRatio)
-								).toTransposed()
+								.transform = (transform.getTransformation() * projection).toTransposed()
 							}
 						);
 
