@@ -48,19 +48,20 @@ namespace Miracle::Application {
 		auto aspectRatio = static_cast<float>(swapchainImageSize.width)
 			/ static_cast<float>(swapchainImageSize.height);
 
+		auto projection = Matrix4::createOrthographicProjection(aspectRatio, 0.2f);
+
 		m_context.recordCommands({
 			[&]() {
 				m_swapchain->beginRenderPass(scene.getBackgroundColor());
 				m_context.setViewport(0.0f, 0.0f, swapchainImageSize.width, swapchainImageSize.height);
 				m_context.setScissor(0, 0, swapchainImageSize.width, swapchainImageSize.height);
 
-				scene.forEachEntityPosition(
-					[&](const Vector2f& position) {
+				scene.forEachEntityTransform(
+					[&](const Transform& transform) {
 						m_pipeline->bind();
 						m_pipeline->pushConstants(
 							PushConstants{
-								.translation = position,
-								.aspectRatio = aspectRatio
+								.transform = (transform.getTransformation() * projection).toTransposed()
 							}
 						);
 

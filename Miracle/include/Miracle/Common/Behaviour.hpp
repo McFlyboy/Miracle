@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Math/Vector2f.hpp"
 #include "Models/EntityId.hpp"
 #include "IEcsContainer.hpp"
+#include "Transform.hpp"
 
 namespace Miracle {
 	struct BehaviourDependencies {
@@ -12,11 +12,11 @@ namespace Miracle {
 
 	class Behaviour {
 	protected:
-		Vector2f& m_entityPosition;
+		Transform& m_entityTransform;
 
 	public:
 		Behaviour(const BehaviourDependencies& dependencies) :
-			m_entityPosition(dependencies.ecsContainer.getPosition(dependencies.entityId))
+			m_entityTransform(dependencies.ecsContainer.getTransform(dependencies.entityId))
 		{}
 
 		virtual ~Behaviour() = default;

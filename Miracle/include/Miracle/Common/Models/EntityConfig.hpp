@@ -2,12 +2,12 @@
 
 #include <optional>
 
-#include <Miracle/Common/Math/Vector2f.hpp>
 #include <Miracle/Common/BehaviourFactory.hpp>
+#include "TransformConfig.hpp"
 
 namespace Miracle {
 	struct EntityConfig {
-		Vector2f position = {};
+		TransformConfig transformConfig = {};
 		std::optional<BehaviourFactory> behaviourFactory = {};
 	};
 }

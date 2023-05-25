@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Miracle/Common/Math/Color3f.hpp>
+#include <Miracle/Common/Math/ColorRgb.hpp>
 #include <Miracle/Common/Models/Mesh.hpp>
 
 namespace Miracle {

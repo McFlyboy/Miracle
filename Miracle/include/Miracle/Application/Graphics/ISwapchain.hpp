@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Miracle/Common/MiracleError.hpp>
-#include <Miracle/Common/Math/Color3f.hpp>
+#include <Miracle/Common/Math/ColorRgb.hpp>
 
 namespace Miracle::Application {
 	struct SwapchainImageSize {
@@ -15,7 +15,7 @@ namespace Miracle::Application {
 
 		virtual SwapchainImageSize getImageSize() const = 0;
 
-		virtual void beginRenderPass(Color3f clearColor) = 0;
+		virtual void beginRenderPass(ColorRgb clearColor) = 0;
 
 		virtual void endRenderPass() = 0;
 
