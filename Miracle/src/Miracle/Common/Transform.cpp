@@ -35,6 +35,11 @@ namespace Miracle {
 		m_cacheOutdated = true;
 	}
 
+	void Transform::scale(float scalar) {
+		m_scale *= scalar;
+		m_cacheOutdated = true;
+	}
+
 	const Matrix4& Transform::getTransformation() const {
 		if (m_cacheOutdated) {
 			m_cachedTransformation = createTransformation();

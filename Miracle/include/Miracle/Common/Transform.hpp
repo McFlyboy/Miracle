@@ -55,6 +55,8 @@ namespace Miracle {
 
 		void scale(const Vector3& deltaScale);
 
+		void scale(float scalar);
+
 		const Matrix4& getTransformation() const;
 
 	private:
