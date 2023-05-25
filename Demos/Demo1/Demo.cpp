@@ -9,13 +9,13 @@ private:
 public:
 	ProjectileBehaviour(
 		const BehaviourDependencies& dependencies,
-		const Vector3& velocity
+		float movementSpeed
 	) : Behaviour(dependencies),
-		m_velocity(velocity)
+		m_velocity(Vector3::up * movementSpeed)
 	{}
 
 	virtual void act() override {
-		m_entityTransform.getTranslation() += m_velocity * DeltaTime::get();
+		m_entityTransform.translate(m_velocity * DeltaTime::get());
 	}
 };
 
@@ -26,7 +26,7 @@ private:
 public:
 	PlayerBehaviour(
 		const BehaviourDependencies& dependencies,
-		float movementSpeed = 0.5f
+		float movementSpeed
 	) : Behaviour(dependencies),
 		m_movementSpeed(movementSpeed)
 	{}
@@ -39,21 +39,18 @@ public:
 
 		float rotation = Keyboard::isKeyHeld(KeyboardKey::keyQ) - Keyboard::isKeyHeld(KeyboardKey::keyE);
 
-		m_entityTransform.getRotation() *= Quaternion::createRotation(Vector3::forward, 180.0_deg * rotation * DeltaTime::get());
-		m_entityTransform.getTranslation() += MathUtilities::rotateVector(velocity.toNormalized(), m_entityTransform.getRotation())
-			* m_movementSpeed * DeltaTime::get();
+		m_entityTransform.rotate(Quaternion::createRotation(Vector3::forward, 180.0_deg * rotation * DeltaTime::get()));
+		m_entityTransform.translate(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
 			CurrentScene::addEntity(
 				EntityConfig{
 					.transformConfig = TransformConfig{
 						.translation = m_entityTransform.getTranslation(),
-						.rotation = m_entityTransform.getRotation(),
-						.scale = Vector3{ .x = 0.0625f, .y = 0.125f, .z = 1.0f }
+						.rotation    = m_entityTransform.getRotation(),
+						.scale       = Vector3{ .x = 0.0625f, .y = 0.125f, .z = 1.0f }
 					},
-					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(
-						MathUtilities::rotateVector(Vector3::up, m_entityTransform.getRotation()) * 3.0f
-					)
+					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(3.0f)
 				}
 			);
 		}
@@ -73,13 +70,13 @@ int main() {
 			},
 			.rendererConfig = RendererConfig{
 				.mesh = Mesh{
-					.vertices = {
+					.vertices = std::vector{
 						Vertex{ .position = Vector3{ .x = -0.5f, .y = -0.5f, .z = 0.0f } },
 						Vertex{ .position = Vector3{ .x =  0.5f, .y = -0.5f, .z = 0.0f } },
 						Vertex{ .position = Vector3{ .x =  0.5f, .y =  0.5f, .z = 0.0f } },
 						Vertex{ .position = Vector3{ .x = -0.5f, .y =  0.5f, .z = 0.0f } }
 					},
-					.faces = {
+					.faces = std::vector{
 						Face{ .indices = { 0, 1, 2 } },
 						Face{ .indices = { 0, 2, 3 } }
 					}
@@ -89,7 +86,7 @@ int main() {
 				.entityConfigs = std::vector<EntityConfig>{
 					{
 						.transformConfig = TransformConfig{
-							.scale = Vector3{.x = 0.25f, .y = 0.25f, .z = 0.25f }
+							.scale = Vector3{ .x = 0.25f, .y = 0.25f, .z = 0.25f }
 						},
 						.behaviourFactory = BehaviourFactory::createFactoryFor<PlayerBehaviour>(2.0f)
 					}
@@ -114,6 +111,6 @@ int main() {
 	);
 
 	int exitCode = app.run();
-	
+
 	return exitCode;
 }
