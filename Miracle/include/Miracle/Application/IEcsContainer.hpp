@@ -12,6 +12,8 @@ namespace Miracle::Application {
 	public:
 		virtual ~IEcsContainer() = default;
 
+		inline virtual size_t getEntityCount() const = 0;
+
 		virtual void createEntity(const EntityConfig& config) = 0;
 
 		virtual void forEachTransform(const std::function<void(const Transform&)>& forEach) const = 0;

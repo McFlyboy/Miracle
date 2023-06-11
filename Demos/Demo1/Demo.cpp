@@ -2,6 +2,17 @@
 
 using namespace Miracle;
 
+static void updateTitle() {
+	Window::setTitle(
+		UnicodeConverter::toUtf8(
+			CurrentApp::getName()
+				+ " - FPS: " + std::to_string(PerformanceCounters::getFps())
+				+ " - UPS: " + std::to_string(PerformanceCounters::getUps())
+				+ " - Entity count: " + std::to_string(CurrentScene::getEntityCount())
+		)
+	);
+}
+
 class ProjectileBehaviour : public Behaviour {
 private:
 	Vector3 m_velocity;
@@ -56,6 +67,8 @@ public:
 					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(15.0f)
 				}
 			);
+
+			updateTitle();
 		}
 	}
 };
@@ -93,14 +106,8 @@ int main() {
 				}
 			},
 			.startScript = []() {
-				PerformanceCounters::setCountersUpdatedCallback(
-					[]() {
-						Logger::info(
-							std::string("FPS: ") + std::to_string(PerformanceCounters::getFps())
-								+ " - UPS: " + std::to_string(PerformanceCounters::getUps())
-						);
-					}
-				);
+				PerformanceCounters::setCountersUpdatedCallback(updateTitle);
+				updateTitle();
 			},
 			.updateScript = []() {
 				if (Keyboard::isKeyPressed(KeyboardKey::keyEscape)) {

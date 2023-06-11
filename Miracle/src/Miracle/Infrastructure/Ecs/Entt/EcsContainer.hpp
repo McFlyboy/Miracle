@@ -10,6 +10,8 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 		entt::registry m_registry;
 
 	public:
+		inline virtual size_t getEntityCount() const override { return m_registry.alive(); }
+
 		virtual void createEntity(const EntityConfig& config) override;
 
 		virtual Transform& getTransform(EntityId owner) override;

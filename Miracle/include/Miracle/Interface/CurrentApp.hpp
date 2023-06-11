@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string_view>
+#include <string>
 #include <chrono>
 
 #include <Miracle/App.hpp>
@@ -10,7 +10,7 @@ namespace Miracle {
 	public:
 		CurrentApp() = delete;
 
-		static inline std::string_view getName() {
+		static inline const std::string& getName() {
 			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			return App::s_currentApp->getName();

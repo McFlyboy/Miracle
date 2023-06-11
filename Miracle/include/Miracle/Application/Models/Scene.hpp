@@ -31,6 +31,8 @@ namespace Miracle::Application {
 
 		void setBackgroundColor(const ColorRgb& color);
 
+		inline size_t getEntityCount() const { return m_container->getEntityCount(); }
+
 		void addEntity(const EntityConfig& config);
 
 		void forEachEntityTransform(const std::function<void(const Transform&)>& forEach) const;

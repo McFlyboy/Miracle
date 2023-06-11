@@ -33,8 +33,8 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 	}
 
 	void EcsContainer::forEachTransform(const std::function<void(const Transform&)>& forEach) const {
-		for (auto [entity, position] : m_registry.view<Transform>().each()) {
-			forEach(position);
+		for (auto [entity, transform] : m_registry.view<Transform>().each()) {
+			forEach(transform);
 		}
 	}
 
