@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Miracle/Common/Models/EntityId.hpp>
-#include <Miracle/Common/Transform.hpp>
+#include <Miracle/Common/Components/Transform.hpp>
 
 namespace Miracle {
 	class IEcsContainer {

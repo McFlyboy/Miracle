@@ -14,7 +14,8 @@
 #include "Interface/PerformanceCounters.hpp"
 
 #include "Common/UnicodeConverter.hpp"
-#include "Common/Behaviour.hpp"
+#include "Common/Components/Transform.hpp"
+#include "Common/Components/Behaviour.hpp"
 #include "Common/Math/Angle.hpp"
 #include "Common/Math/ColorRgb.hpp"
 #include "Common/Math/Vector2.hpp"

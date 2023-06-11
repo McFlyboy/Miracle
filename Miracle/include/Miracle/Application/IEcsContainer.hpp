@@ -4,8 +4,8 @@
 
 #include <Miracle/Common/IEcsContainer.hpp>
 #include <Miracle/Common/Models/EntityConfig.hpp>
-#include <Miracle/Common/Transform.hpp>
-#include <Miracle/Common/Behaviour.hpp>
+#include <Miracle/Common/Components/Transform.hpp>
+#include <Miracle/Common/Components/Behaviour.hpp>
 
 namespace Miracle::Application {
 	class IEcsContainer : public Miracle::IEcsContainer {

@@ -6,7 +6,7 @@
 
 #include <Miracle/Common/Math/ColorRgb.hpp>
 #include <Miracle/Common/Models/EntityConfig.hpp>
-#include <Miracle/Common/Transform.hpp>
+#include <Miracle/Common/Components/Transform.hpp>
 #include <Miracle/Application/IEcs.hpp>
 #include <Miracle/Application/IEcsContainer.hpp>
 

@@ -4,7 +4,7 @@
 #include <memory>
 #include <utility>
 
-#include "Behaviour.hpp"
+#include "Components/Behaviour.hpp"
 
 namespace Miracle {
 	class BehaviourFactory {
