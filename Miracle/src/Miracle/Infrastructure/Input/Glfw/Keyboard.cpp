@@ -3,8 +3,8 @@
 #include <GLFW/glfw3.h>
 
 #include <Miracle/Definitions.hpp>
-#include <Miracle/Application/Models/Events/KeyInputEvent.hpp>
-#include <Miracle/Application/Models/Events/TextInputEvent.hpp>
+#include <Miracle/Application/Events/KeyInputEvent.hpp>
+#include <Miracle/Application/Events/TextInputEvent.hpp>
 #include <Miracle/Common/UnicodeConverter.hpp>
 
 namespace Miracle::Infrastructure::Input::Glfw {

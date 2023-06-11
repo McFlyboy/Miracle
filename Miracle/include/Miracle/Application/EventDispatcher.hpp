@@ -3,7 +3,7 @@
 #include <functional>
 #include <vector>
 
-#include "Models/Events/Event.hpp"
+#include "Events/Event.hpp"
 
 namespace Miracle::Application {
 	using EventSubscriptionId = int;

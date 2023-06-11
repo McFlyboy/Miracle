@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include <Miracle/Application/Models/Events/TextInputEvent.hpp>
+#include <Miracle/Application/Events/TextInputEvent.hpp>
 
 namespace Miracle::Application {
 	TextInputService::TextInputService(EventDispatcher& dispatcher) :

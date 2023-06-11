@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Miracle/Common/Models/KeyboardKey.hpp>
-#include <Miracle/Application/Models/Events/KeyInputEvent.hpp>
+#include <Miracle/Application/Events/KeyInputEvent.hpp>
 
 namespace Miracle::Application {
 	class IKeyboard {
