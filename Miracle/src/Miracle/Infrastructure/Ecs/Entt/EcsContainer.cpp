@@ -21,7 +21,7 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 				config.behaviourFactory.value()(
 					BehaviourDependencies{
 						.ecsContainer = *this,
-						.entityId = static_cast<EntityId>(entity)
+						.entityId     = entity
 					}
 				)
 			);
@@ -29,7 +29,7 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 	}
 
 	Transform& EcsContainer::getTransform(EntityId owner) {
-		return m_registry.get<Transform>(static_cast<entt::entity>(owner));
+		return m_registry.get<Transform>(owner);
 	}
 
 	void EcsContainer::forEachTransform(const std::function<void(const Transform&)>& forEach) const {
