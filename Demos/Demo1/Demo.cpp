@@ -28,7 +28,7 @@ public:
 	virtual void act() override {
 		CurrentScene::getEntityTransform(m_entityId).translate(m_velocity * DeltaTime::get());
 
-		if (CurrentScene::getEntityTransform(m_entityId).getTranslation().getLenght() > 10.0f) {
+		if (CurrentScene::getEntityTransform(m_entityId).getTranslation().getLength() > 10.0f) {
 			CurrentScene::destroyEntity(m_entityId);
 
 			updateTitle();
