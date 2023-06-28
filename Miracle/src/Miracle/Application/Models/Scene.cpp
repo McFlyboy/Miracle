@@ -17,8 +17,12 @@ namespace Miracle::Application {
 		m_backgroundColor = color;
 	}
 
-	void Scene::addEntity(const EntityConfig& config) {
-		m_container->createEntity(config);
+	EntityId Scene::createEntity(const EntityConfig& config) {
+		return m_container->createEntity(config);
+	}
+
+	void Scene::destroyEntity(EntityId id) {
+		m_container->destroyEntity(id);
 	}
 
 	void Scene::forEachEntityTransform(const std::function<void(const Transform&)>& forEach) const {

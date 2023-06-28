@@ -2,13 +2,11 @@
 
 #include <memory>
 
-#include <Miracle/Common/Models/EntityId.hpp>
-
 namespace Miracle::Infrastructure::Ecs::Entt {
-	void EcsContainer::createEntity(const EntityConfig& config) {
+	EntityId EcsContainer::createEntity(const EntityConfig& config) {
 		auto entity = m_registry.create();
 
-		m_registry.emplace<Transform>(
+		auto& transform = m_registry.emplace<Transform>(
 			entity,
 			config.transformConfig.translation,
 			config.transformConfig.rotation,
@@ -20,16 +18,17 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 				entity,
 				config.behaviourFactory.value()(
 					BehaviourDependencies{
-						.ecsContainer = *this,
-						.entityId     = entity
+						.entityId = entity
 					}
 				)
 			);
 		}
+
+		return entity;
 	}
 
-	Transform& EcsContainer::getTransform(EntityId owner) {
-		return m_registry.get<Transform>(owner);
+	void EcsContainer::destroyEntity(EntityId id) {
+		m_registry.destroy(id);
 	}
 
 	void EcsContainer::forEachTransform(const std::function<void(const Transform&)>& forEach) const {

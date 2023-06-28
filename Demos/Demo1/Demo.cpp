@@ -26,7 +26,13 @@ public:
 	{}
 
 	virtual void act() override {
-		m_entityTransform.translate(m_velocity * DeltaTime::get());
+		CurrentScene::getEntityTransform(m_entityId).translate(m_velocity * DeltaTime::get());
+
+		if (CurrentScene::getEntityTransform(m_entityId).getTranslation().getLenght() > 10.0f) {
+			CurrentScene::destroyEntity(m_entityId);
+
+			updateTitle();
+		}
 	}
 };
 
@@ -53,20 +59,26 @@ public:
 
 		float rotation = Keyboard::isKeyHeld(KeyboardKey::keyQ) - Keyboard::isKeyHeld(KeyboardKey::keyE);
 
-		m_entityTransform.rotate(Quaternion::createRotation(Vector3::forward, rotation * m_turnSpeed * DeltaTime::get()));
-		m_entityTransform.translate(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
+		CurrentScene::getEntityTransform(m_entityId).rotate(Quaternion::createRotation(Vector3::forward, rotation * m_turnSpeed * DeltaTime::get()));
+		CurrentScene::getEntityTransform(m_entityId).translate(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
-			CurrentScene::addEntity(
+			CurrentScene::createEntity(
 				EntityConfig{
 					.transformConfig = TransformConfig{
-						.translation = m_entityTransform.getTranslation(),
-						.rotation    = m_entityTransform.getRotation(),
+						.translation = CurrentScene::getEntityTransform(m_entityId).getTranslation(),
+						.rotation    = CurrentScene::getEntityTransform(m_entityId).getRotation(),
 						.scale       = Vector3{ .x = 0.25f, .y = 0.5f, .z = 1.0f }
 					},
 					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(15.0f)
 				}
 			);
+			
+			updateTitle();
+		}
+
+		if (Keyboard::isKeyPressed(KeyboardKey::keyDelete)) {
+			CurrentScene::destroyEntity(m_entityId);
 
 			updateTitle();
 		}

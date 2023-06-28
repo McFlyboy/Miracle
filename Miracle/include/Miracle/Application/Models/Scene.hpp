@@ -6,6 +6,7 @@
 
 #include <Miracle/Common/Math/ColorRgb.hpp>
 #include <Miracle/Common/Models/EntityConfig.hpp>
+#include <Miracle/Common/Models/EntityId.hpp>
 #include <Miracle/Common/Components/Transform.hpp>
 #include <Miracle/Application/IEcs.hpp>
 #include <Miracle/Application/IEcsContainer.hpp>
@@ -33,7 +34,11 @@ namespace Miracle::Application {
 
 		inline size_t getEntityCount() const { return m_container->getEntityCount(); }
 
-		void addEntity(const EntityConfig& config);
+		EntityId createEntity(const EntityConfig& config);
+
+		void destroyEntity(EntityId id);
+
+		inline Transform& getEntityTransform(EntityId id) { return m_container->getTransform(id); }
 
 		void forEachEntityTransform(const std::function<void(const Transform&)>& forEach) const;
 
