@@ -17,9 +17,7 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 			m_registry.emplace<std::unique_ptr<Behaviour>>(
 				entity,
 				config.behaviourFactory.value()(
-					BehaviourDependencies{
-						.entityId = entity
-					}
+					EntityView(*this, entity)
 				)
 			);
 		}

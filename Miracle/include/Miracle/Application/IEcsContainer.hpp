@@ -2,13 +2,14 @@
 
 #include <functional>
 
+#include <Miracle/Common/IEcsContainer.hpp>
 #include <Miracle/Common/Models/EntityConfig.hpp>
 #include <Miracle/Common/Models/EntityId.hpp>
 #include <Miracle/Common/Components/Transform.hpp>
 #include <Miracle/Common/Components/Behaviour.hpp>
 
 namespace Miracle::Application {
-	class IEcsContainer {
+	class IEcsContainer : public Miracle::IEcsContainer {
 	public:
 		virtual ~IEcsContainer() = default;
 
@@ -17,8 +18,6 @@ namespace Miracle::Application {
 		virtual EntityId createEntity(const EntityConfig& config) = 0;
 
 		virtual void destroyEntity(EntityId id) = 0;
-
-		inline virtual Transform& getTransform(EntityId id) = 0;
 
 		virtual void forEachTransform(const std::function<void(const Transform&)>& forEach) const = 0;
 

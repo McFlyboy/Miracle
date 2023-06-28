@@ -18,6 +18,8 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 
 		inline virtual Transform& getTransform(EntityId id) override { return m_registry.get<Transform>(id); }
 
+		inline virtual const Transform& getTransform(EntityId id) const override { return m_registry.get<Transform>(id); }
+
 		virtual void forEachTransform(const std::function<void(const Transform&)>& forEach) const override;
 
 		virtual void forEachBehaviour(const std::function<void(Behaviour&)>& forEach) override;

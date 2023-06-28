@@ -1,20 +1,17 @@
 #pragma once
 
+#include <Miracle/Common/EntityView.hpp>
 #include <Miracle/Common/Models/EntityId.hpp>
 #include "Transform.hpp"
 
 namespace Miracle {
-	struct BehaviourDependencies {
-		EntityId entityId;
-	};
-
 	class Behaviour {
 	protected:
-		const EntityId m_entityId;
+		EntityView m_entity;
 
 	public:
-		Behaviour(const BehaviourDependencies& dependencies) :
-			m_entityId(dependencies.entityId)
+		Behaviour(const EntityView& entity) :
+			m_entity(entity)
 		{}
 
 		virtual ~Behaviour() = default;
