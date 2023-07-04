@@ -18,7 +18,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		return std::make_unique<GraphicsContext>(
 			appName,
 			m_logger,
-			*reinterpret_cast<IContextTarget*>(&target)
+			reinterpret_cast<IContextTarget&>(target)
 		);
 	}
 
@@ -28,7 +28,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	) const {
 		return std::make_unique<Swapchain>(
 			m_logger,
-			*reinterpret_cast<GraphicsContext*>(&context),
+			reinterpret_cast<GraphicsContext&>(context),
 			initProps
 		);
 	}
@@ -41,8 +41,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		return std::make_unique<GraphicsPipeline>(
 			m_logger,
 			fileAccess,
-			*reinterpret_cast<GraphicsContext*>(&context),
-			*reinterpret_cast<Swapchain*>(&swapchain)
+			reinterpret_cast<GraphicsContext&>(context),
+			reinterpret_cast<Swapchain&>(swapchain)
 		);
 	}
 
@@ -52,7 +52,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	) const {
 		return std::make_unique<VertexBuffer>(
 			m_logger,
-			*reinterpret_cast<GraphicsContext*>(&context),
+			reinterpret_cast<GraphicsContext&>(context),
 			vertices
 		);
 	}
@@ -63,7 +63,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	) const {
 		return std::make_unique<IndexBuffer>(
 			m_logger,
-			*reinterpret_cast<GraphicsContext*>(&context),
+			reinterpret_cast<GraphicsContext&>(context),
 			faces
 		);
 	}

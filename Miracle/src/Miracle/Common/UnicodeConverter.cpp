@@ -8,7 +8,7 @@ namespace Miracle {
 		auto result = std::u8string();
 
 		for (auto& character : utf32) {
-			auto& codepoint = *reinterpret_cast<const unsigned int*>(&character);
+			auto& codepoint = reinterpret_cast<const unsigned int&>(character);
 
 			if (codepoint <= 0x00007F) [[likely]] {
 				result += codepoint;

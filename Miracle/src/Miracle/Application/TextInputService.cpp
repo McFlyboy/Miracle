@@ -25,7 +25,7 @@ namespace Miracle::Application {
 	void TextInputService::onEvent(const Event& event) {
 		if (m_receiver == nullptr) return;
 
-		auto& textInputEvent = *reinterpret_cast<const TextInputEvent*>(&event);
+		auto& textInputEvent = reinterpret_cast<const TextInputEvent&>(event);
 
 		if (textInputEvent.getText() == U"\b") {
 			if (!m_receiver->empty()) {

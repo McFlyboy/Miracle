@@ -42,11 +42,9 @@ namespace Miracle::Application {
 	}
 
 	inline EventTypes& operator|=(EventTypes& lhs, const EventTypes& rhs) {
-		auto& lhsAsBase = *reinterpret_cast<EventTypesBase::type*>(&lhs);
+		reinterpret_cast<EventTypesBase::type&>(lhs) |= static_cast<EventTypesBase::type>(rhs);
 
-		return *reinterpret_cast<EventTypes*>(
-			&(lhsAsBase |= static_cast<EventTypesBase::type>(rhs))
-		);
+		return lhs;
 	}
 
 	inline EventTypes operator&(const EventTypes& lhs, const EventTypes& rhs) {
@@ -56,11 +54,9 @@ namespace Miracle::Application {
 	}
 
 	inline EventTypes& operator&=(EventTypes& lhs, const EventTypes& rhs) {
-		auto& lhsAsBase = *reinterpret_cast<EventTypesBase::type*>(&lhs);
+		reinterpret_cast<EventTypesBase::type&>(lhs) &= static_cast<EventTypesBase::type>(rhs);
 
-		return *reinterpret_cast<EventTypes*>(
-			&(lhsAsBase &= static_cast<EventTypesBase::type>(rhs))
-		);
+		return lhs;
 	}
 
 	class EventTypesUtilities {

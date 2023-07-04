@@ -48,7 +48,7 @@ namespace Miracle::Infrastructure::Input::Glfw {
 	}
 
 	void Keyboard::onEvent(const Application::Event& event) {
-		auto& keyInputEvent = *reinterpret_cast<const Application::KeyInputEvent*>(&event);
+		auto& keyInputEvent = reinterpret_cast<const Application::KeyInputEvent&>(event);
 
 		if (keyInputEvent.getKey() == KeyboardKey::keyUnknown) {
 			return;
