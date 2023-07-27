@@ -11,18 +11,29 @@ namespace Miracle::Application {
 		for (auto& entityConfig : initProps.entityConfigs) {
 			m_container->createEntity(entityConfig);
 		}
+
+		m_container->setEntityCreatedCallback(std::function(initProps.entityCreatedCallback));
+		m_container->setEntityDestroyedCallback(std::function(initProps.entityDestroyedCallback));
 	}
 
 	void Scene::setBackgroundColor(const ColorRgb& color) {
 		m_backgroundColor = color;
 	}
 
-	EntityId Scene::createEntity(const EntityConfig& config) {
-		return m_container->createEntity(config);
+	void Scene::createEntity(const EntityConfig& config) {
+		m_container->createEntity(config);
 	}
 
-	void Scene::destroyEntity(EntityId id) {
-		m_container->destroyEntity(id);
+	EntityContext Scene::createAndGetEntity(const EntityConfig& config) {
+		return EntityContext(m_container->createEntity(config), *m_container.get());
+	}
+
+	void Scene::scheduleEntityDestruction(EntityId entity) {
+		m_container->scheduleEntityDestruction(entity);
+	}
+
+	void Scene::destroyScheduledEntities() {
+		m_container->destroyScheduledEntities();
 	}
 
 	void Scene::forEachEntityTransform(const std::function<void(const Transform&)>& forEach) const {
@@ -35,5 +46,7 @@ namespace Miracle::Application {
 				behaviour.act();
 			}
 		);
+
+		destroyScheduledEntities();
 	}
 }

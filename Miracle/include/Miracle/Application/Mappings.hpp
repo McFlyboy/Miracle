@@ -42,8 +42,10 @@ namespace Miracle::Application {
 			const SceneConfig& sceneConfig
 		) {
 			return SceneInitProps{
-				.backgroundColor = sceneConfig.backgroundColor,
-				.entityConfigs   = sceneConfig.entityConfigs
+				.backgroundColor         = sceneConfig.backgroundColor,
+				.entityConfigs           = sceneConfig.entityConfigs,
+				.entityCreatedCallback   = sceneConfig.entityCreatedCallback,
+				.entityDestroyedCallback = sceneConfig.entityDestroyedCallback
 			};
 		}
 	};

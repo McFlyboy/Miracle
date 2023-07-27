@@ -5,18 +5,20 @@
 #include "Components/Transform.hpp"
 
 namespace Miracle {
-	class EntityView {
+	class EntityContext {
 	private:
 		IEcsContainer& m_ecsContainer;
 		const EntityId m_entityId;
 
 	public:
-		EntityView(IEcsContainer& ecsContainer, EntityId entityId) :
+		EntityContext(EntityId entityId, IEcsContainer& ecsContainer) :
 			m_ecsContainer(ecsContainer),
 			m_entityId(entityId)
 		{}
 
 		inline EntityId getEntityId() const { return m_entityId; }
+
+		inline void destroyEntity() { m_ecsContainer.scheduleEntityDestruction(m_entityId); }
 
 		inline Transform& getTransform() { return m_ecsContainer.getTransform(m_entityId); }
 

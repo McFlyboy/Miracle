@@ -50,8 +50,6 @@ namespace Miracle {
 	}
 
 	Matrix4 Transform::createTransformation() const {
-		return Matrix4::createScale(m_scale)
-			* Matrix4::createRotation(m_rotation)
-			* Matrix4::createTranslation(m_translation);
+		return Matrix4::createTransformation(m_translation, m_rotation, m_scale);
 	}
 }

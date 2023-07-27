@@ -496,11 +496,11 @@ namespace Miracle {
 			};
 		}
 
-		static constexpr inline Matrix4 createRotation(const Quaternion& quaternion) {
-			auto& w = quaternion.w;
-			auto& x = quaternion.v.x;
-			auto& y = quaternion.v.y;
-			auto& z = quaternion.v.z;
+		static constexpr inline Matrix4 createRotation(const Quaternion& rotation) {
+			auto& w = rotation.w;
+			auto& x = rotation.v.x;
+			auto& y = rotation.v.y;
+			auto& z = rotation.v.z;
 
 			return Matrix4{
 				.m11 = 1.0f - 2.0f * y * y - 2.0f * z * z,
@@ -560,6 +560,36 @@ namespace Miracle {
 				.m41 = 0.0f,
 				.m42 = 0.0f,
 				.m43 = 0.0f,
+				.m44 = 1.0f
+			};
+		}
+
+		static inline Matrix4 createTransformation(
+			const Vector3& translation,
+			const Quaternion& rotation,
+			const Vector3& scale
+		) {
+			auto& w = rotation.w;
+			auto& x = rotation.v.x;
+			auto& y = rotation.v.y;
+			auto& z = rotation.v.z;
+
+			return Matrix4{
+				.m11 = (1.0f - 2.0f * y * y - 2.0f * z * z) * scale.x,
+				.m12 = (2.0f * x * y + 2.0f * w * z) * scale.x,
+				.m13 = (2.0f * x * z - 2.0f * w * y) * scale.x,
+				.m14 = 0.0f,
+				.m21 = (2.0f * x * y - 2.0f * w * z) * scale.y,
+				.m22 = (1.0f - 2.0f * z * z - 2.0f * x * x) * scale.y,
+				.m23 = (2.0f * y * z + 2.0f * w * x) * scale.y,
+				.m24 = 0.0f,
+				.m31 = (2.0f * x * z + 2.0f * w * y) * scale.z,
+				.m32 = (2.0f * y * z - 2.0f * w * x) * scale.z,
+				.m33 = (1.0f - 2.0f * x * x - 2.0f * y * y) * scale.z,
+				.m34 = 0.0f,
+				.m41 = translation.x,
+				.m42 = translation.y,
+				.m43 = translation.z,
 				.m44 = 1.0f
 			};
 		}

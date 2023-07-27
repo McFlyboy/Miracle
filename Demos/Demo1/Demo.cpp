@@ -19,19 +19,19 @@ private:
 
 public:
 	ProjectileBehaviour(
-		const EntityView& entity,
+		const EntityContext& context,
 		float movementSpeed
-	) : Behaviour(entity),
+	) : Behaviour(context),
 		m_velocity(Vector3::up * movementSpeed)
 	{}
 
 	virtual void act() override {
-		m_entity.getTransform().translate(m_velocity * DeltaTime::get());
+		auto& transform = m_context.getTransform();
 
-		if (m_entity.getTransform().getTranslation().getLength() > 10.0f) {
-			CurrentScene::destroyEntity(m_entity.getEntityId());
+		transform.translate(m_velocity * DeltaTime::get());
 
-			updateTitle();
+		if (transform.getTranslation().getLength() > 10.0f) {
+			m_context.destroyEntity();
 		}
 	}
 };
@@ -43,10 +43,10 @@ private:
 
 public:
 	PlayerBehaviour(
-		const EntityView& entity,
+		const EntityContext& context,
 		float movementSpeed,
 		Degrees turnSpeed
-	) : Behaviour(entity),
+	) : Behaviour(context),
 		m_movementSpeed(movementSpeed),
 		m_turnSpeed(turnSpeed)
 	{}
@@ -59,31 +59,26 @@ public:
 
 		float rotation = Keyboard::isKeyHeld(KeyboardKey::keyQ) - Keyboard::isKeyHeld(KeyboardKey::keyE);
 
-		m_entity.getTransform()
-			.rotate(Quaternion::createRotation(Vector3::forward, rotation * m_turnSpeed * DeltaTime::get()));
+		auto& transform = m_context.getTransform();
 
-		m_entity.getTransform()
-			.translate(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
+		transform.rotate(Quaternion::createRotation(Vector3::forward, rotation * m_turnSpeed * DeltaTime::get()));
+		transform.translate(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
 			CurrentScene::createEntity(
 				EntityConfig{
 					.transformConfig = TransformConfig{
-						.translation = m_entity.getTransform().getTranslation(),
-						.rotation    = m_entity.getTransform().getRotation(),
+						.translation = transform.getTranslation(),
+						.rotation    = transform.getRotation(),
 						.scale       = Vector3{ .x = 0.25f, .y = 0.5f, .z = 1.0f }
 					},
 					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(15.0f)
 				}
 			);
-			
-			updateTitle();
 		}
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keyDelete)) {
-			CurrentScene::destroyEntity(m_entity.getEntityId());
-
-			updateTitle();
+			m_context.destroyEntity();
 		}
 	}
 };
@@ -118,7 +113,9 @@ int main() {
 					{
 						.behaviourFactory = BehaviourFactory::createFactoryFor<PlayerBehaviour>(10.0f, 270.0_deg)
 					}
-				}
+				},
+				.entityCreatedCallback   = [](EntityId) { updateTitle(); },
+				.entityDestroyedCallback = [](EntityId) { updateTitle(); }
 			},
 			.startScript = []() {
 				PerformanceCounters::setCountersUpdatedCallback(updateTitle);

@@ -1,12 +1,13 @@
 #include "EcsContainer.hpp"
 
 #include <memory>
+#include <utility>
 
 namespace Miracle::Infrastructure::Ecs::Entt {
 	EntityId EcsContainer::createEntity(const EntityConfig& config) {
 		auto entity = m_registry.create();
 
-		auto& transform = m_registry.emplace<Transform>(
+		m_registry.emplace<Transform>(
 			entity,
 			config.transformConfig.translation,
 			config.transformConfig.rotation,
@@ -17,16 +18,42 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 			m_registry.emplace<std::unique_ptr<Behaviour>>(
 				entity,
 				config.behaviourFactory.value()(
-					EntityView(*this, entity)
+					EntityContext(entity, *this)
 				)
 			);
 		}
 
+		m_entityCreatedCallback(entity);
 		return entity;
 	}
 
-	void EcsContainer::destroyEntity(EntityId id) {
-		m_registry.destroy(id);
+	void EcsContainer::scheduleEntityDestruction(EntityId entity) {
+		m_entitiesScheduledForDestruction.emplace(entity);
+	}
+
+	void EcsContainer::destroyScheduledEntities() {
+		for (auto entity : m_entitiesScheduledForDestruction) {
+			m_registry.destroy(entity);
+			m_entityDestroyedCallback(entity);
+		}
+
+		m_entitiesScheduledForDestruction.clear();
+	}
+
+	void EcsContainer::setEntityCreatedCallback(std::function<void(EntityId)>&& entityCreatedCallback) {
+		m_entityCreatedCallback = std::move(entityCreatedCallback);
+	}
+
+	void EcsContainer::unsetEntityCreatedCallback() {
+		m_entityCreatedCallback = [](EntityId) {};
+	}
+
+	void EcsContainer::setEntityDestroyedCallback(std::function<void(EntityId)>&& entityDestroyedCallback) {
+		m_entityDestroyedCallback = std::move(entityDestroyedCallback);
+	}
+
+	void EcsContainer::unsetEntityDestroyedCallback() {
+		m_entityDestroyedCallback = [](EntityId) {};
 	}
 
 	void EcsContainer::forEachTransform(const std::function<void(const Transform&)>& forEach) const {

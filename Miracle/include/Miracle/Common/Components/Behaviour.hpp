@@ -1,17 +1,17 @@
 #pragma once
 
-#include <Miracle/Common/EntityView.hpp>
+#include <Miracle/Common/EntityContext.hpp>
 #include <Miracle/Common/Models/EntityId.hpp>
 #include "Transform.hpp"
 
 namespace Miracle {
 	class Behaviour {
 	protected:
-		EntityView m_entity;
+		EntityContext m_context;
 
 	public:
-		Behaviour(const EntityView& entity) :
-			m_entity(entity)
+		Behaviour(const EntityContext& context) :
+			m_context(context)
 		{}
 
 		virtual ~Behaviour() = default;

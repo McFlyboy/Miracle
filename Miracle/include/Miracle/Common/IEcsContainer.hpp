@@ -8,8 +8,10 @@ namespace Miracle {
 	public:
 		virtual ~IEcsContainer() = default;
 
-		inline virtual Transform& getTransform(EntityId id) = 0;
+		virtual void scheduleEntityDestruction(EntityId entity) = 0;
 
-		inline virtual const Transform& getTransform(EntityId id) const = 0;
+		inline virtual Transform& getTransform(EntityId entity) = 0;
+
+		inline virtual const Transform& getTransform(EntityId entity) const = 0;
 	};
 }
