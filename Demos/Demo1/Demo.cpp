@@ -2,20 +2,37 @@
 
 using namespace Miracle;
 
+static void updateTitle() {
+	Window::setTitle(
+		UnicodeConverter::toUtf8(
+			CurrentApp::getName()
+				+ " - FPS: " + std::to_string(PerformanceCounters::getFps())
+				+ " - UPS: " + std::to_string(PerformanceCounters::getUps())
+				+ " - Entity count: " + std::to_string(CurrentScene::getEntityCount())
+		)
+	);
+}
+
 class ProjectileBehaviour : public Behaviour {
 private:
 	Vector3 m_velocity;
 
 public:
 	ProjectileBehaviour(
-		const BehaviourDependencies& dependencies,
+		const EntityContext& context,
 		float movementSpeed
-	) : Behaviour(dependencies),
+	) : Behaviour(context),
 		m_velocity(Vector3::up * movementSpeed)
 	{}
 
 	virtual void act() override {
-		m_entityTransform.translate(m_velocity * DeltaTime::get());
+		auto& transform = m_context.getTransform();
+
+		transform.translate(m_velocity * DeltaTime::get());
+
+		if (transform.getTranslation().getLength() > 10.0f) {
+			m_context.destroyEntity();
+		}
 	}
 };
 
@@ -26,10 +43,10 @@ private:
 
 public:
 	PlayerBehaviour(
-		const BehaviourDependencies& dependencies,
+		const EntityContext& context,
 		float movementSpeed,
 		Degrees turnSpeed
-	) : Behaviour(dependencies),
+	) : Behaviour(context),
 		m_movementSpeed(movementSpeed),
 		m_turnSpeed(turnSpeed)
 	{}
@@ -42,20 +59,26 @@ public:
 
 		float rotation = Keyboard::isKeyHeld(KeyboardKey::keyQ) - Keyboard::isKeyHeld(KeyboardKey::keyE);
 
-		m_entityTransform.rotate(Quaternion::createRotation(Vector3::forward, rotation * m_turnSpeed * DeltaTime::get()));
-		m_entityTransform.translate(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
+		auto& transform = m_context.getTransform();
+
+		transform.rotate(Quaternion::createRotation(Vector3::forward, rotation * m_turnSpeed * DeltaTime::get()));
+		transform.translate(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
-			CurrentScene::addEntity(
+			CurrentScene::createEntity(
 				EntityConfig{
 					.transformConfig = TransformConfig{
-						.translation = m_entityTransform.getTranslation(),
-						.rotation    = m_entityTransform.getRotation(),
+						.translation = transform.getTranslation(),
+						.rotation    = transform.getRotation(),
 						.scale       = Vector3{ .x = 0.25f, .y = 0.5f, .z = 1.0f }
 					},
 					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(15.0f)
 				}
 			);
+		}
+
+		if (Keyboard::isKeyPressed(KeyboardKey::keyDelete)) {
+			m_context.destroyEntity();
 		}
 	}
 };
@@ -90,17 +113,13 @@ int main() {
 					{
 						.behaviourFactory = BehaviourFactory::createFactoryFor<PlayerBehaviour>(10.0f, 270.0_deg)
 					}
-				}
+				},
+				.entityCreatedCallback   = [](EntityId) { updateTitle(); },
+				.entityDestroyedCallback = [](EntityId) { updateTitle(); }
 			},
 			.startScript = []() {
-				PerformanceCounters::setCountersUpdatedCallback(
-					[]() {
-						Logger::info(
-							std::string("FPS: ") + std::to_string(PerformanceCounters::getFps())
-								+ " - UPS: " + std::to_string(PerformanceCounters::getUps())
-						);
-					}
-				);
+				PerformanceCounters::setCountersUpdatedCallback(updateTitle);
+				updateTitle();
 			},
 			.updateScript = []() {
 				if (Keyboard::isKeyPressed(KeyboardKey::keyEscape)) {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EventDispatcher.hpp"
-#include "Models/Events/Event.hpp"
+#include "Events/Event.hpp"
 
 namespace Miracle::Application {
 	template<EventTypes t_subscribedTypes>

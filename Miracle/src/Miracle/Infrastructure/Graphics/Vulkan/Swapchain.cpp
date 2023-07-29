@@ -24,8 +24,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		auto images = m_swapchain.getImages();
 
+		m_images.reserve(images.size());
+
 		for (auto& image : images) {
-			m_images.emplace(image, createImageView(image));
+			m_images.emplace_back(image, createImageView(image));
 		}
 
 		m_renderPass = createRenderPass();
@@ -120,7 +122,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		auto images = m_swapchain.getImages();
 
 		for (auto& image : images) {
-			m_images.emplace(image, createImageView(image));
+			m_images.emplace_back(image, createImageView(image));
 		}
 
 		for (auto& [image, imageView] : m_images) {

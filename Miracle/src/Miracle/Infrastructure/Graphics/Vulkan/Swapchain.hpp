@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <utility>
 #include <vector>
 
 #include <Miracle/Application/Graphics/ISwapchain.hpp>
@@ -19,7 +19,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::Extent2D m_imageExtent;
 		vk::PresentModeKHR m_presentMode;
 		vk::raii::SwapchainKHR m_swapchain = nullptr;
-		std::map<vk::Image, vk::raii::ImageView> m_images;
+		std::vector<std::pair<vk::Image, vk::raii::ImageView>> m_images;
 		vk::raii::RenderPass m_renderPass = nullptr;
 		std::vector<vk::raii::Framebuffer> m_frameBuffers;
 		uint32_t m_imageIndex = 0;

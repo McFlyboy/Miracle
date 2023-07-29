@@ -2,9 +2,9 @@
 
 #include <cstdint>
 
-#include "Math/Vector3.hpp"
-#include "Math/Matrix4.hpp"
-#include "Math/Quaternion.hpp"
+#include <Miracle/Common/Math/Vector3.hpp>
+#include <Miracle/Common/Math/Matrix4.hpp>
+#include <Miracle/Common/Math/Quaternion.hpp>
 
 namespace Miracle {
 	enum class TransformSpace : uint8_t {

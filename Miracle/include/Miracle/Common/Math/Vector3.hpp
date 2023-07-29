@@ -133,7 +133,7 @@ namespace Miracle {
 
 		/* ----- MISC. ----- */
 
-		inline float getLenght() const {
+		inline float getLength() const {
 			return std::sqrt(x * x + y * y + z * z);
 		}
 
@@ -142,7 +142,7 @@ namespace Miracle {
 				return Vector3{};
 			}
 
-			return *this / getLenght();
+			return *this / getLength();
 		}
 
 		inline Vector3& normalize() {
@@ -150,13 +150,13 @@ namespace Miracle {
 				return *this;
 			}
 
-			*this /= getLenght();
+			*this /= getLength();
 
 			return *this;
 		}
 
 		inline float distanceTo(const Vector3& vector) const {
-			return (vector - *this).getLenght();
+			return (vector - *this).getLength();
 		}
 
 		constexpr inline float dot(const Vector3& rhs) const {

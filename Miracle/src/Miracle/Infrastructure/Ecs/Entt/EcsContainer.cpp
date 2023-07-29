@@ -1,11 +1,10 @@
 #include "EcsContainer.hpp"
 
 #include <memory>
-
-#include <Miracle/Common/Models/EntityId.hpp>
+#include <utility>
 
 namespace Miracle::Infrastructure::Ecs::Entt {
-	void EcsContainer::createEntity(const EntityConfig& config) {
+	EntityId EcsContainer::createEntity(const EntityConfig& config) {
 		auto entity = m_registry.create();
 
 		m_registry.emplace<Transform>(
@@ -19,22 +18,47 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 			m_registry.emplace<std::unique_ptr<Behaviour>>(
 				entity,
 				config.behaviourFactory.value()(
-					BehaviourDependencies{
-						.ecsContainer = *this,
-						.entityId = static_cast<EntityId>(entity)
-					}
+					EntityContext(entity, *this)
 				)
 			);
 		}
+
+		m_entityCreatedCallback(entity);
+		return entity;
 	}
 
-	Transform& EcsContainer::getTransform(EntityId owner) {
-		return m_registry.get<Transform>(static_cast<entt::entity>(owner));
+	void EcsContainer::scheduleEntityDestruction(EntityId entity) {
+		m_entitiesScheduledForDestruction.emplace(entity);
+	}
+
+	void EcsContainer::destroyScheduledEntities() {
+		for (auto entity : m_entitiesScheduledForDestruction) {
+			m_registry.destroy(entity);
+			m_entityDestroyedCallback(entity);
+		}
+
+		m_entitiesScheduledForDestruction.clear();
+	}
+
+	void EcsContainer::setEntityCreatedCallback(std::function<void(EntityId)>&& entityCreatedCallback) {
+		m_entityCreatedCallback = std::move(entityCreatedCallback);
+	}
+
+	void EcsContainer::unsetEntityCreatedCallback() {
+		m_entityCreatedCallback = [](EntityId) {};
+	}
+
+	void EcsContainer::setEntityDestroyedCallback(std::function<void(EntityId)>&& entityDestroyedCallback) {
+		m_entityDestroyedCallback = std::move(entityDestroyedCallback);
+	}
+
+	void EcsContainer::unsetEntityDestroyedCallback() {
+		m_entityDestroyedCallback = [](EntityId) {};
 	}
 
 	void EcsContainer::forEachTransform(const std::function<void(const Transform&)>& forEach) const {
-		for (auto [entity, position] : m_registry.view<Transform>().each()) {
-			forEach(position);
+		for (auto [entity, transform] : m_registry.view<Transform>().each()) {
+			forEach(transform);
 		}
 	}
 

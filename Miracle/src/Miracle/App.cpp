@@ -101,7 +101,9 @@ namespace Miracle {
 				deltaTimeService.updateDeltaTime();
 
 				m_config.updateScript();
-				sceneManager.getCurrentScene().update();
+				auto& currentScene = sceneManager.getCurrentScene();
+				currentScene.destroyScheduledEntities();
+				currentScene.update();
 				performanceCountingService.incrementUpdateCounter();
 
 				bool frameRendered = renderer.render(sceneManager.getCurrentScene());

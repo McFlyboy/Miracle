@@ -37,7 +37,7 @@ namespace Miracle {
 			std::make_unique<GlfwWindow>(
 				logger,
 				eventDispatcher,
-				*reinterpret_cast<GlfwMultimediaFramework*>(m_multimediaFramework.get()),
+				reinterpret_cast<GlfwMultimediaFramework&>(*m_multimediaFramework.get()),
 				Application::Mappings::toWindowInitProps(windowConfig, UnicodeConverter::toUtf8(appName))
 			)
 		),
@@ -45,7 +45,7 @@ namespace Miracle {
 			std::make_unique<GlfwKeyboard>(
 				eventDispatcher,
 				*m_multimediaFramework.get(),
-				*reinterpret_cast<GlfwWindow*>(m_window.get())
+				reinterpret_cast<GlfwWindow&>(*m_window.get())
 			)
 		),
 		m_graphicsApi(
@@ -54,7 +54,7 @@ namespace Miracle {
 		m_graphicsContext(
 			m_graphicsApi->createGraphicsContext(
 				appName,
-				*reinterpret_cast<GlfwWindow*>(m_window.get())
+				reinterpret_cast<GlfwWindow&>(*m_window.get())
 			)
 		),
 		m_ecs(

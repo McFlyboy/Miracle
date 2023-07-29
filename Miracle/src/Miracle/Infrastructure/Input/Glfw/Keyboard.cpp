@@ -3,8 +3,8 @@
 #include <GLFW/glfw3.h>
 
 #include <Miracle/Definitions.hpp>
-#include <Miracle/Application/Models/Events/KeyInputEvent.hpp>
-#include <Miracle/Application/Models/Events/TextInputEvent.hpp>
+#include <Miracle/Application/Events/KeyInputEvent.hpp>
+#include <Miracle/Application/Events/TextInputEvent.hpp>
 #include <Miracle/Common/UnicodeConverter.hpp>
 
 namespace Miracle::Infrastructure::Input::Glfw {
@@ -48,7 +48,7 @@ namespace Miracle::Infrastructure::Input::Glfw {
 	}
 
 	void Keyboard::onEvent(const Application::Event& event) {
-		auto& keyInputEvent = *reinterpret_cast<const Application::KeyInputEvent*>(&event);
+		auto& keyInputEvent = reinterpret_cast<const Application::KeyInputEvent&>(event);
 
 		if (keyInputEvent.getKey() == KeyboardKey::keyUnknown) {
 			return;

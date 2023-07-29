@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include <Miracle/Application/Models/Events/TextInputEvent.hpp>
+#include <Miracle/Application/Events/TextInputEvent.hpp>
 
 namespace Miracle::Application {
 	TextInputService::TextInputService(EventDispatcher& dispatcher) :
@@ -25,7 +25,7 @@ namespace Miracle::Application {
 	void TextInputService::onEvent(const Event& event) {
 		if (m_receiver == nullptr) return;
 
-		auto& textInputEvent = *reinterpret_cast<const TextInputEvent*>(&event);
+		auto& textInputEvent = reinterpret_cast<const TextInputEvent&>(event);
 
 		if (textInputEvent.getText() == U"\b") {
 			if (!m_receiver->empty()) {
