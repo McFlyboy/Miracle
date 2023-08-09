@@ -14,16 +14,7 @@ namespace Miracle::Application {
 		m_context(context),
 		m_swapchain(m_api.createSwapchain(m_context, initProps.swapchainInitProps)),
 		m_pipeline(m_api.createGraphicsPipeline(m_fileAccess, m_context, *m_swapchain.get())),
-		m_vertexBuffer(
-			!initProps.mesh.vertices.empty()
-				? m_api.createVertexBuffer(m_context, initProps.mesh.vertices)
-				: nullptr
-		),
-		m_indexBuffer(
-			!initProps.mesh.faces.empty()
-				? m_api.createIndexBuffer(m_context, initProps.mesh.faces)
-				: nullptr
-		)
+		m_meshBuffersList(createMeshBuffersList(initProps.meshes))
 	{
 		auto swapchainImageSize = m_swapchain->getImageSize();
 
@@ -50,38 +41,62 @@ namespace Miracle::Application {
 
 		auto projection = Matrix4::createOrthographicProjection(aspectRatio, 0.2f);
 
-		m_context.recordCommands({
+		m_context.recordCommands(
 			[&]() {
 				m_swapchain->beginRenderPass(scene.getBackgroundColor());
 				m_context.setViewport(0.0f, 0.0f, swapchainImageSize.width, swapchainImageSize.height);
 				m_context.setScissor(0, 0, swapchainImageSize.width, swapchainImageSize.height);
 
-				scene.forEachEntityTransform(
-					[&](const Transform& transform) {
-						m_pipeline->bind();
-						m_pipeline->pushConstants(
-							PushConstants{
-								.transform = (transform.getTransformation() * projection).toTransposed()
-							}
-						);
+				if (!m_meshBuffersList.empty()) {
+					scene.forEachEntityAppearance(
+						[&](const Transform& transform, const Appearance& appearance) {
+							if (!appearance.isVisible()) [[unlikely]] return;
 
-						if (m_vertexBuffer != nullptr && m_indexBuffer != nullptr) {
-							m_vertexBuffer->bind();
-							m_indexBuffer->bind();
+							m_pipeline->bind();
+							m_pipeline->pushConstants(
+								PushConstants{
+									.vertexStageConstants = VertexStagePushConstants{
+										.transform = (transform.getTransformation() * projection)
+											.toTransposed()
+									},
+									.fragmentStageConstants = FragmentStagePushConstants{
+										.color = appearance.getColor()
+									}
+								}
+							);
 
-							m_context.drawIndexed(m_indexBuffer->getIndexCount());
+							auto& meshBuffers = m_meshBuffersList[appearance.getMeshIndex()];
+
+							meshBuffers.vertexBuffer->bind();
+							meshBuffers.indexBuffer->bind();
+
+							m_context.drawIndexed(meshBuffers.indexBuffer->getIndexCount());
 						}
-					}
-				);
+					);
+				}
 
 				m_swapchain->endRenderPass();
 			}
-		});
+		);
 
 		m_context.submitRecording();
 
 		m_swapchain->swap();
 
 		return true;
+	}
+
+	std::vector<MeshBuffers> Renderer::createMeshBuffersList(const std::vector<Mesh>& meshes) const {
+		auto list = std::vector<MeshBuffers>();
+		list.reserve(meshes.size());
+
+		for (auto& mesh : meshes) {
+			list.emplace_back(
+				m_api.createVertexBuffer(m_context, mesh.vertices),
+				m_api.createIndexBuffer(m_context, mesh.faces)
+			);
+		}
+
+		return list;
 	}
 }

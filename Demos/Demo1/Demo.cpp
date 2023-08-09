@@ -70,7 +70,11 @@ public:
 					.transformConfig = TransformConfig{
 						.translation = transform.getTranslation(),
 						.rotation    = transform.getRotation(),
-						.scale       = Vector3{ .x = 0.25f, .y = 0.5f, .z = 1.0f }
+						.scale       = Vector3{ .x = 0.5f, .y = 0.5f, .z = 1.0f }
+					},
+					.appearanceConfig = AppearanceConfig{
+						.meshIndex = 1,
+						.color     = ColorRgb::magenta
 					},
 					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(15.0f)
 				}
@@ -95,22 +99,38 @@ int main() {
 				.resizable = true
 			},
 			.rendererConfig = RendererConfig{
-				.mesh = Mesh{
-					.vertices = std::vector{
-						Vertex{ .position = Vector3{ .x = -0.5f, .y = -0.5f, .z = 0.0f } },
-						Vertex{ .position = Vector3{ .x =  0.5f, .y = -0.5f, .z = 0.0f } },
-						Vertex{ .position = Vector3{ .x =  0.5f, .y =  0.5f, .z = 0.0f } },
-						Vertex{ .position = Vector3{ .x = -0.5f, .y =  0.5f, .z = 0.0f } }
+				.meshes = std::vector<Mesh>{
+					{
+						.vertices = std::vector{
+							Vertex{ .position = Vector3{ .x = -0.5f, .y = -0.5f, .z = 0.0f } },
+							Vertex{ .position = Vector3{ .x =  0.5f, .y = -0.5f, .z = 0.0f } },
+							Vertex{ .position = Vector3{ .x =  0.5f, .y =  0.5f, .z = 0.0f } },
+							Vertex{ .position = Vector3{ .x = -0.5f, .y =  0.5f, .z = 0.0f } }
+						},
+						.faces = std::vector{
+							Face{ .indices = { 0, 1, 2 } },
+							Face{ .indices = { 0, 2, 3 } }
+						}
 					},
-					.faces = std::vector{
-						Face{ .indices = { 0, 1, 2 } },
-						Face{ .indices = { 0, 2, 3 } }
+					{
+						.vertices = std::vector{
+							Vertex{ .position = Vector3{ .x = -0.5f, .y = -0.5f, .z = 0.0f } },
+							Vertex{ .position = Vector3{ .x =  0.5f, .y = -0.5f, .z = 0.0f } },
+							Vertex{ .position = Vector3{ .x =  0.0f, .y =  0.5f, .z = 0.0f } }
+						},
+						.faces = std::vector{
+							Face{ .indices = { 0, 1, 2 } }
+						}
 					}
 				}
 			},
 			.sceneConfig = SceneConfig{
 				.entityConfigs = std::vector<EntityConfig>{
 					{
+						.appearanceConfig = AppearanceConfig{
+							.meshIndex = 0,
+							.color     = ColorRgb::green
+						},
 						.behaviourFactory = BehaviourFactory::createFactoryFor<PlayerBehaviour>(10.0f, 270.0_deg)
 					}
 				},

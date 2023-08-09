@@ -118,7 +118,7 @@ namespace Miracle::Infrastructure::View::Glfw {
 	}
 
 	std::span<const char*> Window::getRequiredVulkanExtensionNames() const {
-		uint32_t extensionCount = 0;
+		uint32_t extensionCount;
 		auto extensionNames = glfwGetRequiredInstanceExtensions(&extensionCount);
 
 		return std::span(extensionNames, extensionCount);
@@ -145,8 +145,8 @@ namespace Miracle::Infrastructure::View::Glfw {
 	}
 
 	vk::Extent2D Window::getCurrentVulkanExtent() const {
-		int width = 0;
-		int height = 0;
+		int width;
+		int height;
 
 		glfwGetFramebufferSize(m_window, &width, &height);
 

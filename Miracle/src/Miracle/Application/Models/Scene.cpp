@@ -36,8 +36,10 @@ namespace Miracle::Application {
 		m_container->destroyScheduledEntities();
 	}
 
-	void Scene::forEachEntityTransform(const std::function<void(const Transform&)>& forEach) const {
-		m_container->forEachTransform(forEach);
+	void Scene::forEachEntityAppearance(
+		const std::function<void(const Transform&, const Appearance&)>& forEach
+	) const {
+		m_container->forEachAppearance(forEach);
 	}
 
 	void Scene::update() {

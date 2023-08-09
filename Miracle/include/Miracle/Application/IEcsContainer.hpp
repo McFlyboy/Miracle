@@ -1,11 +1,13 @@
 #pragma once
 
 #include <functional>
+#include <optional>
 
 #include <Miracle/Common/IEcsContainer.hpp>
 #include <Miracle/Common/Models/EntityConfig.hpp>
 #include <Miracle/Common/Models/EntityId.hpp>
 #include <Miracle/Common/Components/Transform.hpp>
+#include <Miracle/Common/Components/Appearance.hpp>
 #include <Miracle/Common/Components/Behaviour.hpp>
 
 namespace Miracle::Application {
@@ -27,7 +29,9 @@ namespace Miracle::Application {
 
 		virtual void unsetEntityDestroyedCallback() = 0;
 
-		virtual void forEachTransform(const std::function<void(const Transform&)>& forEach) const = 0;
+		virtual void forEachAppearance(
+			const std::function<void(const Transform&, const Appearance&)>& forEach
+		) const = 0;
 
 		virtual void forEachBehaviour(const std::function<void(Behaviour&)>& forEach) = 0;
 	};

@@ -594,14 +594,14 @@ namespace Miracle {
 			};
 		}
 
-		static constexpr inline Matrix4 createOrthographicProjection(float aspectRatio, float zoom) {
+		static constexpr inline Matrix4 createOrthographicProjection(float aspectRatio, float zoomLevel) {
 			return Matrix4{
-				.m11 = zoom / aspectRatio,
+				.m11 = zoomLevel / aspectRatio,
 				.m12 = 0.0f,
 				.m13 = 0.0f,
 				.m14 = 0.0f,
 				.m21 = 0.0f,
-				.m22 = zoom,
+				.m22 = zoomLevel,
 				.m23 = 0.0f,
 				.m24 = 0.0f,
 				.m31 = 0.0f,

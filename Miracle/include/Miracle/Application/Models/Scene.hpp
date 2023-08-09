@@ -4,12 +4,14 @@
 #include <vector>
 #include <functional>
 #include <utility>
+#include <optional>
 
 #include <Miracle/Common/Math/ColorRgb.hpp>
 #include <Miracle/Common/Models/EntityConfig.hpp>
 #include <Miracle/Common/Models/EntityId.hpp>
 #include <Miracle/Common/EntityContext.hpp>
 #include <Miracle/Common/Components/Transform.hpp>
+#include <Miracle/Common/Components/Appearance.hpp>
 #include <Miracle/Application/IEcs.hpp>
 #include <Miracle/Application/IEcsContainer.hpp>
 
@@ -62,7 +64,9 @@ namespace Miracle::Application {
 			m_container->unsetEntityDestroyedCallback();
 		}
 
-		void forEachEntityTransform(const std::function<void(const Transform&)>& forEach) const;
+		void forEachEntityAppearance(
+			const std::function<void(const Transform&, const Appearance&)>& forEach
+		) const;
 
 		void update();
 	};

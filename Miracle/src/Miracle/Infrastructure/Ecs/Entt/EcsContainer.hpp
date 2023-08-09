@@ -43,7 +43,17 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 			return m_registry.get<Transform>(entity);
 		}
 
-		virtual void forEachTransform(const std::function<void(const Transform&)>& forEach) const override;
+		inline virtual Appearance& getAppearance(EntityId entity) override {
+			return m_registry.get<Appearance>(entity);
+		}
+
+		inline virtual const Appearance& getAppearance(EntityId entity) const override {
+			return m_registry.get<Appearance>(entity);
+		}
+
+		virtual void forEachAppearance(
+			const std::function<void(const Transform&, const Appearance&)>& forEach
+		) const override;
 
 		virtual void forEachBehaviour(const std::function<void(Behaviour&)>& forEach) override;
 	};

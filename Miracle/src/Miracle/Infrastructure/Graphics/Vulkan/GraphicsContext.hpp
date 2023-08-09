@@ -19,8 +19,8 @@
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	class GraphicsContext : public Application::IGraphicsContext {
 	private:
-		static inline const uint32_t s_vulkanApiVersion = VK_API_VERSION_1_1;
-		static inline auto s_validationLayerNames = std::array{ "VK_LAYER_KHRONOS_validation" };
+		static inline constexpr uint32_t s_vulkanApiVersion = VK_API_VERSION_1_1;
+		static inline constexpr auto s_validationLayerNames = std::array{ "VK_LAYER_KHRONOS_validation" };
 
 		Application::ILogger& m_logger;
 		IContextTarget& m_target;
@@ -37,7 +37,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::Queue m_graphicsQueue = nullptr;
 		vk::raii::Queue m_presentQueue = nullptr;
 		vk::raii::CommandPool m_commandPool = nullptr;
-		vk::raii::CommandBuffers m_commandBuffers = nullptr;
+		std::vector<vk::raii::CommandBuffer> m_commandBuffers;
 		std::vector<vk::raii::Semaphore> m_commandExecutionWaitSemaphores;
 		std::vector<vk::raii::Semaphore> m_commandExecutionSignalSemaphores;
 		std::vector<vk::raii::Fence> m_commandExecutionSignalFences;
@@ -73,7 +73,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		inline IContextTarget& getTarget() override { return m_target; }
 
-		virtual void recordCommands(const Application::Recording& recording) override;
+		virtual void recordCommands(const std::function<void()>& recording) override;
 
 		virtual void submitRecording() override;
 
@@ -123,9 +123,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		) const;
 
 #ifdef MIRACLE_CONFIG_DEBUG
-		void checkValidationLayersAvailable(
-			const std::span<const char*>& validationLayerNames
-		) const;
+		void checkValidationLayersAvailable() const;
 
 		vk::raii::DebugUtilsMessengerEXT createDebugMessenger();
 
@@ -145,7 +143,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		vk::raii::CommandPool createCommandPool() const;
 
-		vk::raii::CommandBuffers createCommandBuffers(size_t count) const;
+		std::vector<vk::raii::CommandBuffer> allocateCommandBuffers(size_t count) const;
 
 		vk::raii::Fence createFence(bool preSignaled) const;
 

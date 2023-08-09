@@ -7,14 +7,6 @@
 #include "IContextTarget.hpp"
 
 namespace Miracle::Application {
-	struct Recording {
-		std::function<void()> recording;
-
-		void operator()() const {
-			recording();
-		}
-	};
-
 	class IGraphicsContext {
 	public:
 		virtual ~IGraphicsContext() = default;
@@ -39,7 +31,7 @@ namespace Miracle::Application {
 
 		virtual inline IContextTarget& getTarget() = 0;
 
-		virtual void recordCommands(const Recording& recording) = 0;
+		virtual void recordCommands(const std::function<void()>& recording) = 0;
 
 		virtual void submitRecording() = 0;
 
