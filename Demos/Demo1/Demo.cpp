@@ -64,7 +64,7 @@ public:
 		transform.rotate(Quaternion::createRotation(Vector3::forward, rotation * m_turnSpeed * DeltaTime::get()));
 		transform.translate(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
 
-		if (Keyboard::isKeyPressedOrRepeated(KeyboardKey::keySpace)) {
+		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
 			CurrentScene::createEntity(
 				EntityConfig{
 					.transformConfig = TransformConfig{
