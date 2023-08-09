@@ -3,6 +3,7 @@
 #include "IEcsContainer.hpp"
 #include "Models/EntityId.hpp"
 #include "Components/Transform.hpp"
+#include "Components/Appearance.hpp"
 
 namespace Miracle {
 	class EntityContext {
@@ -23,5 +24,9 @@ namespace Miracle {
 		inline Transform& getTransform() { return m_ecsContainer.getTransform(m_entityId); }
 
 		inline const Transform& getTransform() const { return m_ecsContainer.getTransform(m_entityId); }
+
+		inline Appearance& getAppearance() { return m_ecsContainer.getAppearance(m_entityId); }
+
+		inline const Appearance& getAppearance() const { return m_ecsContainer.getAppearance(m_entityId); }
 	};
 }

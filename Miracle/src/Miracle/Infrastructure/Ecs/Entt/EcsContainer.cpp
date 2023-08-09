@@ -3,6 +3,11 @@
 #include <memory>
 #include <utility>
 
+#include <Miracle/Common/EntityContext.hpp>
+#include <Miracle/Common/Components/Transform.hpp>
+#include <Miracle/Common/Components/Appearance.hpp>
+#include <Miracle/Common/Components/Behaviour.hpp>
+
 namespace Miracle::Infrastructure::Ecs::Entt {
 	EntityId EcsContainer::createEntity(const EntityConfig& config) {
 		auto entity = m_registry.create();
@@ -14,6 +19,17 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 			config.transformConfig.scale
 		);
 
+		if (config.appearanceConfig.has_value()) {
+			auto& appearanceConfig = config.appearanceConfig.value();
+
+			m_registry.emplace<Appearance>(
+				entity,
+				appearanceConfig.visible,
+				appearanceConfig.meshIndex,
+				appearanceConfig.color
+			);
+		}
+		
 		if (config.behaviourFactory.has_value()) {
 			m_registry.emplace<std::unique_ptr<Behaviour>>(
 				entity,
@@ -56,9 +72,11 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 		m_entityDestroyedCallback = [](EntityId) {};
 	}
 
-	void EcsContainer::forEachTransform(const std::function<void(const Transform&)>& forEach) const {
-		for (auto [entity, transform] : m_registry.view<Transform>().each()) {
-			forEach(transform);
+	void EcsContainer::forEachAppearance(
+		const std::function<void(const Transform&, const Appearance&)>& forEach
+	) const {
+		for (auto [entity, transform, appearance] : m_registry.view<Transform, Appearance>().each()) {
+			forEach(transform, appearance);
 		}
 	}
 

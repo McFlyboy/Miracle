@@ -2,7 +2,6 @@
 
 #include <cstring>
 #include <exception>
-#include <algorithm>
 #include <limits>
 
 #include <fmt/format.h>
@@ -41,7 +40,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		);
 
 		m_commandPool = createCommandPool();
-		m_commandBuffers = createCommandBuffers(2);
+		m_commandBuffers = allocateCommandBuffers(2);
 
 		m_commandExecutionWaitSemaphores.reserve(m_commandBuffers.size());
 		m_commandExecutionSignalSemaphores.reserve(m_commandBuffers.size());
@@ -112,7 +111,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		getCommandBuffer().drawIndexed(indexCount, 1, 0, 0, 0);
 	}
 
-	void GraphicsContext::recordCommands(const Application::Recording& recording) {
+	void GraphicsContext::recordCommands(const std::function<void()>& recording) {
 		auto result = m_device.waitForFences(
 			*m_commandExecutionSignalFences[m_currentCommandBufferIndex],
 			true,
@@ -199,7 +198,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 #ifdef MIRACLE_CONFIG_DEBUG
 		extensionNames.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 
-		checkValidationLayersAvailable(s_validationLayerNames);
+		checkValidationLayersAvailable();
 
 		auto debugMessengerCreateInfo = getDebugMessengerCreateInfo();
 #endif
@@ -268,14 +267,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	}
 
 #ifdef MIRACLE_CONFIG_DEBUG
-	void GraphicsContext::checkValidationLayersAvailable(
-		const std::span<const char*>& validationLayerNames
-	) const {
+	void GraphicsContext::checkValidationLayersAvailable() const {
 		bool allLayersFound = true;
 
 		auto layersProperties = m_context.enumerateInstanceLayerProperties();
 
-		for (auto& validationLayerName : validationLayerNames) {
+		for (auto& validationLayerName : s_validationLayerNames) {
 			bool layerFound = false;
 
 			for (auto& layerProperties : layersProperties) {
@@ -387,29 +384,27 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			fmt::format("Supported Vulkan physical devices: {}", supportedDevices.size())
 		);
 
-		std::sort(
-			supportedDevices.begin(),
-			supportedDevices.end(),
-			[](
-				std::pair<vk::raii::PhysicalDevice*, DeviceInfo>& lhs,
-				std::pair<vk::raii::PhysicalDevice*, DeviceInfo>& rhs
+		size_t selectedDeviceIndex = 0;
+
+		for (size_t i = 1; i < supportedDevices.size(); i++) {
+			auto& selectedDeviceInfo = supportedDevices[selectedDeviceIndex].second;
+			auto& deviceInfo = supportedDevices[i].second;
+
+			bool isSelectedDeviceDiscrete = selectedDeviceInfo.type == vk::PhysicalDeviceType::eDiscreteGpu;
+			bool isDeviceDiscrete = deviceInfo.type == vk::PhysicalDeviceType::eDiscreteGpu;
+
+			if (
+				(isDeviceDiscrete && !isSelectedDeviceDiscrete)
+					|| (
+						(isDeviceDiscrete == isSelectedDeviceDiscrete)
+							&& (deviceInfo.deviceLocalMemorySize > selectedDeviceInfo.deviceLocalMemorySize)
+					)
 			) {
-				bool isLhsDiscreteGpu = lhs.second.type == vk::PhysicalDeviceType::eDiscreteGpu;
-				bool isRhsDiscreteGpu = rhs.second.type == vk::PhysicalDeviceType::eDiscreteGpu;
-
-				if (isLhsDiscreteGpu && !isRhsDiscreteGpu) {
-					return true;
-				}
-				else if (isRhsDiscreteGpu && !isLhsDiscreteGpu) {
-					return false;
-				}
-				else {
-					return lhs.second.deviceLocalMemorySize > rhs.second.deviceLocalMemorySize;
-				}
+				selectedDeviceIndex = i;
 			}
-		);
+		}
 
-		auto& [selectedDevice, deviceInfo] = supportedDevices.front();
+		auto& [selectedDevice, deviceInfo] = supportedDevices[selectedDeviceIndex];
 
 		m_logger.info(
 			fmt::format(
@@ -483,10 +478,9 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 	}
 
-	vk::raii::CommandBuffers GraphicsContext::createCommandBuffers(size_t count) const {
+	std::vector<vk::raii::CommandBuffer> GraphicsContext::allocateCommandBuffers(size_t count) const {
 		try {
-			return vk::raii::CommandBuffers(
-				m_device,
+			return m_device.allocateCommandBuffers(
 				vk::CommandBufferAllocateInfo{
 					.commandPool        = *m_commandPool,
 					.level              = vk::CommandBufferLevel::ePrimary,

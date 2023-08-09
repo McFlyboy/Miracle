@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include <Miracle/Common/Math/ColorRgb.hpp>
 #include <Miracle/Common/Models/Mesh.hpp>
@@ -11,14 +12,13 @@
 #include "IGraphicsContext.hpp"
 #include "ISwapchain.hpp"
 #include "IGraphicsPipeline.hpp"
-#include "IVertexBuffer.hpp"
-#include "IIndexBuffer.hpp"
+#include "MeshBuffers.hpp"
 #include "PushConstants.hpp"
 
 namespace Miracle::Application {
 	struct RendererInitProps{
 		SwapchainInitProps swapchainInitProps = {};
-		const Mesh& mesh = {};
+		const std::vector<Mesh>& meshes = {};
 	};
 
 	class Renderer {
@@ -30,8 +30,7 @@ namespace Miracle::Application {
 
 		std::unique_ptr<ISwapchain> m_swapchain;
 		std::unique_ptr<IGraphicsPipeline> m_pipeline;
-		std::unique_ptr<IVertexBuffer> m_vertexBuffer;
-		std::unique_ptr<IIndexBuffer> m_indexBuffer;
+		std::vector<MeshBuffers> m_meshBuffersList;
 
 	public:
 		Renderer(
@@ -45,5 +44,8 @@ namespace Miracle::Application {
 		~Renderer();
 
 		bool render(const Scene& scene);
+
+	private:
+		std::vector<MeshBuffers> createMeshBuffersList(const std::vector<Mesh>& meshes) const;
 	};
 }

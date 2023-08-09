@@ -140,10 +140,17 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			.pDynamicStates    = dynamicStates.data()
 		};
 
-		auto pushConstantRange = vk::PushConstantRange{
-			.stageFlags = vk::ShaderStageFlagBits::eVertex,
-			.offset     = 0,
-			.size       = sizeof(Application::PushConstants)
+		auto pushConstantRanges = std::array{
+			vk::PushConstantRange{
+				.stageFlags = vk::ShaderStageFlagBits::eVertex,
+				.offset     = static_cast<uint32_t>(offsetof(Application::PushConstants, vertexStageConstants)),
+				.size       = sizeof(Application::PushConstants::vertexStageConstants)
+			},
+			vk::PushConstantRange{
+				.stageFlags = vk::ShaderStageFlagBits::eFragment,
+				.offset = static_cast<uint32_t>(offsetof(Application::PushConstants, fragmentStageConstants)),
+				.size = sizeof(Application::PushConstants::fragmentStageConstants)
+			}
 		};
 
 		try {
@@ -152,8 +159,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 					.flags                  = {},
 					.setLayoutCount         = 0,
 					.pSetLayouts            = nullptr,
-					.pushConstantRangeCount = 1,
-					.pPushConstantRanges    = &pushConstantRange
+					.pushConstantRangeCount = static_cast<uint32_t>(pushConstantRanges.size()),
+					.pPushConstantRanges    = pushConstantRanges.data()
 				}
 			);
 		}
@@ -203,11 +210,18 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	}
 
 	void GraphicsPipeline::pushConstants(const Application::PushConstants& constants) {
-		m_context.getCommandBuffer().pushConstants<Application::PushConstants>(
+		m_context.getCommandBuffer().pushConstants<Application::VertexStagePushConstants>(
 			*m_layout,
 			vk::ShaderStageFlagBits::eVertex,
 			0,
-			constants
+			constants.vertexStageConstants
+		);
+
+		m_context.getCommandBuffer().pushConstants<Application::FragmentStagePushConstants>(
+			*m_layout,
+			vk::ShaderStageFlagBits::eFragment,
+			static_cast<uint32_t>(offsetof(Application::PushConstants, fragmentStageConstants)),
+			constants.fragmentStageConstants
 		);
 	}
 

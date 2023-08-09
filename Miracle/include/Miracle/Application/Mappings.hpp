@@ -34,7 +34,7 @@ namespace Miracle::Application {
 					.useSrgb  = false,
 					.useVsync = false
 				},
-				.mesh               = rendererConfig.mesh
+				.meshes               = rendererConfig.meshes
 			};
 		}
 
