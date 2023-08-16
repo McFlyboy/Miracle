@@ -1,5 +1,7 @@
 #include <Miracle/Application/Graphics/Renderer.hpp>
 
+#include <Miracle/Common/Components/Camera.hpp>
+
 namespace Miracle::Application {
 	Renderer::Renderer(
 		ILogger& logger,
@@ -39,7 +41,28 @@ namespace Miracle::Application {
 		auto aspectRatio = static_cast<float>(swapchainImageSize.width)
 			/ static_cast<float>(swapchainImageSize.height);
 
-		auto projection = Matrix4::createOrthographicProjection(aspectRatio, 0.2f);
+		const Transform* sceneCameraTransform = nullptr;
+		const Camera* sceneCamera = nullptr;
+
+		scene.forEachEntityCamera(
+			[&](const Transform& transform, const Camera& camera) {
+				sceneCameraTransform = &transform;
+				sceneCamera = &camera;
+			}
+		);
+
+		auto view = sceneCameraTransform != nullptr
+			? Matrix4::createTranslation(-sceneCameraTransform->getTranslation())
+				* Matrix4::createRotation(sceneCameraTransform->getRotation().getInverse())
+			: Matrix4::identity;
+
+		auto projection = sceneCamera != nullptr
+			? sceneCamera->getProjectionType() == CameraProjectionType::perspective
+				? Matrix4::createPerspectiveProjection(aspectRatio, 0.1f, 10.0f)
+				: Matrix4::createOrthographicProjection(aspectRatio, sceneCamera->getZoomLevel() * 0.2f)
+			: Matrix4::createOrthographicProjection(aspectRatio, 0.2f);
+
+		auto viewProjection = view * projection;
 
 		m_context.recordCommands(
 			[&]() {
@@ -56,7 +79,7 @@ namespace Miracle::Application {
 							m_pipeline->pushConstants(
 								PushConstants{
 									.vertexStageConstants = VertexStagePushConstants{
-										.transform = (transform.getTransformation() * projection)
+										.transform = (transform.getTransformation() * viewProjection)
 											.toTransposed()
 									},
 									.fragmentStageConstants = FragmentStagePushConstants{

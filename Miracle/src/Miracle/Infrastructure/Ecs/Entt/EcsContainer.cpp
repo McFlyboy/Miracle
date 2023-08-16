@@ -5,8 +5,9 @@
 
 #include <Miracle/Common/EntityContext.hpp>
 #include <Miracle/Common/Components/Transform.hpp>
+#include <Miracle/Common/Components/Camera.hpp>
 #include <Miracle/Common/Components/Appearance.hpp>
-#include <Miracle/Common/Components/Behaviour.hpp>
+#include <Miracle/Common/Components/Behavior.hpp>
 
 namespace Miracle::Infrastructure::Ecs::Entt {
 	EntityId EcsContainer::createEntity(const EntityConfig& config) {
@@ -19,6 +20,15 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 			config.transformConfig.scale
 		);
 
+		if (config.cameraConfig.has_value()) {
+			m_registry.emplace<Camera>(
+				entity,
+				config.cameraConfig.value().projectionType,
+				config.cameraConfig.value().zoomLevel,
+				config.cameraConfig.value().fieldOfView
+			);
+		}
+
 		if (config.appearanceConfig.has_value()) {
 			auto& appearanceConfig = config.appearanceConfig.value();
 
@@ -30,10 +40,10 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 			);
 		}
 		
-		if (config.behaviourFactory.has_value()) {
-			m_registry.emplace<std::unique_ptr<Behaviour>>(
+		if (config.behaviorFactory.has_value()) {
+			m_registry.emplace<std::unique_ptr<Behavior>>(
 				entity,
-				config.behaviourFactory.value()(
+				config.behaviorFactory.value()(
 					EntityContext(entity, *this)
 				)
 			);
@@ -72,6 +82,14 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 		m_entityDestroyedCallback = [](EntityId) {};
 	}
 
+	void EcsContainer::forEachCamera(
+		const std::function<void(const Transform&, const Camera&)>& forEach
+	) const {
+		for (auto [entity, transform, camera] : m_registry.view<Transform, Camera>().each()) {
+			forEach(transform, camera);
+		}
+	}
+
 	void EcsContainer::forEachAppearance(
 		const std::function<void(const Transform&, const Appearance&)>& forEach
 	) const {
@@ -80,9 +98,9 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 		}
 	}
 
-	void EcsContainer::forEachBehaviour(const std::function<void(Behaviour&)>& forEach) {
-		for (auto [entity, behaviour] : m_registry.view<std::unique_ptr<Behaviour>>().each()) {
-			forEach(*behaviour.get());
+	void EcsContainer::forEachBehavior(const std::function<void(Behavior&)>& forEach) {
+		for (auto [entity, behavior] : m_registry.view<std::unique_ptr<Behavior>>().each()) {
+			forEach(*behavior.get());
 		}
 	}
 }

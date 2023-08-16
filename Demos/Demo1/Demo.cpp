@@ -13,15 +13,15 @@ static void updateTitle() {
 	);
 }
 
-class ProjectileBehaviour : public Behaviour {
+class ProjectileBehavior : public Behavior {
 private:
 	Vector3 m_velocity;
 
 public:
-	ProjectileBehaviour(
+	ProjectileBehavior(
 		const EntityContext& context,
 		float movementSpeed
-	) : Behaviour(context),
+	) : Behavior(context),
 		m_velocity(Vector3::up * movementSpeed)
 	{}
 
@@ -36,17 +36,17 @@ public:
 	}
 };
 
-class PlayerBehaviour : public Behaviour {
+class PlayerBehavior : public Behavior {
 private:
 	float m_movementSpeed;
 	Degrees m_turnSpeed;
 
 public:
-	PlayerBehaviour(
+	PlayerBehavior(
 		const EntityContext& context,
 		float movementSpeed,
 		Degrees turnSpeed
-	) : Behaviour(context),
+	) : Behavior(context),
 		m_movementSpeed(movementSpeed),
 		m_turnSpeed(turnSpeed)
 	{}
@@ -54,7 +54,7 @@ public:
 	virtual void act() override {
 		auto velocity = Vector3{
 			.x = static_cast<float>(Keyboard::isKeyHeld(KeyboardKey::keyD) - Keyboard::isKeyHeld(KeyboardKey::keyA)),
-			.y = static_cast<float>(Keyboard::isKeyHeld(KeyboardKey::keyW) - Keyboard::isKeyHeld(KeyboardKey::keyS)),
+			.y = static_cast<float>(Keyboard::isKeyHeld(KeyboardKey::keyW) - Keyboard::isKeyHeld(KeyboardKey::keyS))
 		};
 
 		float rotation = Keyboard::isKeyHeld(KeyboardKey::keyQ) - Keyboard::isKeyHeld(KeyboardKey::keyE);
@@ -76,7 +76,7 @@ public:
 						.meshIndex = 1,
 						.color     = ColorRgb::magenta
 					},
-					.behaviourFactory = BehaviourFactory::createFactoryFor<ProjectileBehaviour>(15.0f)
+					.behaviorFactory = BehaviorFactory::createFactoryFor<ProjectileBehavior>(3.0f)
 				}
 			);
 		}
@@ -84,6 +84,37 @@ public:
 		if (Keyboard::isKeyPressed(KeyboardKey::keyDelete)) {
 			m_context.destroyEntity();
 		}
+	}
+};
+
+class CameraBehavior : public Behavior {
+private:
+	float m_movementSpeed;
+	Degrees m_turnSpeed;
+
+public:
+	CameraBehavior(
+		const EntityContext& context,
+		float movementSpeed,
+		Degrees turnSpeed
+	) : Behavior(context),
+		m_movementSpeed(movementSpeed),
+		m_turnSpeed(turnSpeed)
+	{}
+
+	virtual void act() {
+		auto velocity = Vector3{
+			.x = static_cast<float>(Keyboard::isKeyHeld(KeyboardKey::keyRight) - Keyboard::isKeyHeld(KeyboardKey::keyLeft)),
+			.y = static_cast<float>(Keyboard::isKeyHeld(KeyboardKey::keyPageUp) - Keyboard::isKeyHeld(KeyboardKey::keyPageDown)),
+			.z = static_cast<float>(Keyboard::isKeyHeld(KeyboardKey::keyUp) - Keyboard::isKeyHeld(KeyboardKey::keyDown))
+		};
+
+		float rotation = Keyboard::isKeyHeld(KeyboardKey::keyPeriod) - Keyboard::isKeyHeld(KeyboardKey::keyComma);
+
+		auto& transform = m_context.getTransform();
+
+		transform.rotate(Quaternion::createRotation(Vector3::up, rotation * m_turnSpeed * DeltaTime::get()));
+		transform.translate(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
 	}
 };
 
@@ -127,11 +158,20 @@ int main() {
 			.sceneConfig = SceneConfig{
 				.entityConfigs = std::vector<EntityConfig>{
 					{
+						.transformConfig = TransformConfig{
+							.translation = Vector3{0.0f, 0.0f, -1.0f}
+						},
+						.cameraConfig = CameraConfig{
+							.projectionType = CameraProjectionType::perspective
+						},
+						.behaviorFactory = BehaviorFactory::createFactoryFor<CameraBehavior>(1.0f, 120.0_deg)
+					},
+					{
 						.appearanceConfig = AppearanceConfig{
 							.meshIndex = 0,
 							.color     = ColorRgb::green
 						},
-						.behaviourFactory = BehaviourFactory::createFactoryFor<PlayerBehaviour>(10.0f, 270.0_deg)
+						.behaviorFactory = BehaviorFactory::createFactoryFor<PlayerBehavior>(10.0f, 270.0_deg)
 					}
 				},
 				.entityCreatedCallback   = [](EntityId) { updateTitle(); },

@@ -15,8 +15,9 @@
 
 #include "Common/UnicodeConverter.hpp"
 #include "Common/Components/Transform.hpp"
+#include "Common/Components/Camera.hpp"
 #include "Common/Components/Appearance.hpp"
-#include "Common/Components/Behaviour.hpp"
+#include "Common/Components/Behavior.hpp"
 #include "Common/Math/Angle.hpp"
 #include "Common/Math/ColorRgb.hpp"
 #include "Common/Math/Vector2.hpp"

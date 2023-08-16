@@ -5,16 +5,16 @@
 #include "Transform.hpp"
 
 namespace Miracle {
-	class Behaviour {
+	class Behavior {
 	protected:
 		EntityContext m_context;
 
 	public:
-		Behaviour(const EntityContext& context) :
+		Behavior(const EntityContext& context) :
 			m_context(context)
 		{}
 
-		virtual ~Behaviour() = default;
+		virtual ~Behavior() = default;
 
 		virtual void act() = 0;
 	};

@@ -11,6 +11,7 @@
 #include <Miracle/Common/Models/EntityId.hpp>
 #include <Miracle/Common/EntityContext.hpp>
 #include <Miracle/Common/Components/Transform.hpp>
+#include <Miracle/Common/Components/Camera.hpp>
 #include <Miracle/Common/Components/Appearance.hpp>
 #include <Miracle/Application/IEcs.hpp>
 #include <Miracle/Application/IEcsContainer.hpp>
@@ -63,6 +64,10 @@ namespace Miracle::Application {
 		inline void unsetEntityDestroyedCallback() {
 			m_container->unsetEntityDestroyedCallback();
 		}
+
+		void forEachEntityCamera(
+			const std::function<void(const Transform&, const Camera&)>& forEach
+		) const;
 
 		void forEachEntityAppearance(
 			const std::function<void(const Transform&, const Appearance&)>& forEach

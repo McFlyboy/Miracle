@@ -615,6 +615,33 @@ namespace Miracle {
 			};
 		}
 
+		static constexpr inline Matrix4 createPerspectiveProjection(
+			float aspectRatio,
+			float nearPlaneDistance,
+			float farPlaneDistance
+		) {
+			float frustumLength = farPlaneDistance - nearPlaneDistance;
+
+			return Matrix4{
+				.m11 = 1.0f / aspectRatio,
+				.m12 = 0.0f,
+				.m13 = 0.0f,
+				.m14 = 0.0f,
+				.m21 = 0.0f,
+				.m22 = 1.0f,
+				.m23 = 0.0f,
+				.m24 = 0.0f,
+				.m31 = 0.0f,
+				.m32 = 0.0f,
+				.m33 = farPlaneDistance / frustumLength,
+				.m34 = 1.0f,
+				.m41 = 0.0f,
+				.m42 = 0.0f,
+				.m43 = -nearPlaneDistance * farPlaneDistance / frustumLength,
+				.m44 = 0.0f
+			};
+		}
+
 		/* ----- MISC. ----- */
 
 		constexpr inline Matrix4 toTransposed() const {

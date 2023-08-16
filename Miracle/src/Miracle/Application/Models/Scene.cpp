@@ -36,6 +36,12 @@ namespace Miracle::Application {
 		m_container->destroyScheduledEntities();
 	}
 
+	void Scene::forEachEntityCamera(
+		const std::function<void(const Transform&, const Camera&)>& forEach
+	) const {
+		m_container->forEachCamera(forEach);
+	}
+
 	void Scene::forEachEntityAppearance(
 		const std::function<void(const Transform&, const Appearance&)>& forEach
 	) const {
@@ -43,9 +49,9 @@ namespace Miracle::Application {
 	}
 
 	void Scene::update() {
-		m_container->forEachBehaviour(
-			[](Behaviour& behaviour) {
-				behaviour.act();
+		m_container->forEachBehavior(
+			[](Behavior& behavior) {
+				behavior.act();
 			}
 		);
 
