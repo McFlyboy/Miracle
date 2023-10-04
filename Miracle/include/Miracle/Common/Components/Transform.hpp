@@ -38,7 +38,7 @@ namespace Miracle {
 
 		void translate(const Vector3& deltaTranslation, TransformSpace transformSpace);
 
-		template <TransformSpace transformSpace = TransformSpace::local>
+		template<TransformSpace transformSpace = TransformSpace::local>
 		inline void translate(const Vector3& deltaTranslation) {
 			if constexpr (transformSpace == TransformSpace::local) {
 				m_translation += MathUtilities::rotateVector(deltaTranslation, m_rotation);
@@ -59,7 +59,7 @@ namespace Miracle {
 
 		void rotate(const Quaternion& deltaRotation, TransformSpace transformSpace);
 
-		template <TransformSpace transformSpace = TransformSpace::local>
+		template<TransformSpace transformSpace = TransformSpace::local>
 		inline void rotate(const Quaternion& deltaRotation) {
 			if constexpr (transformSpace == TransformSpace::local) {
 				m_rotation = m_rotation * deltaRotation;
