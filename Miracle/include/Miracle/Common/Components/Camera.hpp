@@ -1,23 +1,40 @@
 #pragma once
 
+#include <cmath>
+
 #include <Miracle/Common/Models/CameraProjectionType.hpp>
+#include <Miracle/Common/Math/Angle.hpp>
 
 namespace Miracle {
 	class Camera {
 	private:
 		CameraProjectionType m_projectionType;
-		float m_zoomLevel;
-		float m_fieldOfView;
+		float m_zoomFactor;
+		float m_nearClipPlaneDistance;
+		float m_farClipPlaneDistance;
 
 	public:
 		Camera(
-			CameraProjectionType projectionType,
-			float zoomLevel,
-			float fieldOfView
+			float zoomFactor,
+			float nearClipPlaneDistance,
+			float farClipPlaneDistance
 		) :
-			m_projectionType(projectionType),
-			m_zoomLevel(zoomLevel),
-			m_fieldOfView(fieldOfView)
+			m_projectionType(CameraProjectionType::orthographic),
+			m_zoomFactor(zoomFactor),
+			m_nearClipPlaneDistance(nearClipPlaneDistance),
+			m_farClipPlaneDistance(farClipPlaneDistance)
+		{}
+
+		template <Angle TAngle>
+		Camera(
+			TAngle fieldOfView,
+			float nearClipPlaneDistance,
+			float farClipPlaneDistance
+		) :
+			m_projectionType(CameraProjectionType::perspective),
+			m_zoomFactor(fieldOfViewToZoomFactor(fieldOfView)),
+			m_nearClipPlaneDistance(nearClipPlaneDistance),
+			m_farClipPlaneDistance(farClipPlaneDistance)
 		{}
 
 		inline CameraProjectionType getProjectionType() const { return m_projectionType; }
@@ -26,12 +43,33 @@ namespace Miracle {
 			m_projectionType = projectionType;
 		}
 
-		inline float getZoomLevel() const { return m_zoomLevel; }
+		inline float getZoomFactor() const { return m_zoomFactor; }
 
-		inline void setZoomLevel(float zoomLevel) { m_zoomLevel = zoomLevel; }
+		inline void setZoomFactor(float zoomFactor) { m_zoomFactor = zoomFactor; }
 
-		inline float getFieldOfView() const { return m_fieldOfView; }
+		template <Angle TAngle>
+		inline TAngle getFieldOfView() const { return zoomFactorToFieldOfView<TAngle>(m_zoomFactor); }
 
-		inline void setFieldOfView(float fieldOfView) { m_fieldOfView = fieldOfView; }
+		template <Angle TAngle>
+		inline void setFieldOfView(TAngle fieldOfView) { m_zoomFactor = fieldOfViewToZoomFactor(fieldOfView); }
+
+		inline float getNearClipPlaneDistance() const { return m_nearClipPlaneDistance; }
+
+		inline void setNearClipPlaneDistance(float nearClipPlaneDistance) { m_nearClipPlaneDistance = nearClipPlaneDistance; }
+
+		inline float getFarClipPlaneDistance() const { return m_farClipPlaneDistance; }
+
+		inline void setFarClipPlaneDistance(float farClipPlaneDistance) { m_farClipPlaneDistance = farClipPlaneDistance; }
+
+	private:
+		template <Angle TAngle>
+		inline TAngle zoomFactorToFieldOfView(float zoomFactor) const {
+			return static_cast<TAngle>(Radians{ 2.0f * std::atan(1.0f / m_zoomFactor) });
+		}
+
+		template <Angle TAngle>
+		inline float fieldOfViewToZoomFactor(TAngle fieldOfView) const {
+			return 1.0f / std::tan(static_cast<Radians>(fieldOfView).value / 2.0f);
+		}
 	};
 }

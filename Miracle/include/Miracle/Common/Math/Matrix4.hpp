@@ -594,50 +594,58 @@ namespace Miracle {
 			};
 		}
 
-		static constexpr inline Matrix4 createOrthographicProjection(float aspectRatio, float zoomLevel) {
+		static constexpr inline Matrix4 createOrthographicProjection(
+			float aspectRatio,
+			float zoomFactor,
+			float nearClipPlaneDistance,
+			float farClipPlaneDistance
+		) {
+			float frustumLength = farClipPlaneDistance - nearClipPlaneDistance;
+
 			return Matrix4{
-				.m11 = zoomLevel / aspectRatio,
+				.m11 = zoomFactor / aspectRatio,
 				.m12 = 0.0f,
 				.m13 = 0.0f,
 				.m14 = 0.0f,
 				.m21 = 0.0f,
-				.m22 = zoomLevel,
+				.m22 = zoomFactor,
 				.m23 = 0.0f,
 				.m24 = 0.0f,
 				.m31 = 0.0f,
 				.m32 = 0.0f,
-				.m33 = 0.0f,
+				.m33 = 1.0f / frustumLength,
 				.m34 = 0.0f,
 				.m41 = 0.0f,
 				.m42 = 0.0f,
-				.m43 = 0.0f,
+				.m43 = nearClipPlaneDistance / -frustumLength,
 				.m44 = 1.0f
 			};
 		}
 
 		static constexpr inline Matrix4 createPerspectiveProjection(
 			float aspectRatio,
-			float nearPlaneDistance,
-			float farPlaneDistance
+			float zoomFactor,
+			float nearClipPlaneDistance,
+			float farClipPlaneDistance
 		) {
-			float frustumLength = farPlaneDistance - nearPlaneDistance;
+			float frustumLength = farClipPlaneDistance - nearClipPlaneDistance;
 
 			return Matrix4{
-				.m11 = 1.0f / aspectRatio,
+				.m11 = zoomFactor / aspectRatio,
 				.m12 = 0.0f,
 				.m13 = 0.0f,
 				.m14 = 0.0f,
 				.m21 = 0.0f,
-				.m22 = 1.0f,
+				.m22 = zoomFactor,
 				.m23 = 0.0f,
 				.m24 = 0.0f,
 				.m31 = 0.0f,
 				.m32 = 0.0f,
-				.m33 = farPlaneDistance / frustumLength,
+				.m33 = farClipPlaneDistance / frustumLength,
 				.m34 = 1.0f,
 				.m41 = 0.0f,
 				.m42 = 0.0f,
-				.m43 = -nearPlaneDistance * farPlaneDistance / frustumLength,
+				.m43 = -nearClipPlaneDistance * farClipPlaneDistance / frustumLength,
 				.m44 = 0.0f
 			};
 		}

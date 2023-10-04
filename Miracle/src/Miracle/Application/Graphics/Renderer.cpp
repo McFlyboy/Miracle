@@ -58,9 +58,19 @@ namespace Miracle::Application {
 
 		auto projection = sceneCamera != nullptr
 			? sceneCamera->getProjectionType() == CameraProjectionType::perspective
-				? Matrix4::createPerspectiveProjection(aspectRatio, 0.1f, 10.0f)
-				: Matrix4::createOrthographicProjection(aspectRatio, sceneCamera->getZoomLevel() * 0.2f)
-			: Matrix4::createOrthographicProjection(aspectRatio, 0.2f);
+				? Matrix4::createPerspectiveProjection(
+					aspectRatio,
+					sceneCamera->getZoomFactor(),
+					sceneCamera->getNearClipPlaneDistance(),
+					sceneCamera->getFarClipPlaneDistance()
+				)
+				: Matrix4::createOrthographicProjection(
+					aspectRatio,
+					sceneCamera->getZoomFactor() * 0.2f,
+					sceneCamera->getNearClipPlaneDistance(),
+					sceneCamera->getFarClipPlaneDistance()
+				)
+			: Matrix4::createOrthographicProjection(aspectRatio, 0.2f, 0.0f, 1.0f);
 
 		auto viewProjection = view * projection;
 

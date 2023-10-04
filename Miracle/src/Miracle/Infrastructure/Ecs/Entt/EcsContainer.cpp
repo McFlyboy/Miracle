@@ -21,12 +21,36 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 		);
 
 		if (config.cameraConfig.has_value()) {
-			m_registry.emplace<Camera>(
-				entity,
-				config.cameraConfig.value().projectionType,
-				config.cameraConfig.value().zoomLevel,
-				config.cameraConfig.value().fieldOfView
-			);
+			if (std::holds_alternative<OrthographicCameraConfig>(config.cameraConfig.value())) {
+				auto& cameraConfig = std::get<OrthographicCameraConfig>(config.cameraConfig.value());
+
+				m_registry.emplace<Camera>(
+					entity,
+					cameraConfig.zoomFactor,
+					cameraConfig.nearClipPlaneDistance,
+					cameraConfig.farClipPlaneDistance
+				);
+			}
+			else {
+				auto& cameraConfig = std::get<PerspectiveCameraConfig>(config.cameraConfig.value());
+
+				if (std::holds_alternative<Degrees>(cameraConfig.fieldOfView)) {
+					m_registry.emplace<Camera>(
+						entity,
+						std::get<Degrees>(cameraConfig.fieldOfView),
+						cameraConfig.nearClipPlaneDistance,
+						cameraConfig.farClipPlaneDistance
+					);
+				}
+				else {
+					m_registry.emplace<Camera>(
+						entity,
+						std::get<Radians>(cameraConfig.fieldOfView),
+						cameraConfig.nearClipPlaneDistance,
+						cameraConfig.farClipPlaneDistance
+					);
+				}
+			}
 		}
 
 		if (config.appearanceConfig.has_value()) {

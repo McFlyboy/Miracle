@@ -159,11 +159,9 @@ int main() {
 				.entityConfigs = std::vector<EntityConfig>{
 					{
 						.transformConfig = TransformConfig{
-							.translation = Vector3{0.0f, 0.0f, -1.0f}
+							.translation = Vector3{ 0.0f, 0.0f, -1.0f }
 						},
-						.cameraConfig = CameraConfig{
-							.projectionType = CameraProjectionType::perspective
-						},
+						.cameraConfig = PerspectiveCameraConfig{},
 						.behaviorFactory = BehaviorFactory::createFactoryFor<CameraBehavior>(1.0f, 120.0_deg)
 					},
 					{
