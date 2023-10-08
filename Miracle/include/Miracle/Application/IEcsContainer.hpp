@@ -7,8 +7,9 @@
 #include <Miracle/Common/Models/EntityConfig.hpp>
 #include <Miracle/Common/Models/EntityId.hpp>
 #include <Miracle/Common/Components/Transform.hpp>
+#include <Miracle/Common/Components/Camera.hpp>
 #include <Miracle/Common/Components/Appearance.hpp>
-#include <Miracle/Common/Components/Behaviour.hpp>
+#include <Miracle/Common/Components/Behavior.hpp>
 
 namespace Miracle::Application {
 	class IEcsContainer : public Miracle::IEcsContainer {
@@ -29,10 +30,14 @@ namespace Miracle::Application {
 
 		virtual void unsetEntityDestroyedCallback() = 0;
 
+		virtual void forEachCamera(
+			const std::function<void(const Transform&, const Camera&)>& forEach
+		) const = 0;
+
 		virtual void forEachAppearance(
 			const std::function<void(const Transform&, const Appearance&)>& forEach
 		) const = 0;
 
-		virtual void forEachBehaviour(const std::function<void(Behaviour&)>& forEach) = 0;
+		virtual void forEachBehavior(const std::function<void(Behavior&)>& forEach) = 0;
 	};
 }

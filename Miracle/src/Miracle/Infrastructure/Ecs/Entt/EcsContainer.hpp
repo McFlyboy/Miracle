@@ -43,6 +43,14 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 			return m_registry.get<Transform>(entity);
 		}
 
+		inline virtual Camera& getCamera(EntityId entity) override {
+			return m_registry.get<Camera>(entity);
+		}
+
+		inline virtual const Camera& getCamera(EntityId entity) const override {
+			return m_registry.get<Camera>(entity);
+		}
+
 		inline virtual Appearance& getAppearance(EntityId entity) override {
 			return m_registry.get<Appearance>(entity);
 		}
@@ -51,10 +59,14 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 			return m_registry.get<Appearance>(entity);
 		}
 
+		virtual void forEachCamera(
+			const std::function<void(const Transform&, const Camera&)>& forEach
+		) const override;
+
 		virtual void forEachAppearance(
 			const std::function<void(const Transform&, const Appearance&)>& forEach
 		) const override;
 
-		virtual void forEachBehaviour(const std::function<void(Behaviour&)>& forEach) override;
+		virtual void forEachBehavior(const std::function<void(Behavior&)>& forEach) override;
 	};
 }

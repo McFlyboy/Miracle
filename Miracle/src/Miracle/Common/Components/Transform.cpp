@@ -1,7 +1,5 @@
 #include <Miracle/Common/Components/Transform.hpp>
 
-#include <Miracle/Common/Math/MathUtilities.hpp>
-
 namespace Miracle {
 	Transform::Transform(
 		const Vector3& translation,

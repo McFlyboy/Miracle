@@ -5,6 +5,7 @@
 #include <Miracle/Common/Math/Vector3.hpp>
 #include <Miracle/Common/Math/Matrix4.hpp>
 #include <Miracle/Common/Math/Quaternion.hpp>
+#include <Miracle/Common/Math/MathUtilities.hpp>
 
 namespace Miracle {
 	enum class TransformSpace : uint8_t {
@@ -35,7 +36,19 @@ namespace Miracle {
 			m_cacheOutdated = true;
 		}
 
-		void translate(const Vector3& deltaTranslation, TransformSpace transformSpace = TransformSpace::local);
+		void translate(const Vector3& deltaTranslation, TransformSpace transformSpace);
+
+		template<TransformSpace transformSpace = TransformSpace::local>
+		inline void translate(const Vector3& deltaTranslation) {
+			if constexpr (transformSpace == TransformSpace::local) {
+				m_translation += MathUtilities::rotateVector(deltaTranslation, m_rotation);
+			}
+			else {
+				m_translation += deltaTranslation;
+			}
+
+			m_cacheOutdated = true;
+		}
 
 		inline const Quaternion& getRotation() const { return m_rotation; }
 
@@ -44,7 +57,19 @@ namespace Miracle {
 			m_cacheOutdated = true;
 		}
 
-		void rotate(const Quaternion& deltaRotation, TransformSpace transformSpace = TransformSpace::local);
+		void rotate(const Quaternion& deltaRotation, TransformSpace transformSpace);
+
+		template<TransformSpace transformSpace = TransformSpace::local>
+		inline void rotate(const Quaternion& deltaRotation) {
+			if constexpr (transformSpace == TransformSpace::local) {
+				m_rotation = m_rotation * deltaRotation;
+			}
+			else {
+				m_rotation = deltaRotation * m_rotation;
+			}
+
+			m_cacheOutdated = true;
+		}
 
 		inline const Vector3& getScale() const { return m_scale; }
 

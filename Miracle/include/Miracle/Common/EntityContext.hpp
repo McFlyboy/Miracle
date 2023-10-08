@@ -3,6 +3,7 @@
 #include "IEcsContainer.hpp"
 #include "Models/EntityId.hpp"
 #include "Components/Transform.hpp"
+#include "Components/Camera.hpp"
 #include "Components/Appearance.hpp"
 
 namespace Miracle {
@@ -24,6 +25,10 @@ namespace Miracle {
 		inline Transform& getTransform() { return m_ecsContainer.getTransform(m_entityId); }
 
 		inline const Transform& getTransform() const { return m_ecsContainer.getTransform(m_entityId); }
+
+		inline Camera& getCamera() { return m_ecsContainer.getCamera(m_entityId); }
+
+		inline const Camera& getCamera() const { return m_ecsContainer.getCamera(m_entityId); }
 
 		inline Appearance& getAppearance() { return m_ecsContainer.getAppearance(m_entityId); }
 
