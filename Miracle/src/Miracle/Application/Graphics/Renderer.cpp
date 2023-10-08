@@ -70,7 +70,12 @@ namespace Miracle::Application {
 					sceneCamera->getNearClipPlaneDistance(),
 					sceneCamera->getFarClipPlaneDistance()
 				)
-			: Matrix4::createOrthographicProjection(aspectRatio, 0.2f, 0.0f, 1000.0f);
+			: Matrix4::createOrthographicProjection(
+				aspectRatio,
+				0.2f,
+				0.0f,
+				1000.0f
+			);
 
 		auto viewProjection = view * projection;
 
