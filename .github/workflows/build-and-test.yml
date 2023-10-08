@@ -46,9 +46,6 @@ jobs:
     - name: Install ninja-build tool
       uses: seanmiddleditch/gha-setup-ninja@v3
 
-    - name: Install platform-specific dependencies
-      run: brew install pkg-config
-
     - name: Install Vulkan SDK
       uses: humbletim/install-vulkan-sdk@81f46b36426f4ccdc1c0e7ab48109f3c98cfdc81
       with:
