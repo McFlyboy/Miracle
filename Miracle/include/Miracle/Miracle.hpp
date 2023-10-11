@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Definitions.hpp"
+#include "Environment.hpp"
 #include "App.hpp"
 
 #include "Interface/CurrentApp.hpp"

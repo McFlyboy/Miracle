@@ -28,19 +28,15 @@ namespace Miracle {
 		float m43 = {};
 		float m44 = {};
 
-		static const Matrix4 identity;
-
 		/* ----- COMPARISON ----- */
 
 		constexpr bool operator==(const Matrix4&) const = default;
 
 		/* ----- SIGNED CONVERTION ----- */
 
-		constexpr inline Matrix4 operator+() const {
-			return *this;
-		}
+		constexpr Matrix4 operator+() const { return *this; }
 
-		constexpr inline Matrix4 operator-() const {
+		constexpr Matrix4 operator-() const {
 			return Matrix4{
 				.m11 = -m11,
 				.m12 = -m12,
@@ -63,7 +59,7 @@ namespace Miracle {
 
 		/* ----- ADDITION ----- */
 
-		constexpr inline Matrix4 operator+(const Matrix4& rhs) const {
+		constexpr Matrix4 operator+(const Matrix4& rhs) const {
 			return Matrix4{
 				.m11 = m11 + rhs.m11,
 				.m12 = m12 + rhs.m12,
@@ -84,7 +80,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Matrix4& operator+=(const Matrix4& rhs) {
+		constexpr Matrix4& operator+=(const Matrix4& rhs) {
 			m11 += rhs.m11;
 			m12 += rhs.m12;
 			m13 += rhs.m13;
@@ -107,7 +103,7 @@ namespace Miracle {
 
 		/* ----- SUBTRACTION ----- */
 
-		constexpr inline Matrix4 operator-(const Matrix4& rhs) const {
+		constexpr Matrix4 operator-(const Matrix4& rhs) const {
 			return Matrix4{
 				.m11 = m11 - rhs.m11,
 				.m12 = m12 - rhs.m12,
@@ -128,7 +124,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Matrix4& operator-=(const Matrix4& rhs) {
+		constexpr Matrix4& operator-=(const Matrix4& rhs) {
 			m11 -= rhs.m11;
 			m12 -= rhs.m12;
 			m13 -= rhs.m13;
@@ -151,7 +147,7 @@ namespace Miracle {
 
 		/* ----- MULTIPLICATION ----- */
 
-		constexpr inline Matrix4 operator*(const Matrix4& rhs) const {
+		constexpr Matrix4 operator*(const Matrix4& rhs) const {
 			return Matrix4{
 				.m11 = m11 * rhs.m11 + m12 * rhs.m21 + m13 * rhs.m31 + m14 * rhs.m41,
 				.m12 = m11 * rhs.m12 + m12 * rhs.m22 + m13 * rhs.m32 + m14 * rhs.m42,
@@ -172,47 +168,30 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Matrix4& operator*=(const Matrix4& rhs) {
-			float newM11 = m11 * rhs.m11 + m12 * rhs.m21 + m13 * rhs.m31 + m14 * rhs.m41;
-			float newM12 = m11 * rhs.m12 + m12 * rhs.m22 + m13 * rhs.m32 + m14 * rhs.m42;
-			float newM13 = m11 * rhs.m13 + m12 * rhs.m23 + m13 * rhs.m33 + m14 * rhs.m43;
-			float newM14 = m11 * rhs.m14 + m12 * rhs.m24 + m13 * rhs.m34 + m14 * rhs.m44;
-			float newM21 = m21 * rhs.m11 + m22 * rhs.m21 + m23 * rhs.m31 + m24 * rhs.m41;
-			float newM22 = m21 * rhs.m12 + m22 * rhs.m22 + m23 * rhs.m32 + m24 * rhs.m42;
-			float newM23 = m21 * rhs.m13 + m22 * rhs.m23 + m23 * rhs.m33 + m24 * rhs.m43;
-			float newM24 = m21 * rhs.m14 + m22 * rhs.m24 + m23 * rhs.m34 + m24 * rhs.m44;
-			float newM31 = m31 * rhs.m11 + m32 * rhs.m21 + m33 * rhs.m31 + m34 * rhs.m41;
-			float newM32 = m31 * rhs.m12 + m32 * rhs.m22 + m33 * rhs.m32 + m34 * rhs.m42;
-			float newM33 = m31 * rhs.m13 + m32 * rhs.m23 + m33 * rhs.m33 + m34 * rhs.m43;
-			float newM34 = m31 * rhs.m14 + m32 * rhs.m24 + m33 * rhs.m34 + m34 * rhs.m44;
-			float newM41 = m41 * rhs.m11 + m42 * rhs.m21 + m43 * rhs.m31 + m44 * rhs.m41;
-			float newM42 = m41 * rhs.m12 + m42 * rhs.m22 + m43 * rhs.m32 + m44 * rhs.m42;
-			float newM43 = m41 * rhs.m13 + m42 * rhs.m23 + m43 * rhs.m33 + m44 * rhs.m43;
-			float newM44 = m41 * rhs.m14 + m42 * rhs.m24 + m43 * rhs.m34 + m44 * rhs.m44;
-
-			m11 = newM11;
-			m12 = newM12;
-			m13 = newM13;
-			m14 = newM14;
-			m21 = newM21;
-			m22 = newM22;
-			m23 = newM23;
-			m24 = newM24;
-			m31 = newM31;
-			m32 = newM32;
-			m33 = newM33;
-			m34 = newM34;
-			m41 = newM41;
-			m42 = newM42;
-			m43 = newM43;
-			m44 = newM44;
-
-			return *this;
+		constexpr Matrix4& operator*=(const Matrix4& rhs) {
+			return *this = Matrix4{
+				.m11 = m11 * rhs.m11 + m12 * rhs.m21 + m13 * rhs.m31 + m14 * rhs.m41,
+				.m12 = m11 * rhs.m12 + m12 * rhs.m22 + m13 * rhs.m32 + m14 * rhs.m42,
+				.m13 = m11 * rhs.m13 + m12 * rhs.m23 + m13 * rhs.m33 + m14 * rhs.m43,
+				.m14 = m11 * rhs.m14 + m12 * rhs.m24 + m13 * rhs.m34 + m14 * rhs.m44,
+				.m21 = m21 * rhs.m11 + m22 * rhs.m21 + m23 * rhs.m31 + m24 * rhs.m41,
+				.m22 = m21 * rhs.m12 + m22 * rhs.m22 + m23 * rhs.m32 + m24 * rhs.m42,
+				.m23 = m21 * rhs.m13 + m22 * rhs.m23 + m23 * rhs.m33 + m24 * rhs.m43,
+				.m24 = m21 * rhs.m14 + m22 * rhs.m24 + m23 * rhs.m34 + m24 * rhs.m44,
+				.m31 = m31 * rhs.m11 + m32 * rhs.m21 + m33 * rhs.m31 + m34 * rhs.m41,
+				.m32 = m31 * rhs.m12 + m32 * rhs.m22 + m33 * rhs.m32 + m34 * rhs.m42,
+				.m33 = m31 * rhs.m13 + m32 * rhs.m23 + m33 * rhs.m33 + m34 * rhs.m43,
+				.m34 = m31 * rhs.m14 + m32 * rhs.m24 + m33 * rhs.m34 + m34 * rhs.m44,
+				.m41 = m41 * rhs.m11 + m42 * rhs.m21 + m43 * rhs.m31 + m44 * rhs.m41,
+				.m42 = m41 * rhs.m12 + m42 * rhs.m22 + m43 * rhs.m32 + m44 * rhs.m42,
+				.m43 = m41 * rhs.m13 + m42 * rhs.m23 + m43 * rhs.m33 + m44 * rhs.m43,
+				.m44 = m41 * rhs.m14 + m42 * rhs.m24 + m43 * rhs.m34 + m44 * rhs.m44,
+			};
 		}
 
 		/* ----- VECTOR MULTIPLICATION ----- */
 
-		constexpr inline Vector4 operator*(const Vector4& rhs) const {
+		constexpr Vector4 operator*(const Vector4& rhs) const {
 			return Vector4{
 				.x = m11 * rhs.x + m12 * rhs.y + m13 * rhs.z + m14 * rhs.w,
 				.y = m21 * rhs.x + m22 * rhs.y + m23 * rhs.z + m24 * rhs.w,
@@ -221,7 +200,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline friend Vector4 operator*(const Vector4& lhs, const Matrix4& rhs) {
+		constexpr friend Vector4 operator*(const Vector4& lhs, const Matrix4& rhs) {
 			return Vector4{
 				.x = lhs.x * rhs.m11 + lhs.y * rhs.m21 + lhs.z * rhs.m31 + lhs.w * rhs.m41,
 				.y = lhs.x * rhs.m12 + lhs.y * rhs.m22 + lhs.z * rhs.m32 + lhs.w * rhs.m42,
@@ -230,23 +209,18 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline friend Vector4& operator*=(Vector4& lhs, const Matrix4& rhs) {
-			float newX = lhs.x * rhs.m11 + lhs.y * rhs.m21 + lhs.z * rhs.m31 + lhs.w * rhs.m41;
-			float newY = lhs.x * rhs.m12 + lhs.y * rhs.m22 + lhs.z * rhs.m32 + lhs.w * rhs.m42;
-			float newZ = lhs.x * rhs.m13 + lhs.y * rhs.m23 + lhs.z * rhs.m33 + lhs.w * rhs.m43;
-			float newW = lhs.x * rhs.m14 + lhs.y * rhs.m24 + lhs.z * rhs.m34 + lhs.w * rhs.m44;
-
-			lhs.x = newX;
-			lhs.y = newY;
-			lhs.z = newZ;
-			lhs.w = newW;
-
-			return lhs;
+		constexpr friend Vector4& operator*=(Vector4& lhs, const Matrix4& rhs) {
+			return lhs = Vector4{
+				.x = lhs.x * rhs.m11 + lhs.y * rhs.m21 + lhs.z * rhs.m31 + lhs.w * rhs.m41,
+				.y = lhs.x * rhs.m12 + lhs.y * rhs.m22 + lhs.z * rhs.m32 + lhs.w * rhs.m42,
+				.z = lhs.x * rhs.m13 + lhs.y * rhs.m23 + lhs.z * rhs.m33 + lhs.w * rhs.m43,
+				.w = lhs.x * rhs.m14 + lhs.y * rhs.m24 + lhs.z * rhs.m34 + lhs.w * rhs.m44
+			};
 		}
 
 		/* ----- SCALAR MULTIPLICATION ----- */
 
-		constexpr inline Matrix4 operator*(float rhs) const {
+		constexpr Matrix4 operator*(float rhs) const {
 			return Matrix4{
 				.m11 = m11 * rhs,
 				.m12 = m12 * rhs,
@@ -267,7 +241,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline friend Matrix4 operator*(float lhs, const Matrix4& rhs) {
+		constexpr friend Matrix4 operator*(float lhs, const Matrix4& rhs) {
 			return Matrix4{
 				.m11 = lhs * rhs.m11,
 				.m12 = lhs * rhs.m12,
@@ -288,7 +262,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Matrix4& operator*=(float rhs) {
+		constexpr Matrix4& operator*=(float rhs) {
 			m11 *= rhs;
 			m12 *= rhs;
 			m13 *= rhs;
@@ -311,7 +285,7 @@ namespace Miracle {
 
 		/* ----- SCALAR DIVISION ----- */
 
-		constexpr inline Matrix4 operator/(float rhs) const {
+		constexpr Matrix4 operator/(float rhs) const {
 			return Matrix4{
 				.m11 = m11 / rhs,
 				.m12 = m12 / rhs,
@@ -332,7 +306,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline friend Matrix4 operator/(float lhs, const Matrix4& rhs) {
+		constexpr friend Matrix4 operator/(float lhs, const Matrix4& rhs) {
 			return Matrix4{
 				.m11 = lhs / rhs.m11,
 				.m12 = lhs / rhs.m12,
@@ -353,7 +327,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Matrix4& operator/=(float rhs) {
+		constexpr Matrix4& operator/=(float rhs) {
 			m11 /= rhs;
 			m12 /= rhs;
 			m13 /= rhs;
@@ -376,7 +350,7 @@ namespace Miracle {
 
 		/* ----- TRANSFORMATION ----- */
 
-		static constexpr inline Matrix4 createTranslation(const Vector3& translation) {
+		static constexpr Matrix4 createTranslation(const Vector3& translation) {
 			return Matrix4{
 				.m11 = 1.0f,
 				.m12 = 0.0f,
@@ -397,8 +371,7 @@ namespace Miracle {
 			};
 		}
 
-		template<Angle TAngle>
-		static inline Matrix4 createRotationX(TAngle angle) {
+		static Matrix4 createRotationX(Angle auto angle) {
 			float radians = static_cast<Radians>(angle).value;
 
 			return Matrix4{
@@ -421,8 +394,7 @@ namespace Miracle {
 			};
 		}
 
-		template<Angle TAngle>
-		static inline Matrix4 createRotationY(TAngle angle) {
+		static Matrix4 createRotationY(Angle auto angle) {
 			float radians = static_cast<Radians>(angle).value;
 
 			return Matrix4{
@@ -445,8 +417,7 @@ namespace Miracle {
 			};
 		}
 
-		template<Angle TAngle>
-		static inline Matrix4 createRotationZ(TAngle angle) {
+		static Matrix4 createRotationZ(Angle auto angle) {
 			float radians = static_cast<Radians>(angle).value;
 
 			return Matrix4{
@@ -469,8 +440,7 @@ namespace Miracle {
 			};
 		}
 
-		template<Angle TAngle>
-		static inline Matrix4 createRotation(const Vector3& axis, TAngle angle) {
+		static Matrix4 createRotation(const Vector3& axis, Angle auto angle) {
 			float radians = static_cast<Radians>(angle).value;
 			float cosAngle = std::cos(radians);
 			float sinAngle = std::sin(radians);
@@ -496,7 +466,7 @@ namespace Miracle {
 			};
 		}
 
-		static constexpr inline Matrix4 createRotation(const Quaternion& rotation) {
+		static constexpr Matrix4 createRotation(const Quaternion& rotation) {
 			auto& w = rotation.w;
 			auto& x = rotation.v.x;
 			auto& y = rotation.v.y;
@@ -522,7 +492,7 @@ namespace Miracle {
 			};
 		}
 
-		static constexpr inline Matrix4 createScale(const Vector3& scale) {
+		static constexpr Matrix4 createScale(const Vector3& scale) {
 			return Matrix4{
 				.m11 = scale.x,
 				.m12 = 0.0f,
@@ -543,7 +513,7 @@ namespace Miracle {
 			};
 		}
 
-		static constexpr inline Matrix4 createScale(float uniformScale) {
+		static constexpr Matrix4 createScale(float uniformScale) {
 			return Matrix4{
 				.m11 = uniformScale,
 				.m12 = 0.0f,
@@ -564,7 +534,7 @@ namespace Miracle {
 			};
 		}
 
-		static inline Matrix4 createTransformation(
+		static constexpr Matrix4 createTransformation(
 			const Vector3& translation,
 			const Quaternion& rotation,
 			const Vector3& scale
@@ -594,7 +564,7 @@ namespace Miracle {
 			};
 		}
 
-		static constexpr inline Matrix4 createOrthographicProjection(
+		static constexpr Matrix4 createOrthographicProjection(
 			float aspectRatio,
 			float zoomFactor,
 			float nearClipPlaneDistance,
@@ -622,7 +592,7 @@ namespace Miracle {
 			};
 		}
 
-		static constexpr inline Matrix4 createPerspectiveProjection(
+		static constexpr Matrix4 createPerspectiveProjection(
 			float aspectRatio,
 			float zoomFactor,
 			float nearClipPlaneDistance,
@@ -652,7 +622,7 @@ namespace Miracle {
 
 		/* ----- MISC. ----- */
 
-		constexpr inline Matrix4 toTransposed() const {
+		constexpr Matrix4 toTransposed() const {
 			return Matrix4{
 				.m11 = m11,
 				.m12 = m21,
@@ -673,7 +643,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Matrix4& transpose() {
+		constexpr Matrix4& transpose() {
 			std::swap(m12, m21);
 			std::swap(m13, m31);
 			std::swap(m14, m41);
@@ -683,5 +653,17 @@ namespace Miracle {
 
 			return *this;
 		}
+	};
+
+	class Matrix4s {
+	public:
+		Matrix4s() = delete;
+
+		static constexpr Matrix4 identity = Matrix4{
+			.m11 = 1.0f, .m12 = 0.0f, .m13 = 0.0f, .m14 = 0.0f,
+			.m21 = 0.0f, .m22 = 1.0f, .m23 = 0.0f, .m24 = 0.0f,
+			.m31 = 0.0f, .m32 = 0.0f, .m33 = 1.0f, .m34 = 0.0f,
+			.m41 = 0.0f, .m42 = 0.0f, .m43 = 0.0f, .m44 = 1.0f
+		};
 	};
 }

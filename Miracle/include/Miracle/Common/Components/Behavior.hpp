@@ -10,7 +10,7 @@ namespace Miracle {
 		EntityContext m_context;
 
 	public:
-		Behavior(const EntityContext& context) :
+		constexpr Behavior(const EntityContext& context) :
 			m_context(context)
 		{}
 

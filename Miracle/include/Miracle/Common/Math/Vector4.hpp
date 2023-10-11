@@ -15,7 +15,7 @@ namespace Miracle {
 
 		/* ----- CONVERTERS ----- */
 
-		static constexpr inline Vector4 createFromVector2(const Vector2& xy, float z, float w) {
+		static constexpr Vector4 createFromVector2(const Vector2& xy, float z = 0.0f, float w = 0.0f) {
 			return Vector4{
 				.x = xy.x,
 				.y = xy.y,
@@ -24,7 +24,7 @@ namespace Miracle {
 			};
 		}
 
-		static constexpr inline Vector4 createFromVector3(const Vector3& xyz, float w) {
+		static constexpr Vector4 createFromVector3(const Vector3& xyz, float w = 0.0f) {
 			return Vector4{
 				.x = xyz.x,
 				.y = xyz.y,
@@ -35,11 +35,9 @@ namespace Miracle {
 
 		/* ----- SIGNED CONVERTION ----- */
 
-		constexpr inline Vector4 operator+() const {
-			return *this;
-		}
+		constexpr Vector4 operator+() const { return *this; }
 
-		constexpr inline Vector4 operator-() const {
+		constexpr Vector4 operator-() const {
 			return Vector4{
 				.x = -x,
 				.y = -y,
@@ -50,7 +48,7 @@ namespace Miracle {
 
 		/* ----- ADDITION ----- */
 
-		constexpr inline Vector4 operator+(const Vector4& rhs) const {
+		constexpr Vector4 operator+(const Vector4& rhs) const {
 			return Vector4{
 				.x = x + rhs.x,
 				.y = y + rhs.y,
@@ -59,7 +57,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Vector4& operator+=(const Vector4& rhs) {
+		constexpr Vector4& operator+=(const Vector4& rhs) {
 			x += rhs.x;
 			y += rhs.y;
 			z += rhs.z;
@@ -70,7 +68,7 @@ namespace Miracle {
 
 		/* ----- SUBTRACTION ----- */
 
-		constexpr inline Vector4 operator-(const Vector4& rhs) const {
+		constexpr Vector4 operator-(const Vector4& rhs) const {
 			return Vector4{
 				.x = x - rhs.x,
 				.y = y - rhs.y,
@@ -79,7 +77,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Vector4& operator-=(const Vector4& rhs) {
+		constexpr Vector4& operator-=(const Vector4& rhs) {
 			x -= rhs.x;
 			y -= rhs.y;
 			z -= rhs.z;
@@ -90,7 +88,7 @@ namespace Miracle {
 
 		/* ----- SCALAR MULTIPLICATION ----- */
 
-		constexpr inline Vector4 operator*(float rhs) const {
+		constexpr Vector4 operator*(float rhs) const {
 			return Vector4{
 				.x = x * rhs,
 				.y = y * rhs,
@@ -99,7 +97,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline friend Vector4 operator*(float lhs, const Vector4& rhs) {
+		constexpr friend Vector4 operator*(float lhs, const Vector4& rhs) {
 			return Vector4{
 				.x = lhs * rhs.x,
 				.y = lhs * rhs.y,
@@ -108,7 +106,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Vector4& operator*=(float rhs) {
+		constexpr Vector4& operator*=(float rhs) {
 			x *= rhs;
 			y *= rhs;
 			z *= rhs;
@@ -119,7 +117,7 @@ namespace Miracle {
 
 		/* ----- SCALAR DIVISION ----- */
 
-		constexpr inline Vector4 operator/(float rhs) const {
+		constexpr Vector4 operator/(float rhs) const {
 			return Vector4{
 				.x = x / rhs,
 				.y = y / rhs,
@@ -128,7 +126,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline friend Vector4 operator/(float lhs, const Vector4& rhs) {
+		constexpr friend Vector4 operator/(float lhs, const Vector4& rhs) {
 			return Vector4{
 				.x = lhs / rhs.x,
 				.y = lhs / rhs.y,
@@ -137,7 +135,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Vector4& operator/=(float rhs) {
+		constexpr Vector4& operator/=(float rhs) {
 			x /= rhs;
 			y /= rhs;
 			z /= rhs;
@@ -148,38 +146,50 @@ namespace Miracle {
 
 		/* ----- MISC. ----- */
 
-		inline float getLength() const {
+		float getLength() const {
 			return std::sqrt(x * x + y * y + z * z + w * w);
 		}
 
-		inline Vector4 toNormalized() const {
+		Vector4 toNormalized() const {
 			if (*this == Vector4{}) {
-				return Vector4{};
+				return *this;
 			}
 
 			return *this / getLength();
 		}
 
-		inline Vector4& normalize() {
+		Vector4& normalize() {
 			if (*this == Vector4{}) {
 				return *this;
 			}
 
-			*this /= getLength();
-
-			return *this;
+			return *this /= getLength();
 		}
 
-		inline float distanceTo(const Vector4& vector) const {
+		float distanceTo(const Vector4& vector) const {
 			return (vector - *this).getLength();
 		}
 
-		constexpr inline float dot(const Vector4& rhs) const {
+		constexpr float dot(const Vector4& rhs) const {
 			return x * rhs.x + y * rhs.y + z * rhs.z + w * rhs.w;
 		}
 
-		constexpr inline Vector4 lerp(const Vector4& vector, float t) const {
+		constexpr Vector4 lerp(const Vector4& vector, float t) const {
 			return *this + (vector - *this) * t;
 		}
+	};
+
+	// Directional names in 4D space
+	// https://en.wikipedia.org/wiki/Four-dimensional_space#Orthogonality_and_vocabulary
+
+	class Vector4s {
+	public:
+		Vector4s() = delete;
+
+		static constexpr Vector4 zero    = Vector4{ .x = 0.0f, .y = 0.0f, .z = 0.0f, .w = 0.0f };
+		static constexpr Vector4 right   = Vector4{ .x = 1.0f, .y = 0.0f, .z = 0.0f, .w = 0.0f };
+		static constexpr Vector4 up      = Vector4{ .x = 0.0f, .y = 1.0f, .z = 0.0f, .w = 0.0f };
+		static constexpr Vector4 forward = Vector4{ .x = 0.0f, .y = 0.0f, .z = 1.0f, .w = 0.0f };
+		static constexpr Vector4 ana     = Vector4{ .x = 0.0f, .y = 0.0f, .z = 0.0f, .w = 1.0f };
 	};
 }

@@ -22,7 +22,7 @@ public:
 		const EntityContext& context,
 		float movementSpeed
 	) : Behavior(context),
-		m_velocity(Vector3::up * movementSpeed)
+		m_velocity(Vector3s::up * movementSpeed)
 	{}
 
 	virtual void act() override {
@@ -61,7 +61,7 @@ public:
 
 		auto& transform = m_context.getTransform();
 
-		transform.rotate(Quaternion::createRotation(Vector3::forward, rotation * m_turnSpeed * DeltaTime::get()));
+		transform.rotate(Quaternion::createRotation(Vector3s::forward, rotation * m_turnSpeed * DeltaTime::get()));
 		transform.translate(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
@@ -74,7 +74,7 @@ public:
 					},
 					.appearanceConfig = AppearanceConfig{
 						.meshIndex = 1,
-						.color     = ColorRgb::magenta
+						.color     = ColorRgbs::magenta
 					},
 					.behaviorFactory = BehaviorFactory::createFactoryFor<ProjectileBehavior>(3.0f)
 				}
@@ -113,7 +113,7 @@ public:
 
 		auto& transform = m_context.getTransform();
 
-		transform.rotate(Quaternion::createRotation(Vector3::up, rotation * m_turnSpeed * DeltaTime::get()));
+		transform.rotate(Quaternion::createRotation(Vector3s::up, rotation * m_turnSpeed * DeltaTime::get()));
 		transform.translate(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
 	}
 };
@@ -167,7 +167,7 @@ int main() {
 					{
 						.appearanceConfig = AppearanceConfig{
 							.meshIndex = 0,
-							.color     = ColorRgb::green
+							.color     = ColorRgbs::green
 						},
 						.behaviorFactory = BehaviorFactory::createFactoryFor<PlayerBehavior>(10.0f, 270.0_deg)
 					}

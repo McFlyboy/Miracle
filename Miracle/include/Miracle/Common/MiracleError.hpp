@@ -30,15 +30,15 @@ namespace Miracle {
 	public:
 		MiracleError(ErrorCategory errorCategory, ErrorValue errorValue, const char* message) :
 			runtime_error(message),
-			m_errorCode(createErrorCode(static_cast<ErrorCodeSection>(errorCategory), errorValue))
+			m_errorCode(createErrorCode(errorCategory, errorValue))
 		{}
 
-		inline ErrorCode getErrorCode() const { return m_errorCode; }
+		constexpr ErrorCode getErrorCode() const { return m_errorCode; }
 
 	private:
-		inline ErrorCode createErrorCode(ErrorCodeSection section1, ErrorCodeSection section2) const {
-			return (static_cast<ErrorCode>(section1) << (sizeof(ErrorCodeSection) * 8))
-				| static_cast<ErrorCode>(section2);
+		constexpr ErrorCode createErrorCode(ErrorCategory category, ErrorValue value) const {
+			return (static_cast<ErrorCode>(category) << (sizeof(category) * 8))
+				| static_cast<ErrorCode>(value);
 		}
 	};
 

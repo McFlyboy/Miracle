@@ -54,7 +54,7 @@ namespace Miracle::Application {
 		auto view = sceneCameraTransform != nullptr
 			? Matrix4::createTranslation(-sceneCameraTransform->getTranslation())
 				* Matrix4::createRotation(sceneCameraTransform->getRotation().getInverse())
-			: Matrix4::identity;
+			: Matrix4s::identity;
 
 		auto projection = sceneCamera != nullptr
 			? sceneCamera->getProjectionType() == CameraProjectionType::perspective
