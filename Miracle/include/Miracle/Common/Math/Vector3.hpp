@@ -172,9 +172,12 @@ namespace Miracle {
 	public:
 		Vector3s() = delete;
 
-		static constexpr Vector3 zero    = Vector3{ .x = 0.0f, .y = 0.0f, .z = 0.0f };
-		static constexpr Vector3 right	 = Vector3{ .x = 1.0f, .y = 0.0f, .z = 0.0f };
-		static constexpr Vector3 up		 = Vector3{ .x = 0.0f, .y = 1.0f, .z = 0.0f };
-		static constexpr Vector3 forward = Vector3{ .x = 0.0f, .y = 0.0f, .z = 1.0f };
+		static constexpr Vector3 zero    = Vector3{ .x =  0.0f, .y =  0.0f, .z =  0.0f };
+		static constexpr Vector3 right	 = Vector3{ .x =  1.0f, .y =  0.0f, .z =  0.0f };
+		static constexpr Vector3 left    = Vector3{ .x = -1.0f, .y =  0.0f, .z =  0.0f };
+		static constexpr Vector3 up		 = Vector3{ .x =  0.0f, .y =  1.0f, .z =  0.0f };
+		static constexpr Vector3 down    = Vector3{ .x =  0.0f, .y = -1.0f, .z =  0.0f };
+		static constexpr Vector3 forward = Vector3{ .x =  0.0f, .y =  0.0f, .z =  1.0f };
+		static constexpr Vector3 back    = Vector3{ .x =  0.0f, .y =  0.0f, .z = -1.0f };
 	};
 }

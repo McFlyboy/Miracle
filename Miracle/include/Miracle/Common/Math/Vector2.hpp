@@ -140,8 +140,10 @@ namespace Miracle {
 	public:
 		Vector2s() = delete;
 
-		static constexpr Vector2 zero  = Vector2{ .x = 0.0f, .y = 0.0f };
-		static constexpr Vector2 right = Vector2{ .x = 1.0f, .y = 0.0f };
-		static constexpr Vector2 up	   = Vector2{ .x = 0.0f, .y = 1.0f };
+		static constexpr Vector2 zero  = Vector2{ .x =  0.0f, .y =  0.0f };
+		static constexpr Vector2 right = Vector2{ .x =  1.0f, .y =  0.0f };
+		static constexpr Vector2 left  = Vector2{ .x = -1.0f, .y =  0.0f };
+		static constexpr Vector2 up	   = Vector2{ .x =  0.0f, .y =  1.0f };
+		static constexpr Vector2 down  = Vector2{ .x =  0.0f, .y = -1.0f };
 	};
 }

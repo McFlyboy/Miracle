@@ -186,10 +186,14 @@ namespace Miracle {
 	public:
 		Vector4s() = delete;
 
-		static constexpr Vector4 zero    = Vector4{ .x = 0.0f, .y = 0.0f, .z = 0.0f, .w = 0.0f };
-		static constexpr Vector4 right   = Vector4{ .x = 1.0f, .y = 0.0f, .z = 0.0f, .w = 0.0f };
-		static constexpr Vector4 up      = Vector4{ .x = 0.0f, .y = 1.0f, .z = 0.0f, .w = 0.0f };
-		static constexpr Vector4 forward = Vector4{ .x = 0.0f, .y = 0.0f, .z = 1.0f, .w = 0.0f };
-		static constexpr Vector4 ana     = Vector4{ .x = 0.0f, .y = 0.0f, .z = 0.0f, .w = 1.0f };
+		static constexpr Vector4 zero    = Vector4{ .x =  0.0f, .y =  0.0f, .z =  0.0f, .w =  0.0f };
+		static constexpr Vector4 right   = Vector4{ .x =  1.0f, .y =  0.0f, .z =  0.0f, .w =  0.0f };
+		static constexpr Vector4 left    = Vector4{ .x = -1.0f, .y =  0.0f, .z =  0.0f, .w =  0.0f };
+		static constexpr Vector4 up      = Vector4{ .x =  0.0f, .y =  1.0f, .z =  0.0f, .w =  0.0f };
+		static constexpr Vector4 down    = Vector4{ .x =  0.0f, .y = -1.0f, .z =  0.0f, .w =  0.0f };
+		static constexpr Vector4 forward = Vector4{ .x =  0.0f, .y =  0.0f, .z =  1.0f, .w =  0.0f };
+		static constexpr Vector4 back    = Vector4{ .x =  0.0f, .y =  0.0f, .z = -1.0f, .w =  0.0f };
+		static constexpr Vector4 ana     = Vector4{ .x =  0.0f, .y =  0.0f, .z =  0.0f, .w =  1.0f };
+		static constexpr Vector4 kata    = Vector4{ .x =  0.0f, .y =  0.0f, .z =  0.0f, .w = -1.0f };
 	};
 }

@@ -17,7 +17,7 @@ namespace Miracle {
 			m_factory(std::move(factory))
 		{}
 
-		std::unique_ptr<Behavior> operator()(const EntityContext& context) const {
+		std::unique_ptr<Behavior> produce(const EntityContext& context) const {
 			return m_factory(context);
 		}
 

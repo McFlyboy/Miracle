@@ -67,7 +67,7 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 		if (config.behaviorFactory.has_value()) {
 			m_registry.emplace<std::unique_ptr<Behavior>>(
 				entity,
-				config.behaviorFactory.value()(
+				config.behaviorFactory.value().produce(
 					EntityContext(entity, *this)
 				)
 			);
