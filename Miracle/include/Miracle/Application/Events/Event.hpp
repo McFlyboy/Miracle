@@ -63,7 +63,7 @@ namespace Miracle::Application {
 	public:
 		EventTypesUtilities() = delete;
 
-		static inline bool hasAnyOfSameTypes(const EventTypes& lhs, const EventTypes& rhs) {
+		static bool hasAnyOfSameTypes(const EventTypes& lhs, const EventTypes& rhs) {
 			return (lhs & rhs) != EventTypes::none;
 		}
 	};
@@ -80,6 +80,6 @@ namespace Miracle::Application {
 	public:
 		virtual ~Event() = default;
 
-		inline const EventTypes& getTypes() const { return m_types; }
+		const EventTypes& getTypes() const { return m_types; }
 	};
 }

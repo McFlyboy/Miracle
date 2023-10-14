@@ -28,7 +28,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		~IndexBuffer();
 
-		inline virtual uint32_t getIndexCount() const override { return m_indexCount; }
+		virtual uint32_t getIndexCount() const override { return m_indexCount; }
 
 		virtual void bind() override;
 	};

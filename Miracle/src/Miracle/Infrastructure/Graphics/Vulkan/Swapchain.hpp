@@ -43,7 +43,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		virtual void recreate() override;
 
-		inline const vk::raii::RenderPass& getRenderPass() const { return m_renderPass; }
+		const vk::raii::RenderPass& getRenderPass() const { return m_renderPass; }
 
 	private:
 		uint32_t selectImageCount() const;

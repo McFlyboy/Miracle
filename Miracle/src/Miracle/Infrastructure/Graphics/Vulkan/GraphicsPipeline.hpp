@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <vector>
 
 #include <Miracle/Application/Graphics/IGraphicsPipeline.hpp>
@@ -35,6 +36,6 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		virtual void pushConstants(const Application::PushConstants& constants) override;
 
 	private:
-		vk::raii::ShaderModule createShaderModule(const std::vector<char>& bytecode) const;
+		vk::raii::ShaderModule createShaderModule(const std::vector<std::byte>& bytecode) const;
 	};
 }

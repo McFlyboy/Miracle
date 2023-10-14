@@ -16,7 +16,7 @@ namespace Miracle::Application {
 	public:
 		virtual ~IEcsContainer() = default;
 
-		inline virtual size_t getEntityCount() const = 0;
+		virtual size_t getEntityCount() const = 0;
 
 		virtual EntityId createEntity(const EntityConfig& config) = 0;
 

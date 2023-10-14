@@ -41,7 +41,7 @@ namespace Miracle::Infrastructure::View::TinyFileDialogs {
 			m_icon(icon)
 		{}
 
-		inline void show() const {
+		void show() const {
 			switch (m_icon) {
 			case MessageBoxIcon::info:
 				tinyfd_messageBox(m_title.c_str(), m_message.c_str(), "ok", "info", 1);

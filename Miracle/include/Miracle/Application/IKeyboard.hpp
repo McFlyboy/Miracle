@@ -23,16 +23,16 @@ namespace Miracle::Application {
 		bool m_updated;
 
 	public:
-		inline KeyInputAction getAction() const { return m_action; }
+		KeyInputAction getAction() const { return m_action; }
 
-		inline void setAction(KeyInputAction action) {
+		void setAction(KeyInputAction action) {
 			m_action = action;
 			m_updated = true;
 		}
 
-		inline bool isUpdated() const { return m_updated; }
+		bool isUpdated() const { return m_updated; }
 
-		inline void setAsDated() {
+		void setAsDated() {
 			m_updated = false;
 		}
 	};

@@ -1,6 +1,5 @@
 #include "GraphicsPipeline.hpp"
 
-#include <cstddef>
 #include <exception>
 #include <array>
 
@@ -225,7 +224,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		);
 	}
 
-	vk::raii::ShaderModule GraphicsPipeline::createShaderModule(const std::vector<char>& bytecode) const {
+	vk::raii::ShaderModule GraphicsPipeline::createShaderModule(const std::vector<std::byte>& bytecode) const {
 		try {
 			return m_context.getDevice().createShaderModule(
 				vk::ShaderModuleCreateInfo{

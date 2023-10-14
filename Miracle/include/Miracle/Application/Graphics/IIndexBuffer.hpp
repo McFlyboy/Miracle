@@ -9,7 +9,7 @@ namespace Miracle::Application {
 	public:
 		virtual ~IIndexBuffer() = default;
 
-		inline virtual uint32_t getIndexCount() const = 0;
+		virtual uint32_t getIndexCount() const = 0;
 
 		virtual void bind() = 0;
 	};

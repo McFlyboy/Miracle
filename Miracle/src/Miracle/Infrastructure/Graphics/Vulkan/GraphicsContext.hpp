@@ -71,7 +71,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		virtual void drawIndexed(uint32_t indexCount) override;
 
-		inline IContextTarget& getTarget() override { return m_target; }
+		IContextTarget& getTarget() override { return m_target; }
 
 		virtual void recordCommands(const std::function<void()>& recording) override;
 
@@ -79,37 +79,37 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		virtual void waitForDeviceIdle() override;
 
-		inline const vk::raii::SurfaceKHR& getSurface() const { return m_surface; }
+		const vk::raii::SurfaceKHR& getSurface() const { return m_surface; }
 
-		inline const DeviceInfo& getDeviceInfo() const { return m_deviceInfo; }
+		const DeviceInfo& getDeviceInfo() const { return m_deviceInfo; }
 
-		inline const vk::raii::Device& getDevice() const { return m_device; }
+		const vk::raii::Device& getDevice() const { return m_device; }
 
-		inline const vk::raii::Queue& getGraphicsQueue() const { return m_graphicsQueue; }
+		const vk::raii::Queue& getGraphicsQueue() const { return m_graphicsQueue; }
 
-		inline const vk::raii::Queue& getPresentQueue() const { return m_presentQueue; }
+		const vk::raii::Queue& getPresentQueue() const { return m_presentQueue; }
 
-		inline const vk::raii::CommandBuffer& getCommandBuffer() const {
+		const vk::raii::CommandBuffer& getCommandBuffer() const {
 			return m_commandBuffers[m_currentCommandBufferIndex];
 		}
 
-		inline const vk::raii::Semaphore& getCommandExecutionWaitSemaphore() const {
+		const vk::raii::Semaphore& getCommandExecutionWaitSemaphore() const {
 			return m_commandExecutionWaitSemaphores[m_currentCommandBufferIndex];
 		}
 
-		inline const vk::raii::Semaphore& getCommandExecutionSignalSemaphore() const {
+		const vk::raii::Semaphore& getCommandExecutionSignalSemaphore() const {
 			return m_commandExecutionSignalSemaphores[m_currentCommandBufferIndex];
 		}
 
-		inline const vma::Allocator& getAllocator() const { return m_allocator; }
+		const vma::Allocator& getAllocator() const { return m_allocator; }
 
 		SurfaceExtent getCurrentSurfaceExtent() const;
 
-		inline vk::SurfaceTransformFlagBitsKHR getCurrentSurfaceTransformation() const {
+		vk::SurfaceTransformFlagBitsKHR getCurrentSurfaceTransformation() const {
 			return m_physicalDevice.getSurfaceCapabilitiesKHR(*m_surface).currentTransform;
 		}
 
-		inline void nextCommandBuffer() {
+		void nextCommandBuffer() {
 			++m_currentCommandBufferIndex %= m_commandBuffers.size();
 		}
 

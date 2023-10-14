@@ -11,6 +11,6 @@ namespace Miracle::Infrastructure::Persistance::FileSystem {
 	public:
 		FileAccess(Application::ILogger& logger);
 
-		virtual std::vector<char> readFileAsBinary(const std::string_view& filePath) const override;
+		virtual std::vector<std::byte> readFileAsBinary(const std::filesystem::path& filePath) const override;
 	};
 }

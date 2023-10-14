@@ -14,7 +14,7 @@ namespace Miracle {
 	public:
 		TextInput() = delete;
 
-		static inline void setTextInputReceiver(
+		static void setTextInputReceiver(
 			std::u32string& textInputReceiver,
 			TextInputReceivedCallback&& textInputReceivedCallback = []() {}
 		) {
@@ -26,7 +26,7 @@ namespace Miracle {
 			);
 		}
 
-		static inline void unsetTextInputReceiver() {
+		static void unsetTextInputReceiver() {
 			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			App::s_currentApp->m_dependencies->getTextInputService().unsetTextInputReceiver();

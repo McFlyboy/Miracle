@@ -12,12 +12,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		std::optional<uint32_t> graphicsFamilyIndex = {};
 		std::optional<uint32_t> presentFamilyIndex = {};
 
-		inline bool hasAllIndicesSet() const {
+		bool hasAllIndicesSet() const {
 			return graphicsFamilyIndex.has_value()
 				&& presentFamilyIndex.has_value();
 		}
 
-		inline std::set<uint32_t> createSetOfAllUniqueIndices() const {
+		std::set<uint32_t> createSetOfAllUniqueIndices() const {
 			auto uniqueIndices = std::set<uint32_t>();
 
 			if (graphicsFamilyIndex.has_value()) {

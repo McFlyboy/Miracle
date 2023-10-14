@@ -22,9 +22,9 @@ namespace Miracle::Application {
 	public:
 		PerformanceCountingService(IMultimediaFramework& multimediaFramework);
 
-		inline int getFps() const { return m_fps; }
+		int getFps() const { return m_fps; }
 
-		inline int getUps() const { return m_ups; }
+		int getUps() const { return m_ups; }
 
 		void incrementFrameCounter();
 

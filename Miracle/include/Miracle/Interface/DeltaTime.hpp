@@ -7,7 +7,7 @@ namespace Miracle {
 	public:
 		DeltaTime() = delete;
 
-		static inline float get() {
+		static float get() {
 			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			return App::s_currentApp->m_dependencies->getDeltaTimeService()

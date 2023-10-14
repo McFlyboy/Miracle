@@ -12,16 +12,16 @@ namespace Miracle {
 
 		virtual void scheduleEntityDestruction(EntityId entity) = 0;
 
-		inline virtual Transform& getTransform(EntityId entity) = 0;
+		virtual Transform& getTransform(EntityId entity) = 0;
 
-		inline virtual const Transform& getTransform(EntityId entity) const = 0;
+		virtual const Transform& getTransform(EntityId entity) const = 0;
 
-		inline virtual Camera& getCamera(EntityId entity) = 0;
+		virtual Camera& getCamera(EntityId entity) = 0;
 
-		inline virtual const Camera& getCamera(EntityId entity) const = 0;
+		virtual const Camera& getCamera(EntityId entity) const = 0;
 
-		inline virtual Appearance& getAppearance(EntityId entity) = 0;
+		virtual Appearance& getAppearance(EntityId entity) = 0;
 
-		inline virtual const Appearance& getAppearance(EntityId entity) const = 0;
+		virtual const Appearance& getAppearance(EntityId entity) const = 0;
 	};
 }

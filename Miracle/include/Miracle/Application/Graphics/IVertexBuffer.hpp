@@ -9,7 +9,7 @@ namespace Miracle::Application {
 	public:
 		virtual ~IVertexBuffer() = default;
 
-		inline virtual uint32_t getVertexCount() const = 0;
+		virtual uint32_t getVertexCount() const = 0;
 
 		virtual void bind() = 0;
 	};

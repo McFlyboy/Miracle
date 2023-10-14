@@ -28,7 +28,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		~VertexBuffer();
 
-		inline virtual uint32_t getVertexCount() const override { return m_vertexCount; }
+		virtual uint32_t getVertexCount() const override { return m_vertexCount; }
 
 		virtual void bind() override;
 	};

@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 
+#include "Common/Random.hpp"
 #include "Common/Models/WindowConfig.hpp"
 #include "Common/Models/RendererConfig.hpp"
 #include "Common/Models/SceneConfig.hpp"
@@ -36,6 +37,7 @@ namespace Miracle {
 		Application::TextInputService m_textInputService;
 		Application::DeltaTimeService m_deltaTimeService;
 		Application::PerformanceCountingService m_performanceCountingService;
+		Random m_random = {};
 
 	public:
 		EngineDependencies(
@@ -47,36 +49,38 @@ namespace Miracle {
 			Application::EventDispatcher& eventDispatcher
 		);
 
-		inline Application::IMultimediaFramework& getMultimediaFramework() {
+		Application::IMultimediaFramework& getMultimediaFramework() {
 			return *m_multimediaFramework.get();
 		}
 
-		inline Application::IWindow& getWindow() {
+		Application::IWindow& getWindow() {
 			return *m_window.get();
 		}
 
-		inline Application::IKeyboard& getKeyboard() {
+		Application::IKeyboard& getKeyboard() {
 			return *m_keyboard.get();
 		}
 
-		inline Application::Renderer& getRenderer() {
+		Application::Renderer& getRenderer() {
 			return m_renderer;
 		}
 
-		inline Application::SceneManager& getSceneManager() {
+		Application::SceneManager& getSceneManager() {
 			return m_sceneManager;
 		}
 
-		inline Application::TextInputService& getTextInputService() {
+		Application::TextInputService& getTextInputService() {
 			return m_textInputService;
 		}
 
-		inline Application::DeltaTimeService& getDeltaTimeService() {
+		Application::DeltaTimeService& getDeltaTimeService() {
 			return m_deltaTimeService;
 		}
 
-		inline Application::PerformanceCountingService& getPerformanceCountingService() {
+		Application::PerformanceCountingService& getPerformanceCountingService() {
 			return m_performanceCountingService;
 		}
+
+		Random& getRandom() { return m_random; }
 	};
 }

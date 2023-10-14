@@ -38,11 +38,11 @@ namespace Miracle::Infrastructure::View::Glfw {
 
 		~Window();
 
-		inline GLFWwindow* operator*() const { return m_window; }
+		GLFWwindow* operator*() const { return m_window; }
 
-		inline Application::EventDispatcher& getEventDispatcher() const { return m_eventDispatcher; }
+		Application::EventDispatcher& getEventDispatcher() const { return m_eventDispatcher; }
 
-		inline virtual bool isSizeChanged() override { return std::exchange(m_sizeChanged, false); }
+		virtual bool isSizeChanged() override { return std::exchange(m_sizeChanged, false); }
 
 		virtual bool isCurrentlyPresentable() const override;
 

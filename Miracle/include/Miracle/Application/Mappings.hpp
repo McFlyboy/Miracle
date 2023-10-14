@@ -15,7 +15,7 @@ namespace Miracle::Application {
 	public:
 		Mappings() = delete;
 
-		static inline WindowInitProps toWindowInitProps(
+		static WindowInitProps toWindowInitProps(
 			const WindowConfig& windowConfig,
 			const std::u8string_view& defaultTitle
 		) {
@@ -26,7 +26,7 @@ namespace Miracle::Application {
 			};
 		}
 
-		static inline RendererInitProps toRendererInitProps(
+		static RendererInitProps toRendererInitProps(
 			const RendererConfig& rendererConfig
 		) {
 			return RendererInitProps{
@@ -38,7 +38,7 @@ namespace Miracle::Application {
 			};
 		}
 
-		static inline SceneInitProps toSceneInitProps(
+		static SceneInitProps toSceneInitProps(
 			const SceneConfig& sceneConfig
 		) {
 			return SceneInitProps{

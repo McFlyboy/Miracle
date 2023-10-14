@@ -29,10 +29,10 @@ namespace Miracle::Application {
 			m_modifiers(modifiers)
 		{}
 
-		inline KeyboardKey getKey() const { return m_key; }
+		KeyboardKey getKey() const { return m_key; }
 
-		inline KeyInputAction getAction() const { return m_action; }
+		KeyInputAction getAction() const { return m_action; }
 
-		inline KeyboardModifierKeys getModifiers() const { return m_modifiers; }
+		KeyboardModifierKeys getModifiers() const { return m_modifiers; }
 	};
 }

@@ -21,6 +21,6 @@ namespace Miracle::Application {
 			m_text(1, character)
 		{}
 
-		inline std::u32string getText() const { return m_text; }
+		std::u32string getText() const { return m_text; }
 	};
 }
