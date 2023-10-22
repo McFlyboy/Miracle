@@ -1,7 +1,7 @@
 #pragma once
 
 #include <numbers>
-#include <type_traits>
+#include <concepts>
 #include <compare>
 
 namespace Miracle {
@@ -185,5 +185,5 @@ namespace Miracle {
 	}
 
 	template<typename T>
-	concept Angle = std::is_same_v<T, Degrees> || std::is_same_v<T, Radians>;
+	concept Angle = std::same_as<T, Degrees> || std::same_as<T, Radians>;
 }

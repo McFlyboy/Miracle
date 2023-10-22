@@ -9,11 +9,8 @@ static void updateTitle() {
 				+ " - FPS: " + std::to_string(PerformanceCounters::getFps())
 				+ " - UPS: " + std::to_string(PerformanceCounters::getUps())
 				+ " - Entity count: " + std::to_string(CurrentScene::getEntityCount())
-				+ " - Random number: " + std::to_string(CurrentApp::getRandom().next<int>())
 		)
 	);
-
-	auto test = 3.0f;
 }
 
 class ProjectileBehavior : public Behavior {

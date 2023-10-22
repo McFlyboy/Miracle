@@ -1,27 +1,34 @@
 #pragma once
 
+#include <cstddef>
 #include <random>
 #include <chrono>
-#include <type_traits>
+#include <concepts>
 
 namespace Miracle {
 	template<typename T>
-	concept RandomInt = std::is_same_v<T, short>
-		|| std::is_same_v<T, int>
-		|| std::is_same_v<T, long>
-		|| std::is_same_v<T, long long>
-		|| std::is_same_v<T, unsigned short>
-		|| std::is_same_v<T, unsigned int>
-		|| std::is_same_v<T, unsigned long>
-		|| std::is_same_v<T, unsigned long long>;
+	concept RandomInt = std::same_as<T, short>
+		|| std::same_as<T, int>
+		|| std::same_as<T, long>
+		|| std::same_as<T, long long>
+		|| std::same_as<T, unsigned short>
+		|| std::same_as<T, unsigned int>
+		|| std::same_as<T, unsigned long>
+		|| std::same_as<T, unsigned long long>;
 
 	template<typename T>
-	concept RandomFloat = std::is_same_v<T, float>
-		|| std::is_same_v<T, double>
-		|| std::is_same_v<T, long double>;
+	concept RandomFloat = std::same_as<T, float>
+		|| std::same_as<T, double>
+		|| std::same_as<T, long double>;
 
 	template<typename T>
-	concept RandomBool = std::is_same_v<T, bool>;
+	concept RandomBool = std::same_as<T, bool>;
+
+	template<typename T>
+	concept RandomContainerOrView = requires(T containerOrView) {
+		{ containerOrView[size_t{}] };
+		{ containerOrView.size() } -> std::same_as<size_t>;
+	};
 
 	class Random {
 	private:
@@ -78,6 +85,10 @@ namespace Miracle {
 		template<RandomBool>
 		auto next(double probabilityForTrue) {
 			return std::bernoulli_distribution(probabilityForTrue)(m_generator);
+		}
+
+		auto&& element(RandomContainerOrView auto&& containerOrView) {
+			return containerOrView[next<size_t>(containerOrView.size() - 1)];
 		}
 	};
 }
