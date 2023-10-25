@@ -2,19 +2,19 @@
 
 #include <functional>
 #include <vector>
+#include <typeindex>
 
 #include "Events/Event.hpp"
 
 namespace Miracle::Application {
 	using EventSubscriptionId = int;
-	using EventCallback = std::function<void(const Event&)>;
+	using EventCallback = std::function<void(const EventBase&)>;
 
 	struct EventSubscription {
 		EventSubscriptionId id;
-		EventTypes subscribedTypes;
+		std::vector<std::type_index> subscribedEvents;
 		EventCallback callback;
 	};
-
 
 	class EventDispatcher {
 	private:
@@ -22,10 +22,18 @@ namespace Miracle::Application {
 		EventSubscriptionId m_nextId = 0;
 
 	public:
-		void postEvent(const Event& event) const;
+		void postEvent(const Event auto& event) const {
+			for (auto& subscription : m_subscriptions) {
+				for (auto& subscribedEvent : subscription.subscribedEvents) {
+					if (subscribedEvent == std::type_index(typeid(event))) {
+						subscription.callback(event);
+					}
+				}
+			}
+		}
 
 		EventSubscriptionId subscribe(
-			const EventTypes& subscribedTypes,
+			std::vector<std::type_index>&& subscribedEvents,
 			EventCallback&& callback
 		);
 

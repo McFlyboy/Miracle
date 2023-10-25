@@ -19,8 +19,8 @@
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	class GraphicsContext : public Application::IGraphicsContext {
 	private:
-		static inline constexpr uint32_t s_vulkanApiVersion = VK_API_VERSION_1_1;
-		static inline constexpr auto s_validationLayerNames = std::array{ "VK_LAYER_KHRONOS_validation" };
+		static constexpr inline uint32_t s_vulkanApiVersion = VK_API_VERSION_1_1;
+		static constexpr inline auto s_validationLayerNames = std::array{ "VK_LAYER_KHRONOS_validation" };
 
 		Application::ILogger& m_logger;
 		IContextTarget& m_target;
@@ -135,8 +135,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			const VkDebugUtilsMessengerCallbackDataEXT* callbackData,
 			void* userData
 		);
-
 #endif
+
 		std::pair<vk::raii::PhysicalDevice, DeviceInfo> getMostOptimalPhysicalDevice() const;
 
 		vk::raii::Device createDevice() const;

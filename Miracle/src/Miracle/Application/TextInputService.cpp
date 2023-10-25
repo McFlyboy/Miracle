@@ -2,8 +2,6 @@
 
 #include <utility>
 
-#include <Miracle/Application/Events/TextInputEvent.hpp>
-
 namespace Miracle::Application {
 	TextInputService::TextInputService(EventDispatcher& dispatcher) :
 		EventSubscriber(dispatcher)
@@ -22,18 +20,18 @@ namespace Miracle::Application {
 		m_callback = []() {};
 	}
 
-	void TextInputService::onEvent(const Event& event) {
+	void TextInputService::onEvent(const EventBase& event) {
 		if (m_receiver == nullptr) return;
 
 		auto& textInputEvent = reinterpret_cast<const TextInputEvent&>(event);
 
-		if (textInputEvent.getText() == U"\b") {
+		if (textInputEvent.text == U"\b") {
 			if (!m_receiver->empty()) {
 				m_receiver->pop_back();
 			}
 		}
 		else {
-			*m_receiver += textInputEvent.getText();
+			*m_receiver += textInputEvent.text;
 		}
 
 		m_callback();

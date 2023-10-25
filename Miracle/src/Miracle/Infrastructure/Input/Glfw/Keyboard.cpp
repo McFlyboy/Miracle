@@ -2,8 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include <Miracle/Definitions.hpp>
-#include <Miracle/Application/Events/KeyInputEvent.hpp>
+#include <Miracle/Environment.hpp>
 #include <Miracle/Application/Events/TextInputEvent.hpp>
 #include <Miracle/Common/UnicodeConverter.hpp>
 
@@ -22,11 +21,11 @@ namespace Miracle::Infrastructure::Input::Glfw {
 			[](GLFWwindow* window, int key, int scanCode, int action, int mods) {
 				auto& parentWindow = *reinterpret_cast<View::Glfw::Window*>(glfwGetWindowUserPointer(window));
 				parentWindow.getEventDispatcher().postEvent(
-					Application::KeyInputEvent(
-						static_cast<KeyboardKey>(key),
-						static_cast<Application::KeyInputAction>(action),
-						static_cast<KeyboardModifierKeys>(mods)
-					)
+					Application::KeyInputEvent{
+						.key       = static_cast<KeyboardKey>(key),
+						.action    = static_cast<Application::KeyInputAction>(action),
+						.modifiers = static_cast<KeyboardModifierKeys>(mods)
+					}
 				);
 			}
 		);
@@ -36,7 +35,7 @@ namespace Miracle::Infrastructure::Input::Glfw {
 			[](GLFWwindow* window, unsigned int codePoint) {
 				auto& parentWindow = *reinterpret_cast<View::Glfw::Window*>(glfwGetWindowUserPointer(window));
 				parentWindow.getEventDispatcher().postEvent(
-					Application::TextInputEvent(codePoint)
+					Application::TextInputEvent{ .text = std::u32string(1, static_cast<char32_t>(codePoint)) }
 				);
 			}
 		);
@@ -47,40 +46,42 @@ namespace Miracle::Infrastructure::Input::Glfw {
 		glfwSetCharCallback(*m_window, nullptr);
 	}
 
-	void Keyboard::onEvent(const Application::Event& event) {
+	void Keyboard::onEvent(const Application::EventBase& event) {
 		auto& keyInputEvent = reinterpret_cast<const Application::KeyInputEvent&>(event);
 
-		if (keyInputEvent.getKey() == KeyboardKey::keyUnknown) {
+		if (keyInputEvent.key == KeyboardKey::keyUnknown) {
 			return;
 		}
 
-		auto& keyState = m_keyStates[static_cast<size_t>(keyInputEvent.getKey())];
+		auto& keyState = m_keyStates[static_cast<size_t>(keyInputEvent.key)];
 
-		keyState.setAction(keyInputEvent.getAction());
+		keyState.setAction(keyInputEvent.action);
 
 		if (
-			keyInputEvent.getKey() == KeyboardKey::keyBackspace
-				&& keyInputEvent.getAction() != Application::KeyInputAction::keyReleased
+			keyInputEvent.key == KeyboardKey::keyBackspace
+				&& keyInputEvent.action != Application::KeyInputAction::keyReleased
 		) {
 			m_window.getEventDispatcher().postEvent(
-				Application::TextInputEvent(U'\b')
+				Application::TextInputEvent{ .text = std::u32string(1, U'\b') }
 			);
 		}
-		else if (
-#ifdef MIRACLE_PLATFORM_MACOS
-			keyInputEvent.getModifiers() == KeyboardModifierKeys::modSuper
-#else
-			keyInputEvent.getModifiers() == KeyboardModifierKeys::modControl
-#endif
-				&& keyInputEvent.getKey() == KeyboardKey::keyV
-				&& keyInputEvent.getAction() != Application::KeyInputAction::keyReleased
-		) {
-			auto clipboardContent = m_multimediaFramework.getClipboardContent();
+		else {
+			constexpr KeyboardModifierKeys pasteModifierKey = Environment::getCurrentPlatform() == Platform::macos
+				? KeyboardModifierKeys::modSuper
+				: KeyboardModifierKeys::modControl;
 
-			if (clipboardContent.has_value()) {
-				m_window.getEventDispatcher().postEvent(
-					Application::TextInputEvent(UnicodeConverter::toUtf32(clipboardContent.value()))
-				);
+			if (
+				keyInputEvent.modifiers == pasteModifierKey
+					&& keyInputEvent.key == KeyboardKey::keyV
+					&& keyInputEvent.action != Application::KeyInputAction::keyReleased
+			) {
+				auto clipboardContent = m_multimediaFramework.getClipboardContent();
+
+				if (clipboardContent.has_value()) {
+					m_window.getEventDispatcher().postEvent(
+						Application::TextInputEvent{ .text = UnicodeConverter::toUtf32(clipboardContent.value()) }
+					);
+				}
 			}
 		}
 	}

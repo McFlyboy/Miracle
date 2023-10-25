@@ -4,7 +4,7 @@
 #include <string>
 #include <string_view>
 
-// UTF-8 encoding conversion:
+// UTF-8 encoding:
 // https://en.wikipedia.org/wiki/UTF-8#Encoding
 
 namespace Miracle {

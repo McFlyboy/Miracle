@@ -6,11 +6,12 @@
 #include <Miracle/Application/IMultimediaFramework.hpp>
 #include <Miracle/Application/EventDispatcher.hpp>
 #include <Miracle/Application/EventSubscriber.hpp>
+#include <Miracle/Application/Events/KeyInputEvent.hpp>
 #include <Miracle/Infrastructure/View/Glfw/Window.hpp>
 
 namespace Miracle::Infrastructure::Input::Glfw {
 	class Keyboard :
-		public Application::EventSubscriber<Application::EventTypes::keyInput>,
+		public Application::EventSubscriber<Application::KeyInputEvent>,
 		public Application::IKeyboard
 	{
 	private:
@@ -28,7 +29,7 @@ namespace Miracle::Infrastructure::Input::Glfw {
 
 		~Keyboard();
 
-		virtual void onEvent(const Application::Event& event) override;
+		virtual void onEvent(const Application::EventBase& event) override;
 
 		virtual bool isKeyPressed(KeyboardKey key) const override;
 

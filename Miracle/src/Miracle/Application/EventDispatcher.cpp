@@ -3,22 +3,14 @@
 #include <utility>
 
 namespace Miracle::Application {
-	void EventDispatcher::postEvent(const Event& event) const {
-		for (auto& subscription : m_subscriptions) {
-			if (EventTypesUtilities::hasAnyOfSameTypes(subscription.subscribedTypes, event.getTypes())) {
-				subscription.callback(event);
-			}
-		}
-	}
-
 	EventSubscriptionId EventDispatcher::subscribe(
-		const EventTypes& subscribedTypes,
+		std::vector<std::type_index>&& subscribedEvents,
 		EventCallback&& callback
 	) {
 		m_subscriptions.push_back(
 			EventSubscription{
 				.id              = m_nextId,
-				.subscribedTypes = subscribedTypes,
+				.subscribedEvents = std::move(subscribedEvents),
 				.callback        = std::move(callback)
 			}
 		);

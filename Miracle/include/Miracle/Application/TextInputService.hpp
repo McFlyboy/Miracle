@@ -5,11 +5,12 @@
 
 #include "EventDispatcher.hpp"
 #include "EventSubscriber.hpp"
+#include "Events/TextInputEvent.hpp"
 
 namespace Miracle::Application {
 	using TextInputReceivedCallback = std::function<void()>;
 
-	class TextInputService : public EventSubscriber<EventTypes::textInput> {
+	class TextInputService : public EventSubscriber<TextInputEvent> {
 	private:
 		std::u32string* m_receiver = nullptr;
 		TextInputReceivedCallback m_callback = []() {};
@@ -24,6 +25,6 @@ namespace Miracle::Application {
 
 		void unsetTextInputReceiver();
 
-		virtual void onEvent(const Event& event) override;
+		virtual void onEvent(const EventBase& event) override;
 	};
 }
