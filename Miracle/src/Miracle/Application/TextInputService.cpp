@@ -30,7 +30,7 @@ namespace Miracle::Application {
 				return;
 			}
 
-			auto reverseIterator = textInputEvent.text.rbegin();
+			auto reverseIterator = m_receiver->rbegin();
 			if (*reverseIterator >> 7 == 0) {
 				m_receiver->pop_back();
 			}
