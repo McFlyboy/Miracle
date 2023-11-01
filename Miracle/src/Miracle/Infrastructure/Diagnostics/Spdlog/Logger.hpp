@@ -7,6 +7,8 @@ namespace Miracle::Infrastructure::Diagnostics::Spdlog {
 	public:
 		Logger();
 
+		~Logger();
+
 		virtual void info(const std::string_view& message) const override;
 
 		virtual void warning(const std::string_view& message) const override;

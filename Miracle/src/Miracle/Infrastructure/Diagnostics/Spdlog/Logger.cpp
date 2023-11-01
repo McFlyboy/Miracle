@@ -9,6 +9,10 @@ namespace Miracle::Infrastructure::Diagnostics::Spdlog {
 		spdlog::set_pattern("%^[%H:%M:%S] %7l: %v%$");
 	}
 
+	Logger::~Logger() {
+		spdlog::shutdown();
+	}
+
 	void Logger::info(const std::string_view& message) const {
 		spdlog::info(message);
 	}
