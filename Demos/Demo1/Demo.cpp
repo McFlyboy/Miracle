@@ -182,6 +182,12 @@ int main() {
 				TextInput::setTextInputReceiver(text, updateTitle);
 				PerformanceCounters::setCountersUpdatedCallback(updateTitle);
 				updateTitle();
+
+				Keyboard::setKeyPressedCallback(
+					[](KeyboardKey key) {
+						Logger::info(std::to_string(static_cast<int>(key)));
+					}
+				);
 			},
 			.updateScript = []() {
 				if (Keyboard::isKeyPressed(KeyboardKey::keyEscape)) {

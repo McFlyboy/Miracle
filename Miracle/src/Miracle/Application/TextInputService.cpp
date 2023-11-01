@@ -25,13 +25,13 @@ namespace Miracle::Application {
 
 		auto& textInputEvent = reinterpret_cast<const TextInputEvent&>(event);
 
-		if (textInputEvent.text == u8"\b") {
+		if (textInputEvent.text == u8"\b") [[unlikely]] {
 			if (m_receiver->empty()) {
 				return;
 			}
 
 			auto reverseIterator = m_receiver->rbegin();
-			if (*reverseIterator >> 7 == 0) {
+			if (*reverseIterator >> 7 == 0) [[likely]] {
 				m_receiver->pop_back();
 			}
 			else if (*(++reverseIterator) >> 5 == 0b110) {

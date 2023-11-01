@@ -49,7 +49,7 @@ namespace Miracle::Infrastructure::Input::Glfw {
 	void Keyboard::onEvent(const Application::EventBase& event) {
 		auto& keyInputEvent = reinterpret_cast<const Application::KeyInputEvent&>(event);
 
-		if (keyInputEvent.key == KeyboardKey::keyUnknown) {
+		if (keyInputEvent.key == KeyboardKey::keyUnknown) [[unlikely]]  {
 			return;
 		}
 
@@ -57,33 +57,38 @@ namespace Miracle::Infrastructure::Input::Glfw {
 
 		keyState.setAction(keyInputEvent.action);
 
+		if (keyInputEvent.action == Application::KeyInputAction::keyPressed) {
+			m_keyPressedCallback(keyInputEvent.key);
+		}
+
 		if (
 			keyInputEvent.key == KeyboardKey::keyBackspace
 				&& keyInputEvent.action != Application::KeyInputAction::keyReleased
-		) {
+		) [[unlikely]] {
 			m_window.getEventDispatcher().postEvent(
 				Application::TextInputEvent{ .text = std::u8string(1, u8'\b') }
 			);
+
+			return;
 		}
-		else {
-			constexpr KeyboardModifierKeys pasteModifierKey = Environment::getCurrentPlatform() == Platform::macos
-				? KeyboardModifierKeys::modSuper
-				: KeyboardModifierKeys::modControl;
 
-			if (
-				keyInputEvent.modifiers == pasteModifierKey
-					&& keyInputEvent.key == KeyboardKey::keyV
-					&& keyInputEvent.action != Application::KeyInputAction::keyReleased
-			) {
-				auto clipboardContent = m_multimediaFramework.getClipboardContent();
+		constexpr KeyboardModifierKeys pasteModifierKey = Environment::getCurrentPlatform() == Platform::macos
+			? KeyboardModifierKeys::modSuper
+			: KeyboardModifierKeys::modControl;
 
-				if (clipboardContent.has_value()) {
-					auto& content = clipboardContent.value();
+		if (
+			keyInputEvent.modifiers == pasteModifierKey
+				&& keyInputEvent.key == KeyboardKey::keyV
+				&& keyInputEvent.action != Application::KeyInputAction::keyReleased
+		) [[unlikely]] {
+			auto clipboardContent = m_multimediaFramework.getClipboardContent();
 
-					m_window.getEventDispatcher().postEvent(
-						Application::TextInputEvent{ .text = std::u8string(content.data(), content.size()) }
-					);
-				}
+			if (clipboardContent.has_value()) {
+				auto& content = clipboardContent.value();
+
+				m_window.getEventDispatcher().postEvent(
+					Application::TextInputEvent{ .text = std::u8string(content.data(), content.size()) }
+				);
 			}
 		}
 	}

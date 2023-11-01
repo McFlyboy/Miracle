@@ -1,6 +1,8 @@
 #pragma once
 
 #include <array>
+#include <functional>
+#include <utility>
 
 #include <Miracle/Application/IKeyboard.hpp>
 #include <Miracle/Application/IMultimediaFramework.hpp>
@@ -19,6 +21,7 @@ namespace Miracle::Infrastructure::Input::Glfw {
 		View::Glfw::Window& m_window;
 
 		std::array<Application::KeyState, static_cast<size_t>(KeyboardKey::keyLast) + 1> m_keyStates = {};
+		std::function<void(KeyboardKey)> m_keyPressedCallback = [](KeyboardKey) {};
 
 	public:
 		Keyboard(
@@ -38,5 +41,13 @@ namespace Miracle::Infrastructure::Input::Glfw {
 		virtual bool isKeyHeld(KeyboardKey key) const override;
 
 		virtual void setAllKeyStatesAsDated() override;
+
+		virtual void setKeyPressedCallback(std::function<void(KeyboardKey)>&& keyPressedCallback) override {
+			m_keyPressedCallback = std::move(keyPressedCallback);
+		}
+
+		virtual void unsetKeyPressedCallback() override {
+			m_keyPressedCallback = [](KeyboardKey) {};
+		}
 	};
 }
