@@ -67,6 +67,6 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 			const std::function<void(const Transform&, const Appearance&)>& forEach
 		) const override;
 
-		virtual void forEachBehavior(const std::function<void(Behavior&)>& forEach) override;
+		virtual void forEachBehavior(const std::function<void(BehaviorBase&)>& forEach) override;
 	};
 }

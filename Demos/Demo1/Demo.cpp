@@ -16,7 +16,7 @@ static void updateTitle() {
 	);
 }
 
-class ProjectileBehavior : public Behavior {
+class ProjectileBehavior : public BehaviorBase {
 private:
 	Vector3 m_velocity;
 
@@ -24,7 +24,7 @@ public:
 	ProjectileBehavior(
 		const EntityContext& context,
 		float movementSpeed
-	) : Behavior(context),
+	) : BehaviorBase(context),
 		m_velocity(Vector3s::up * movementSpeed)
 	{}
 
@@ -39,7 +39,7 @@ public:
 	}
 };
 
-class PlayerBehavior : public Behavior {
+class PlayerBehavior : public BehaviorBase {
 private:
 	float m_movementSpeed;
 	Degrees m_turnSpeed;
@@ -49,7 +49,7 @@ public:
 		const EntityContext& context,
 		float movementSpeed,
 		Degrees turnSpeed
-	) : Behavior(context),
+	) : BehaviorBase(context),
 		m_movementSpeed(movementSpeed),
 		m_turnSpeed(turnSpeed)
 	{}
@@ -90,7 +90,7 @@ public:
 	}
 };
 
-class CameraBehavior : public Behavior {
+class CameraBehavior : public BehaviorBase {
 private:
 	float m_movementSpeed;
 	Degrees m_turnSpeed;
@@ -100,7 +100,7 @@ public:
 		const EntityContext& context,
 		float movementSpeed,
 		Degrees turnSpeed
-	) : Behavior(context),
+	) : BehaviorBase(context),
 		m_movementSpeed(movementSpeed),
 		m_turnSpeed(turnSpeed)
 	{}

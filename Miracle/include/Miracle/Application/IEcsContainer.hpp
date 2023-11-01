@@ -38,6 +38,6 @@ namespace Miracle::Application {
 			const std::function<void(const Transform&, const Appearance&)>& forEach
 		) const = 0;
 
-		virtual void forEachBehavior(const std::function<void(Behavior&)>& forEach) = 0;
+		virtual void forEachBehavior(const std::function<void(BehaviorBase&)>& forEach) = 0;
 	};
 }
