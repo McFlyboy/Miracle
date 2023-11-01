@@ -24,12 +24,27 @@ namespace Miracle {
 			};
 		}
 
+		constexpr Vector2 toVector2() {
+			return Vector2{
+				.x = x,
+				.y = y
+			};
+		}
+
 		static constexpr Vector4 createFromVector3(const Vector3& xyz, float w = 0.0f) {
 			return Vector4{
 				.x = xyz.x,
 				.y = xyz.y,
 				.z = xyz.z,
 				.w = w
+			};
+		}
+
+		constexpr Vector3 toVector3() {
+			return Vector3{
+				.x = x,
+				.y = y,
+				.z = z
 			};
 		}
 

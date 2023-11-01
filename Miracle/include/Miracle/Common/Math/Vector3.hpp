@@ -25,6 +25,13 @@ namespace Miracle {
 			};
 		}
 
+		constexpr Vector2 toVector2() {
+			return Vector2{
+				.x = x,
+				.y = y
+			};
+		}
+
 		/* ----- SIGNED CONVERTION ----- */
 
 		constexpr Vector3 operator+() const { return *this; }
