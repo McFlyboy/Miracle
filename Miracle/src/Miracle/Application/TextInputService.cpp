@@ -8,7 +8,7 @@ namespace Miracle::Application {
 	{}
 
 	void TextInputService::setTextInputReceiver(
-		std::u32string& textInputReceiver,
+		std::u8string& textInputReceiver,
 		TextInputReceivedCallback&& textInputReceivedCallback
 	) {
 		m_receiver = &textInputReceiver;
@@ -25,9 +25,32 @@ namespace Miracle::Application {
 
 		auto& textInputEvent = reinterpret_cast<const TextInputEvent&>(event);
 
-		if (textInputEvent.text == U"\b") {
-			if (!m_receiver->empty()) {
+		if (textInputEvent.text == u8"\b") {
+			if (m_receiver->empty()) {
+				return;
+			}
+
+			auto reverseIterator = textInputEvent.text.rbegin();
+			if (*reverseIterator >> 7 == 0) {
 				m_receiver->pop_back();
+			}
+			else if (*(++reverseIterator) >> 5 == 0b110) {
+				m_receiver->pop_back();
+				m_receiver->pop_back();
+			}
+			else if (*(++reverseIterator) >> 4 == 0b1110) {
+				m_receiver->pop_back();
+				m_receiver->pop_back();
+				m_receiver->pop_back();
+			}
+			else if (*(++reverseIterator) >> 3 == 0b11110) {
+				m_receiver->pop_back();
+				m_receiver->pop_back();
+				m_receiver->pop_back();
+				m_receiver->pop_back();
+			}
+			else {
+				return;
 			}
 		}
 		else {

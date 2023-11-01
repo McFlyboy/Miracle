@@ -12,14 +12,14 @@ namespace Miracle::Application {
 
 	class TextInputService : public EventSubscriber<TextInputEvent> {
 	private:
-		std::u32string* m_receiver = nullptr;
+		std::u8string* m_receiver = nullptr;
 		TextInputReceivedCallback m_callback = []() {};
 
 	public:
 		TextInputService(EventDispatcher& dispatcher);
 
 		void setTextInputReceiver(
-			std::u32string& textInputReceiver,
+			std::u8string& textInputReceiver,
 			TextInputReceivedCallback&& textInputReceivedCallback = []() {}
 		);
 

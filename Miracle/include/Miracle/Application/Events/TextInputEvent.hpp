@@ -6,6 +6,6 @@
 
 namespace Miracle::Application {
 	struct TextInputEvent : public EventBase {
-		std::u32string text = {};
+		std::u8string text = {};
 	};
 }

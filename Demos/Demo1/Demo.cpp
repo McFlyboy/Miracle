@@ -2,6 +2,8 @@
 
 using namespace Miracle;
 
+static auto text = std::u8string{};
+
 static void updateTitle() {
 	Window::setTitle(
 		UnicodeConverter::toUtf8(
@@ -9,6 +11,7 @@ static void updateTitle() {
 				+ " - FPS: " + std::to_string(PerformanceCounters::getFps())
 				+ " - UPS: " + std::to_string(PerformanceCounters::getUps())
 				+ " - Entity count: " + std::to_string(CurrentScene::getEntityCount())
+				+ " - Text: " + reinterpret_cast<const char*>(text.c_str())
 		)
 	);
 }
@@ -176,6 +179,7 @@ int main() {
 				.entityDestroyedCallback = [](EntityId) { updateTitle(); }
 			},
 			.startScript = []() {
+				TextInput::setTextInputReceiver(text, updateTitle);
 				PerformanceCounters::setCountersUpdatedCallback(updateTitle);
 				updateTitle();
 			},

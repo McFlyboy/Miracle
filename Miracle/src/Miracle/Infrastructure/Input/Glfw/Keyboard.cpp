@@ -35,7 +35,7 @@ namespace Miracle::Infrastructure::Input::Glfw {
 			[](GLFWwindow* window, unsigned int codePoint) {
 				auto& parentWindow = *reinterpret_cast<View::Glfw::Window*>(glfwGetWindowUserPointer(window));
 				parentWindow.getEventDispatcher().postEvent(
-					Application::TextInputEvent{ .text = std::u32string(1, static_cast<char32_t>(codePoint)) }
+					Application::TextInputEvent{ .text = UnicodeConverter::toUtf8(static_cast<uint32_t>(codePoint)) }
 				);
 			}
 		);
@@ -62,7 +62,7 @@ namespace Miracle::Infrastructure::Input::Glfw {
 				&& keyInputEvent.action != Application::KeyInputAction::keyReleased
 		) {
 			m_window.getEventDispatcher().postEvent(
-				Application::TextInputEvent{ .text = std::u32string(1, U'\b') }
+				Application::TextInputEvent{ .text = std::u8string(1, u8'\b') }
 			);
 		}
 		else {
@@ -78,8 +78,10 @@ namespace Miracle::Infrastructure::Input::Glfw {
 				auto clipboardContent = m_multimediaFramework.getClipboardContent();
 
 				if (clipboardContent.has_value()) {
+					auto& content = clipboardContent.value();
+
 					m_window.getEventDispatcher().postEvent(
-						Application::TextInputEvent{ .text = UnicodeConverter::toUtf32(clipboardContent.value()) }
+						Application::TextInputEvent{ .text = std::u8string(content.data(), content.size()) }
 					);
 				}
 			}
