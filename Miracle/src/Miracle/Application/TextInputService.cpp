@@ -4,7 +4,7 @@
 
 namespace Miracle::Application {
 	TextInputService::TextInputService(EventDispatcher& dispatcher) :
-		EventSubscriber(dispatcher)
+		EventSubscriber(dispatcher, [this](auto& event) { handleTextInputEvent(event); })
 	{}
 
 	void TextInputService::setTextInputReceiver(
@@ -20,12 +20,10 @@ namespace Miracle::Application {
 		m_callback = []() {};
 	}
 
-	void TextInputService::onEvent(const EventBase& event) {
+	void TextInputService::handleTextInputEvent(const TextInputEvent& event) {
 		if (m_receiver == nullptr) return;
 
-		auto& textInputEvent = reinterpret_cast<const TextInputEvent&>(event);
-
-		if (textInputEvent.text == u8"\b") [[unlikely]] {
+		if (event.text == u8"\b") [[unlikely]] {
 			if (m_receiver->empty()) {
 				return;
 			}
@@ -54,7 +52,7 @@ namespace Miracle::Application {
 			}
 		}
 		else {
-			*m_receiver += textInputEvent.text;
+			*m_receiver += event.text;
 		}
 
 		m_callback();

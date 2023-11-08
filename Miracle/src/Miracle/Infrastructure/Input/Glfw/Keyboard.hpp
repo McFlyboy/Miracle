@@ -32,8 +32,6 @@ namespace Miracle::Infrastructure::Input::Glfw {
 
 		~Keyboard();
 
-		virtual void onEvent(const Application::EventBase& event) override;
-
 		virtual bool isKeyPressed(KeyboardKey key) const override;
 
 		virtual bool isKeyPressedOrRepeated(KeyboardKey key) const override;
@@ -49,5 +47,8 @@ namespace Miracle::Infrastructure::Input::Glfw {
 		virtual void unsetKeyPressedCallback() override {
 			m_keyPressedCallback = [](KeyboardKey) {};
 		}
+
+	private:
+		void handleKeyInputEvent(const Application::KeyInputEvent& event);
 	};
 }

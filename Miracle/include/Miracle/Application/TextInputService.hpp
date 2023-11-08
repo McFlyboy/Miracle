@@ -25,6 +25,7 @@ namespace Miracle::Application {
 
 		void unsetTextInputReceiver();
 
-		virtual void onEvent(const EventBase& event) override;
+	private:
+		void handleTextInputEvent(const TextInputEvent& event);
 	};
 }

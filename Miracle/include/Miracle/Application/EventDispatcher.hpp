@@ -1,42 +1,40 @@
 #pragma once
 
 #include <functional>
-#include <vector>
+#include <unordered_map>
 #include <typeindex>
+#include <vector>
+#include <utility>
 
 #include "Events/Event.hpp"
 
 namespace Miracle::Application {
-	using EventSubscriptionId = int;
+	using EventSubscriberId = int;
 	using EventCallback = std::function<void(const EventBase&)>;
 
 	struct EventSubscription {
-		EventSubscriptionId id;
-		std::vector<std::type_index> subscribedEvents;
+		EventSubscriberId subscriberId;
 		EventCallback callback;
 	};
 
 	class EventDispatcher {
 	private:
-		std::vector<EventSubscription> m_subscriptions;
-		EventSubscriptionId m_nextId = 0;
+		std::unordered_map<std::type_index, std::vector<EventSubscription>> m_subscriptions;
+		EventSubscriberId m_nextId = 0;
 
 	public:
 		void postEvent(const Event auto& event) const {
-			for (auto& subscription : m_subscriptions) {
-				for (auto& subscribedEvent : subscription.subscribedEvents) {
-					if (subscribedEvent == std::type_index(typeid(event))) {
-						subscription.callback(event);
-					}
-				}
+			if (!m_subscriptions.contains(typeid(event))) return;
+
+			for (auto& subscription : m_subscriptions.at(typeid(event))) {
+				subscription.callback(event);
 			}
 		}
 
-		EventSubscriptionId subscribe(
-			std::vector<std::type_index>&& subscribedEvents,
-			EventCallback&& callback
+		EventSubscriberId subscribe(
+			const std::vector<std::pair<std::type_index, EventCallback>>& subscribedEvents
 		);
 
-		void unsubscribe(EventSubscriptionId subscriptionId);
+		void unsubscribe(EventSubscriberId subscriberId);
 	};
 }
