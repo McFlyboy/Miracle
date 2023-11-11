@@ -26,7 +26,7 @@ namespace Miracle {
 
 	template<typename T>
 	concept RandomContainerOrView = requires(T containerOrView) {
-		{ containerOrView[size_t{}] };
+		{ containerOrView.begin() };
 		{ containerOrView.size() } -> std::same_as<size_t>;
 	};
 
@@ -88,7 +88,15 @@ namespace Miracle {
 		}
 
 		auto&& element(RandomContainerOrView auto&& containerOrView) {
-			return containerOrView[next<size_t>(containerOrView.size() - 1)];
+			size_t remainingIncrementations = next<size_t>(containerOrView.size() - 1);
+			auto iterator = containerOrView.begin();
+
+			while (remainingIncrementations > 0) {
+				iterator++;
+				remainingIncrementations--;
+			}
+
+			return *iterator;
 		}
 	};
 }
