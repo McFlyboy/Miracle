@@ -54,7 +54,7 @@ jobs:
     - name: Configure CMake
       run: cmake --preset macos-release
       env:
-        CXX: g++-12
+        CXX: g++-13
 
     - name: Build
       run: cmake --build --preset macos-release-build
@@ -86,7 +86,7 @@ jobs:
     - name: Configure CMake
       run: cmake --preset linux-release
       env:
-        CXX: g++-12
+        CXX: g++-13
 
     - name: Build
       run: cmake --build --preset linux-release-build
