@@ -2,8 +2,7 @@
 
 #include <filesystem>
 #include <fstream>
-
-#include <fmt/format.h>
+#include <format>
 
 namespace Miracle::Infrastructure::Persistance::FileSystem {
 	FileAccess::FileAccess(Application::ILogger& logger) :
@@ -12,14 +11,14 @@ namespace Miracle::Infrastructure::Persistance::FileSystem {
 
 	std::vector<std::byte> FileAccess::readFileAsBinary(const std::filesystem::path& filePath) const {
 		if (!std::filesystem::exists(filePath)) [[unlikely]] {
-			m_logger.error(fmt::format("Could not find file {}", filePath.string()));
+			m_logger.error(std::format("Could not find file {}", filePath.string()));
 			throw Application::FileAccessErrors::FileDoesNotExistError(filePath);
 		}
 
 		auto fileStream = std::basic_ifstream<std::byte>(filePath, std::ifstream::binary);
 
 		if (!fileStream.is_open()) [[unlikely]] {
-			m_logger.error(fmt::format("Failed to open file {}", filePath.string()));
+			m_logger.error(std::format("Failed to open file {}", filePath.string()));
 			throw Application::FileAccessErrors::UnableToOpenFileError(filePath);
 		}
 

@@ -1,3 +1,5 @@
+#include <format>
+
 #include <Miracle/Miracle.hpp>
 
 using namespace Miracle;
@@ -5,10 +7,13 @@ using namespace Miracle;
 static void updateTitle() {
 	Window::setTitle(
 		UnicodeConverter::toUtf8(
-			CurrentApp::getName()
-				+ " - FPS: " + std::to_string(PerformanceCounters::getFps())
-				+ " - UPS: " + std::to_string(PerformanceCounters::getUps())
-				+ " - Entity count: " + std::to_string(CurrentScene::getEntityCount())
+			std::format(
+				"{} - FPS: {} - UPS: {} - Entity count: {}",
+				CurrentApp::getName(),
+				PerformanceCounters::getFps(),
+				PerformanceCounters::getUps(),
+				CurrentScene::getEntityCount()
+			)
 		)
 	);
 }

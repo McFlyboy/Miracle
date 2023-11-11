@@ -4,7 +4,7 @@
 
 namespace Miracle::Application {
 	TextInputService::TextInputService(EventDispatcher& dispatcher) :
-		EventSubscriber(dispatcher, [this](const TextInputEvent& event) { handleTextInputEvent(event); })
+		EventSubscriber(dispatcher, [this](auto& event) { handleTextInputEvent(event); })
 	{}
 
 	void TextInputService::setTextInputReceiver(

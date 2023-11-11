@@ -1,8 +1,7 @@
 #include "VertexBuffer.hpp"
 
 #include <exception>
-
-#include <fmt/format.h>
+#include <format>
 
 #include "BufferUtilities.hpp"
 
@@ -35,7 +34,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 		catch (const std::exception& e) {
 			m_logger.error(
-				fmt::format("Failed to create staging buffer for Vulkan vertex buffer.\n{}", e.what())
+				std::format("Failed to create staging buffer for Vulkan vertex buffer.\n{}", e.what())
 			);
 
 			throw Application::VertexBufferErrors::CreationError();
@@ -56,7 +55,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 		catch (const std::exception& e) {
 			m_logger.error(
-				fmt::format("Failed to create Vulkan vertex buffer.\n{}", e.what())
+				std::format("Failed to create Vulkan vertex buffer.\n{}", e.what())
 			);
 
 			m_context.getAllocator().destroyBuffer(stagingBuffer, stagingAllocation);
