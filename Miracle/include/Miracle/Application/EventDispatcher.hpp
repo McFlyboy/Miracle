@@ -32,7 +32,7 @@ namespace Miracle::Application {
 		}
 
 		EventSubscriberId subscribe(
-			const std::vector<std::pair<std::type_index, EventCallback>>& subscribedEvents
+			std::vector<std::pair<std::type_index, EventCallback>>&& subscribedEvents
 		);
 
 		void unsubscribe(EventSubscriberId subscriberId);

@@ -1,10 +1,9 @@
 #pragma once
 
-#include <functional>
+#include <concepts>
 
 #include "EventDispatcher.hpp"
 #include "Events/Event.hpp"
-#include "Events/TextInputEvent.hpp"
 
 namespace Miracle::Application {
 	template<Event... TEvents>
@@ -15,14 +14,14 @@ namespace Miracle::Application {
 		const EventSubscriberId m_subscriberId;
 
 	public:
-		EventSubscriber(EventDispatcher& dispatcher, std::function<void(const TEvents&)>... callbacks) :
+		EventSubscriber(EventDispatcher& dispatcher, const std::invocable<const TEvents&> auto&... callbacks) :
 			m_dispatcher(dispatcher),
 			m_subscriberId(
 				m_dispatcher.subscribe(
 					std::vector{
-						std::pair(
-							std::type_index(typeid(TEvents)),
-							EventCallback([=](const EventBase& event) { callbacks(reinterpret_cast<const TEvents&>(event)); })
+						std::pair<std::type_index, EventCallback>(
+							typeid(TEvents),
+							[=](const EventBase& event) { callbacks(reinterpret_cast<const TEvents&>(event)); }
 						)...
 					}
 				)

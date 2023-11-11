@@ -2,7 +2,7 @@
 
 namespace Miracle::Application {
 	EventSubscriberId EventDispatcher::subscribe(
-		const std::vector<std::pair<std::type_index, EventCallback>>& subscribedEvents
+		std::vector<std::pair<std::type_index, EventCallback>>&& subscribedEvents
 	) {
 		for (auto& [eventId, callback] : subscribedEvents) {
 			m_subscriptions[eventId].emplace_back(m_nextId, std::move(callback));
