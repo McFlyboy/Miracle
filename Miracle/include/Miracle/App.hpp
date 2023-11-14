@@ -58,9 +58,9 @@ namespace Miracle {
 			UserData&& userData = {}
 		);
 
-		inline const std::string& getName() const { return m_name; }
+		const std::string& getName() const { return m_name; }
 
-		inline const UserData& getUserData() const { return m_userData; }
+		const UserData& getUserData() const { return m_userData; }
 
 		void setUserData(const UserData& userData);
 

@@ -1,34 +1,40 @@
 #pragma once
 
 #include <functional>
+#include <unordered_map>
+#include <typeindex>
 #include <vector>
+#include <utility>
 
 #include "Events/Event.hpp"
 
 namespace Miracle::Application {
-	using EventSubscriptionId = int;
-	using EventCallback = std::function<void(const Event&)>;
+	using EventSubscriberId = int;
+	using EventCallback = std::function<void(const EventBase&)>;
 
 	struct EventSubscription {
-		EventSubscriptionId id;
-		EventTypes subscribedTypes;
+		EventSubscriberId subscriberId;
 		EventCallback callback;
 	};
 
-
 	class EventDispatcher {
 	private:
-		std::vector<EventSubscription> m_subscriptions;
-		EventSubscriptionId m_nextId = 0;
+		std::unordered_map<std::type_index, std::vector<EventSubscription>> m_subscriptions;
+		EventSubscriberId m_nextId = 0;
 
 	public:
-		void postEvent(const Event& event) const;
+		void postEvent(const Event auto& event) const {
+			if (!m_subscriptions.contains(typeid(event))) return;
 
-		EventSubscriptionId subscribe(
-			const EventTypes& subscribedTypes,
-			EventCallback&& callback
+			for (auto& subscription : m_subscriptions.at(typeid(event))) {
+				subscription.callback(event);
+			}
+		}
+
+		EventSubscriberId subscribe(
+			std::vector<std::pair<std::type_index, EventCallback>>&& subscribedEvents
 		);
 
-		void unsubscribe(EventSubscriptionId subscriptionId);
+		void unsubscribe(EventSubscriberId subscriberId);
 	};
 }

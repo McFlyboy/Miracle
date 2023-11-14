@@ -2,8 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include <Miracle/Definitions.hpp>
-#include <Miracle/Application/Events/KeyInputEvent.hpp>
+#include <Miracle/Environment.hpp>
 #include <Miracle/Application/Events/TextInputEvent.hpp>
 #include <Miracle/Common/UnicodeConverter.hpp>
 
@@ -13,7 +12,7 @@ namespace Miracle::Infrastructure::Input::Glfw {
 		Application::IMultimediaFramework& multimediaFramework,
 		View::Glfw::Window& window
 	) :
-		EventSubscriber(eventDispatcher),
+		EventSubscriber(eventDispatcher, [this](auto& event) { handleKeyInputEvent(event); }),
 		m_multimediaFramework(multimediaFramework),
 		m_window(window)
 	{
@@ -22,11 +21,11 @@ namespace Miracle::Infrastructure::Input::Glfw {
 			[](GLFWwindow* window, int key, int scanCode, int action, int mods) {
 				auto& parentWindow = *reinterpret_cast<View::Glfw::Window*>(glfwGetWindowUserPointer(window));
 				parentWindow.getEventDispatcher().postEvent(
-					Application::KeyInputEvent(
-						static_cast<KeyboardKey>(key),
-						static_cast<Application::KeyInputAction>(action),
-						static_cast<KeyboardModifierKeys>(mods)
-					)
+					Application::KeyInputEvent{
+						.key       = static_cast<KeyboardKey>(key),
+						.action    = static_cast<Application::KeyInputAction>(action),
+						.modifiers = static_cast<KeyboardModifierKeys>(mods)
+					}
 				);
 			}
 		);
@@ -36,7 +35,7 @@ namespace Miracle::Infrastructure::Input::Glfw {
 			[](GLFWwindow* window, unsigned int codePoint) {
 				auto& parentWindow = *reinterpret_cast<View::Glfw::Window*>(glfwGetWindowUserPointer(window));
 				parentWindow.getEventDispatcher().postEvent(
-					Application::TextInputEvent(codePoint)
+					Application::TextInputEvent{ .text = UnicodeConverter::toUtf8(static_cast<uint32_t>(codePoint)) }
 				);
 			}
 		);
@@ -45,44 +44,6 @@ namespace Miracle::Infrastructure::Input::Glfw {
 	Keyboard::~Keyboard() {
 		glfwSetKeyCallback(*m_window, nullptr);
 		glfwSetCharCallback(*m_window, nullptr);
-	}
-
-	void Keyboard::onEvent(const Application::Event& event) {
-		auto& keyInputEvent = reinterpret_cast<const Application::KeyInputEvent&>(event);
-
-		if (keyInputEvent.getKey() == KeyboardKey::keyUnknown) {
-			return;
-		}
-
-		auto& keyState = m_keyStates[static_cast<size_t>(keyInputEvent.getKey())];
-
-		keyState.setAction(keyInputEvent.getAction());
-
-		if (
-			keyInputEvent.getKey() == KeyboardKey::keyBackspace
-				&& keyInputEvent.getAction() != Application::KeyInputAction::keyReleased
-		) {
-			m_window.getEventDispatcher().postEvent(
-				Application::TextInputEvent(U'\b')
-			);
-		}
-		else if (
-#ifdef MIRACLE_PLATFORM_MACOS
-			keyInputEvent.getModifiers() == KeyboardModifierKeys::modSuper
-#else
-			keyInputEvent.getModifiers() == KeyboardModifierKeys::modControl
-#endif
-				&& keyInputEvent.getKey() == KeyboardKey::keyV
-				&& keyInputEvent.getAction() != Application::KeyInputAction::keyReleased
-		) {
-			auto clipboardContent = m_multimediaFramework.getClipboardContent();
-
-			if (clipboardContent.has_value()) {
-				m_window.getEventDispatcher().postEvent(
-					Application::TextInputEvent(UnicodeConverter::toUtf32(clipboardContent.value()))
-				);
-			}
-		}
 	}
 
 	bool Keyboard::isKeyPressed(KeyboardKey key) const {
@@ -120,6 +81,49 @@ namespace Miracle::Infrastructure::Input::Glfw {
 	void Keyboard::setAllKeyStatesAsDated() {
 		for (auto& keyState : m_keyStates) {
 			keyState.setAsDated();
+		}
+	}
+
+	void Keyboard::handleKeyInputEvent(const Application::KeyInputEvent& event) {
+		if (event.key == KeyboardKey::keyUnknown) [[unlikely]] return;
+
+		auto& keyState = m_keyStates[static_cast<size_t>(event.key)];
+
+		keyState.setAction(event.action);
+
+		if (event.action == Application::KeyInputAction::keyPressed) {
+			m_keyPressedCallback(event.key);
+		}
+
+		if (
+			event.key == KeyboardKey::keyBackspace
+				&& event.action != Application::KeyInputAction::keyReleased
+		) [[unlikely]] {
+			m_window.getEventDispatcher().postEvent(
+				Application::TextInputEvent{ .text = std::u8string(1, u8'\b') }
+			);
+
+			return;
+		}
+
+		constexpr KeyboardModifierKeys pasteModifierKey = Environment::getCurrentPlatform() == Platform::platformMacos
+			? KeyboardModifierKeys::modSuper
+			: KeyboardModifierKeys::modControl;
+
+		if (
+			event.modifiers == pasteModifierKey
+				&& event.key == KeyboardKey::keyV
+				&& event.action != Application::KeyInputAction::keyReleased
+		) [[unlikely]] {
+			auto clipboardContent = m_multimediaFramework.getClipboardContent();
+
+			if (clipboardContent.has_value()) {
+				auto& content = clipboardContent.value();
+
+				m_window.getEventDispatcher().postEvent(
+					Application::TextInputEvent{ .text = std::u8string(content.data(), content.size()) }
+				);
+			}
 		}
 	}
 }

@@ -10,13 +10,13 @@ namespace Miracle {
 	public:
 		Clipboard() = delete;
 
-		static inline std::optional<std::u8string_view> getClipboardContent() {
+		static std::optional<std::u8string_view> getClipboardContent() {
 			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			return App::s_currentApp->m_dependencies->getMultimediaFramework().getClipboardContent();
 		}
 
-		static inline void setClipboardContent(const std::u8string_view& content) {
+		static void setClipboardContent(const std::u8string_view& content) {
 			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
 
 			App::s_currentApp->m_dependencies->getMultimediaFramework().setClipboardContent(content);

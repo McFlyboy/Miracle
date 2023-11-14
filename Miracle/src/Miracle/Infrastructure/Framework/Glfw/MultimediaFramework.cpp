@@ -1,12 +1,12 @@
 #include "MultimediaFramework.hpp"
 
-#include <fmt/format.h>
+#include <format>
 
 namespace Miracle::Infrastructure::Framework::Glfw {
 	MultimediaFramework::MultimediaFramework(Application::ILogger& logger) :
 		m_logger(logger)
 	{
-		m_logger.info(fmt::format("Initializing GLFW version: {}", glfwGetVersionString()));
+		m_logger.info(std::format("Initializing GLFW version: {}", glfwGetVersionString()));
 
 		bool initialized = glfwInit();
 
@@ -15,7 +15,7 @@ namespace Miracle::Infrastructure::Framework::Glfw {
 			int glfwErrorCode = glfwGetError(&glfwErrorDescription);
 
 			m_logger.error(
-				fmt::format(
+				std::format(
 					"Failed to initialize GLFW\nGLFW error code {0}: {1}",
 					glfwErrorCode,
 					glfwErrorDescription

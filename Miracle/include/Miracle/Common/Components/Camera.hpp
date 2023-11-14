@@ -14,7 +14,7 @@ namespace Miracle {
 		float m_farClipPlaneDistance;
 
 	public:
-		Camera(
+		constexpr Camera(
 			float zoomFactor,
 			float nearClipPlaneDistance,
 			float farClipPlaneDistance
@@ -25,9 +25,8 @@ namespace Miracle {
 			m_farClipPlaneDistance(farClipPlaneDistance)
 		{}
 
-		template <Angle TAngle>
-		Camera(
-			TAngle fieldOfView,
+		constexpr Camera(
+			Angle auto fieldOfView,
 			float nearClipPlaneDistance,
 			float farClipPlaneDistance
 		) :
@@ -37,38 +36,36 @@ namespace Miracle {
 			m_farClipPlaneDistance(farClipPlaneDistance)
 		{}
 
-		inline CameraProjectionType getProjectionType() const { return m_projectionType; }
+		constexpr CameraProjectionType getProjectionType() const { return m_projectionType; }
 
-		inline void setProjectionType(CameraProjectionType projectionType) {
+		constexpr void setProjectionType(CameraProjectionType projectionType) {
 			m_projectionType = projectionType;
 		}
 
-		inline float getZoomFactor() const { return m_zoomFactor; }
+		constexpr float getZoomFactor() const { return m_zoomFactor; }
 
-		inline void setZoomFactor(float zoomFactor) { m_zoomFactor = zoomFactor; }
-
-		template <Angle TAngle>
-		inline TAngle getFieldOfView() const { return zoomFactorToFieldOfView<TAngle>(m_zoomFactor); }
+		constexpr void setZoomFactor(float zoomFactor) { m_zoomFactor = zoomFactor; }
 
 		template <Angle TAngle>
-		inline void setFieldOfView(TAngle fieldOfView) { m_zoomFactor = fieldOfViewToZoomFactor(fieldOfView); }
+		TAngle getFieldOfView() const { return zoomFactorToFieldOfView<TAngle>(m_zoomFactor); }
 
-		inline float getNearClipPlaneDistance() const { return m_nearClipPlaneDistance; }
+		void setFieldOfView(Angle auto fieldOfView) { m_zoomFactor = fieldOfViewToZoomFactor(fieldOfView); }
 
-		inline void setNearClipPlaneDistance(float nearClipPlaneDistance) { m_nearClipPlaneDistance = nearClipPlaneDistance; }
+		constexpr float getNearClipPlaneDistance() const { return m_nearClipPlaneDistance; }
 
-		inline float getFarClipPlaneDistance() const { return m_farClipPlaneDistance; }
+		constexpr void setNearClipPlaneDistance(float nearClipPlaneDistance) { m_nearClipPlaneDistance = nearClipPlaneDistance; }
 
-		inline void setFarClipPlaneDistance(float farClipPlaneDistance) { m_farClipPlaneDistance = farClipPlaneDistance; }
+		constexpr float getFarClipPlaneDistance() const { return m_farClipPlaneDistance; }
+
+		constexpr void setFarClipPlaneDistance(float farClipPlaneDistance) { m_farClipPlaneDistance = farClipPlaneDistance; }
 
 	private:
 		template <Angle TAngle>
-		inline TAngle zoomFactorToFieldOfView(float zoomFactor) const {
+		TAngle zoomFactorToFieldOfView(float zoomFactor) const {
 			return static_cast<TAngle>(Radians{ 2.0f * std::atan(1.0f / m_zoomFactor) });
 		}
 
-		template <Angle TAngle>
-		inline float fieldOfViewToZoomFactor(TAngle fieldOfView) const {
+		float fieldOfViewToZoomFactor(Angle auto fieldOfView) const {
 			return 1.0f / std::tan(static_cast<Radians>(fieldOfView).value / 2.0f);
 		}
 	};

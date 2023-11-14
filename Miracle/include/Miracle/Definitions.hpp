@@ -1,6 +1,7 @@
 #pragma once
 
-// ----- Platform definitions -----
+/* ----- Platform definitions ----- */
+
 #if defined(_WIN32)
 #define MIRACLE_PLATFORM_WINDOWS
 #elif defined(__APPLE__)
@@ -11,7 +12,8 @@
 #error Miracle does not support this platform! Platforms supported: Windows, macOS, Linux
 #endif
 
-// ----- Configuration definitions -----
+/* ----- Configuration definitions ----- */
+
 #ifdef NDEBUG
 #define MIRACLE_CONFIG_RELEASE
 #else

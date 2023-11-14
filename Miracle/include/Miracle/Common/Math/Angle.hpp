@@ -1,7 +1,7 @@
 #pragma once
 
 #include <numbers>
-#include <type_traits>
+#include <concepts>
 #include <compare>
 
 namespace Miracle {
@@ -17,21 +17,17 @@ namespace Miracle {
 
 		/* ----- SIGNED CONVERTION ----- */
 
-		constexpr inline Degrees operator+() const {
-			return *this;
-		}
+		constexpr Degrees operator+() const { return *this; }
 
-		constexpr inline Degrees operator-() const {
-			return Degrees{ .value = -value };
-		}
+		constexpr Degrees operator-() const { return Degrees{ .value = -value }; }
 
 		/* ----- ADDITION ----- */
 
-		constexpr inline Degrees operator+(const Degrees& rhs) const {
+		constexpr Degrees operator+(const Degrees& rhs) const {
 			return Degrees{ .value = value + rhs.value };
 		}
 
-		constexpr inline Degrees& operator+=(const Degrees& rhs) {
+		constexpr Degrees& operator+=(const Degrees& rhs) {
 			value += rhs.value;
 
 			return *this;
@@ -39,11 +35,11 @@ namespace Miracle {
 
 		/* ----- SUBTRACTION ----- */
 
-		constexpr inline Degrees operator-(const Degrees& rhs) const {
+		constexpr Degrees operator-(const Degrees& rhs) const {
 			return Degrees{ .value = value - rhs.value };
 		}
 
-		constexpr inline Degrees& operator-=(const Degrees& rhs) {
+		constexpr Degrees& operator-=(const Degrees& rhs) {
 			value -= rhs.value;
 
 			return *this;
@@ -51,15 +47,15 @@ namespace Miracle {
 
 		/* ----- SCALAR MULTIPLICATION ----- */
 
-		constexpr inline Degrees operator*(float rhs) const {
+		constexpr Degrees operator*(float rhs) const {
 			return Degrees{ .value = value * rhs };
 		}
 
-		constexpr inline friend Degrees operator*(float lhs, const Degrees& rhs) {
+		constexpr friend Degrees operator*(float lhs, const Degrees& rhs) {
 			return Degrees{ .value = lhs * rhs.value };
 		}
 
-		constexpr inline Degrees& operator*=(float rhs) {
+		constexpr Degrees& operator*=(float rhs) {
 			value *= rhs;
 
 			return *this;
@@ -67,15 +63,15 @@ namespace Miracle {
 
 		/* ----- SCALAR DIVISION ----- */
 
-		constexpr inline Degrees operator/(float rhs) const {
+		constexpr Degrees operator/(float rhs) const {
 			return Degrees{ .value = value / rhs };
 		}
 
-		constexpr inline friend Degrees operator/(float lhs, const Degrees& rhs) {
+		constexpr friend Degrees operator/(float lhs, const Degrees& rhs) {
 			return Degrees{ .value = lhs / rhs.value };
 		}
 
-		constexpr inline Degrees& operator/=(float rhs) {
+		constexpr Degrees& operator/=(float rhs) {
 			value /= rhs;
 
 			return *this;
@@ -83,9 +79,9 @@ namespace Miracle {
 
 		/* ----- CONVERTERS ----- */
 
-		constexpr inline Radians toRadians() const;
+		constexpr Radians toRadians() const;
 
-		constexpr explicit inline operator Radians() const;
+		constexpr explicit operator Radians() const;
 	};
 
 	struct Radians {
@@ -97,21 +93,17 @@ namespace Miracle {
 
 		/* ----- SIGNED CONVERTION ----- */
 
-		constexpr inline Radians operator+() const {
-			return *this;
-		}
+		constexpr Radians operator+() const { return *this; }
 
-		constexpr inline Radians operator-() const {
-			return Radians{ .value = -value };
-		}
+		constexpr Radians operator-() const { return Radians{ .value = -value }; }
 
 		/* ----- ADDITION ----- */
 
-		constexpr inline Radians operator+(const Radians& rhs) const {
+		constexpr Radians operator+(const Radians& rhs) const {
 			return Radians{ .value = value + rhs.value };
 		}
 
-		constexpr inline Radians& operator+=(const Radians& rhs) {
+		constexpr Radians& operator+=(const Radians& rhs) {
 			value += rhs.value;
 
 			return *this;
@@ -119,11 +111,11 @@ namespace Miracle {
 
 		/* ----- SUBTRACTION ----- */
 
-		constexpr inline Radians operator-(const Radians& rhs) const {
+		constexpr Radians operator-(const Radians& rhs) const {
 			return Radians{ .value = value - rhs.value };
 		}
 
-		constexpr inline Radians& operator-=(const Radians& rhs) {
+		constexpr Radians& operator-=(const Radians& rhs) {
 			value -= rhs.value;
 
 			return *this;
@@ -131,15 +123,15 @@ namespace Miracle {
 
 		/* ----- SCALAR MULTIPLICATION ----- */
 
-		constexpr inline Radians operator*(float rhs) const {
+		constexpr Radians operator*(float rhs) const {
 			return Radians{ .value = value * rhs };
 		}
 
-		constexpr inline friend Radians operator*(float lhs, const Radians& rhs) {
+		constexpr friend Radians operator*(float lhs, const Radians& rhs) {
 			return Radians{ .value = lhs * rhs.value };
 		}
 
-		constexpr inline Radians& operator*=(float rhs) {
+		constexpr Radians& operator*=(float rhs) {
 			value *= rhs;
 
 			return *this;
@@ -147,15 +139,15 @@ namespace Miracle {
 
 		/* ----- SCALAR DIVISION ----- */
 
-		constexpr inline Radians operator/(float rhs) const {
+		constexpr Radians operator/(float rhs) const {
 			return Radians{ .value = value / rhs };
 		}
 
-		constexpr inline friend Radians operator/(float lhs, const Radians& rhs) {
+		constexpr friend Radians operator/(float lhs, const Radians& rhs) {
 			return Radians{ .value = lhs / rhs.value };
 		}
 
-		constexpr inline Radians& operator/=(float rhs) {
+		constexpr Radians& operator/=(float rhs) {
 			value /= rhs;
 
 			return *this;
@@ -163,35 +155,35 @@ namespace Miracle {
 
 		/* ----- CONVERTERS ----- */
 
-		constexpr inline Degrees toDegrees() const;
+		constexpr Degrees toDegrees() const;
 
-		constexpr explicit inline operator Degrees() const;
+		constexpr explicit operator Degrees() const;
 	};
 
-	constexpr inline Radians Degrees::toRadians() const {
+	constexpr Radians Degrees::toRadians() const {
 		return Radians{ .value = value * std::numbers::pi_v<float> / 180.0f };
 	}
 
-	constexpr inline Degrees::operator Radians() const {
+	constexpr Degrees::operator Radians() const {
 		return toRadians();
 	}
 
-	constexpr inline Degrees Radians::toDegrees() const {
+	constexpr Degrees Radians::toDegrees() const {
 		return Degrees{ .value = value * 180.0f / std::numbers::pi_v<float> };
 	}
 
-	constexpr inline Radians::operator Degrees() const {
+	constexpr Radians::operator Degrees() const {
 		return toDegrees();
 	}
 
-	constexpr inline Degrees operator""_deg(long double value) {
+	constexpr Degrees operator""_deg(long double value) {
 		return Degrees{ .value = static_cast<float>(value) };
 	}
 
-	constexpr inline Radians operator""_rad(long double value) {
+	constexpr Radians operator""_rad(long double value) {
 		return Radians{ .value = static_cast<float>(value) };
 	}
 
 	template<typename T>
-	concept Angle = std::is_same_v<T, Degrees> || std::is_same_v<T, Radians>;
+	concept Angle = std::same_as<T, Degrees> || std::same_as<T, Radians>;
 }

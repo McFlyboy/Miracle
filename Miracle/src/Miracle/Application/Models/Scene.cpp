@@ -50,7 +50,7 @@ namespace Miracle::Application {
 
 	void Scene::update() {
 		m_container->forEachBehavior(
-			[](Behavior& behavior) {
+			[](BehaviorBase& behavior) {
 				behavior.act();
 			}
 		);

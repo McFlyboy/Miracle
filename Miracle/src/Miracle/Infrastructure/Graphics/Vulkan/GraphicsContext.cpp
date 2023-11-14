@@ -3,8 +3,7 @@
 #include <cstring>
 #include <exception>
 #include <limits>
-
-#include <fmt/format.h>
+#include <format>
 
 #include "DeviceExplorer.hpp"
 
@@ -224,7 +223,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 		catch (const std::exception& e) {
 			m_logger.error(
-				fmt::format(
+				std::format(
 					"Failed to create Vulkan instance.\n{}",
 					e.what()
 				)
@@ -255,7 +254,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				continue;
 			}
 
-			m_logger.error(fmt::format("Vulkan extension missing: {}", extensionName));
+			m_logger.error(std::format("Vulkan extension missing: {}", extensionName));
 			allExtensionsFound = false;
 		}
 
@@ -286,7 +285,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				continue;
 			}
 
-			m_logger.error(fmt::format("Vulkan validation layer missing: {}", validationLayerName));
+			m_logger.error(std::format("Vulkan validation layer missing: {}", validationLayerName));
 			allLayersFound = false;
 		}
 
@@ -303,7 +302,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 		catch (const std::exception& e) {
 			m_logger.error(
-				fmt::format(
+				std::format(
 					"Failed to create Vulkan debug messenger.\n{}",
 					e.what()
 				)
@@ -361,7 +360,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 
 		m_logger.info(
-			fmt::format("Vulkan physical devices found: {}", allDevices.size())
+			std::format("Vulkan physical devices found: {}", allDevices.size())
 		);
 
 		auto supportedDevices = std::vector<std::pair<vk::raii::PhysicalDevice*, DeviceInfo>>();
@@ -381,7 +380,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 
 		m_logger.info(
-			fmt::format("Supported Vulkan physical devices: {}", supportedDevices.size())
+			std::format("Supported Vulkan physical devices: {}", supportedDevices.size())
 		);
 
 		size_t selectedDeviceIndex = 0;
@@ -407,7 +406,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		auto& [selectedDevice, deviceInfo] = supportedDevices[selectedDeviceIndex];
 
 		m_logger.info(
-			fmt::format(
+			std::format(
 				"Selected Vulkan device: {} [{}]",
 				deviceInfo.name,
 				vk::to_string(deviceInfo.type)
@@ -455,7 +454,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			);
 		}
 		catch (const std::exception& e) {
-			m_logger.error(fmt::format("Failed to create Vulkan device.\n{}", e.what()));
+			m_logger.error(std::format("Failed to create Vulkan device.\n{}", e.what()));
 			throw Application::GraphicsContextErrors::CreationError();
 		}
 	}
@@ -471,7 +470,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 		catch (const std::exception& e) {
 			m_logger.error(
-				fmt::format("Failed to create Vulkan command pool for context.\n{}", e.what())
+				std::format("Failed to create Vulkan command pool for context.\n{}", e.what())
 			);
 
 			throw Application::GraphicsContextErrors::CreationError();
@@ -490,7 +489,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 		catch (const std::exception& e) {
 			m_logger.error(
-				fmt::format("Failed to create Vulkan command buffers for context.\n{}", e.what())
+				std::format("Failed to create Vulkan command buffers for context.\n{}", e.what())
 			);
 
 			throw Application::GraphicsContextErrors::CreationError();
@@ -509,7 +508,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 		catch (const std::exception& e) {
 			m_logger.error(
-				fmt::format("Failed to create Vulkan fence for context.\n{}", e.what())
+				std::format("Failed to create Vulkan fence for context.\n{}", e.what())
 			);
 
 			throw Application::GraphicsContextErrors::CreationError();
@@ -525,7 +524,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			);
 		}
 		catch (const std::exception& e) {
-			m_logger.error(fmt::format("Failed to create Vulkan semaphore for context.\n{}", e.what()));
+			m_logger.error(std::format("Failed to create Vulkan semaphore for context.\n{}", e.what()));
 			throw Application::GraphicsContextErrors::CreationError();
 		}
 	}
@@ -549,7 +548,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			);
 		}
 		catch (const std::exception& e) {
-			m_logger.error(fmt::format("Failed to create Vulkan memory allocator for context.\n{}", e.what()));
+			m_logger.error(std::format("Failed to create Vulkan memory allocator for context.\n{}", e.what()));
 			throw Application::GraphicsContextErrors::CreationError();
 		}
 	}

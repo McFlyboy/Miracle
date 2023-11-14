@@ -1,10 +1,9 @@
 #include "GraphicsPipeline.hpp"
 
-#include <cstddef>
 #include <exception>
 #include <array>
 
-#include <fmt/format.h>
+#include <format>
 
 #include <Miracle/Common/Models/Vertex.hpp>
 #include <Miracle/Application/Graphics/PushConstants.hpp>
@@ -165,7 +164,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			);
 		}
 		catch (const std::exception& e) {
-			m_logger.error(fmt::format("Failed to create Vulkan pipeline layout.\n{}", e.what()));
+			m_logger.error(std::format("Failed to create Vulkan pipeline layout.\n{}", e.what()));
 			throw Application::GraphicsPipelineErrors::CreationError();
 		}
 
@@ -194,7 +193,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			);
 		}
 		catch (const std::exception& e) {
-			m_logger.error(fmt::format("Failed to create Vulkan graphics pipeline.\n{}", e.what()));
+			m_logger.error(std::format("Failed to create Vulkan graphics pipeline.\n{}", e.what()));
 			throw Application::GraphicsPipelineErrors::CreationError();
 		}
 
@@ -225,7 +224,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		);
 	}
 
-	vk::raii::ShaderModule GraphicsPipeline::createShaderModule(const std::vector<char>& bytecode) const {
+	vk::raii::ShaderModule GraphicsPipeline::createShaderModule(const std::vector<std::byte>& bytecode) const {
 		try {
 			return m_context.getDevice().createShaderModule(
 				vk::ShaderModuleCreateInfo{
@@ -236,7 +235,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			);
 		}
 		catch (const std::exception& e) {
-			m_logger.error(fmt::format("Failed to create Vulkan shader module for pipeline.\n{}", e.what()));
+			m_logger.error(std::format("Failed to create Vulkan shader module for pipeline.\n{}", e.what()));
 			throw Application::GraphicsPipelineErrors::CreationError();
 		}
 	}

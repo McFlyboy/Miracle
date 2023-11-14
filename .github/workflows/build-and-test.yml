@@ -27,7 +27,9 @@ jobs:
         version: 1.3.243.0
 
     - name: Configure CMake
-      run: cmake --preset x64-release
+      run: |
+        $env:VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT
+        cmake --preset x64-release
 
     - name: Build
       run: cmake --build --preset x64-release-build
@@ -52,9 +54,11 @@ jobs:
         version: 1.3.243.0
 
     - name: Configure CMake
-      run: cmake --preset macos-release
+      run: |
+        export VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT
+        cmake --preset macos-release
       env:
-        CXX: g++-12
+        CXX: g++-13
 
     - name: Build
       run: cmake --build --preset macos-release-build
@@ -84,9 +88,11 @@ jobs:
         version: 1.3.243.0
 
     - name: Configure CMake
-      run: cmake --preset linux-release
+      run: |
+        export VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT
+        cmake --preset linux-release
       env:
-        CXX: g++-12
+        CXX: g++-13
 
     - name: Build
       run: cmake --build --preset linux-release-build

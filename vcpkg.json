@@ -1,5 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "builtin-baseline": "c6d6efed3e9b4242765bfe1b5c5befffd85f7b92",
   "dependencies": [
     "spdlog",
     "glfw3",

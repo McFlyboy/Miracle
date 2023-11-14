@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Definitions.hpp"
+#include "Environment.hpp"
 #include "App.hpp"
 
 #include "Interface/CurrentApp.hpp"
@@ -14,6 +15,7 @@
 #include "Interface/PerformanceCounters.hpp"
 
 #include "Common/UnicodeConverter.hpp"
+#include "Common/Random.hpp"
 #include "Common/Components/Transform.hpp"
 #include "Common/Components/Camera.hpp"
 #include "Common/Components/Appearance.hpp"

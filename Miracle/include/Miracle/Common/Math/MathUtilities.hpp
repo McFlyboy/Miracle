@@ -8,7 +8,7 @@ namespace Miracle {
 	public:
 		MathUtilities() = delete;
 
-		static inline Vector3 rotateVector(const Vector3& vector, const Quaternion& rotation) {
+		static Vector3 rotateVector(const Vector3& vector, const Quaternion& rotation) {
 			return (rotation * Quaternion{ .w = 0.0f, .v = vector } * rotation.getInverse()).v;
 		}
 	};

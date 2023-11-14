@@ -1,6 +1,6 @@
 #include "Window.hpp"
 
-#include <fmt/format.h>
+#include <format>
 
 #include <Miracle/Application/Graphics/IGraphicsContext.hpp>
 
@@ -132,7 +132,7 @@ namespace Miracle::Infrastructure::View::Glfw {
 
 		if (result != vk::Result::eSuccess) {
 			m_logger.error(
-				fmt::format(
+				std::format(
 					"Failed to create Vulkan surface for graphics context target.\nResult: {}",
 					vk::to_string(result)
 				)

@@ -17,7 +17,7 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 		std::function<void(EntityId)> m_entityDestroyedCallback = [](EntityId) {};
 
 	public:
-		inline virtual size_t getEntityCount() const override {
+		virtual size_t getEntityCount() const override {
 			return m_registry.storage<EntityId>()->in_use();
 		}
 
@@ -35,27 +35,27 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 
 		virtual void unsetEntityDestroyedCallback() override;
 
-		inline virtual Transform& getTransform(EntityId entity) override {
+		virtual Transform& getTransform(EntityId entity) override {
 			return m_registry.get<Transform>(entity);
 		}
 
-		inline virtual const Transform& getTransform(EntityId entity) const override {
+		virtual const Transform& getTransform(EntityId entity) const override {
 			return m_registry.get<Transform>(entity);
 		}
 
-		inline virtual Camera& getCamera(EntityId entity) override {
+		virtual Camera& getCamera(EntityId entity) override {
 			return m_registry.get<Camera>(entity);
 		}
 
-		inline virtual const Camera& getCamera(EntityId entity) const override {
+		virtual const Camera& getCamera(EntityId entity) const override {
 			return m_registry.get<Camera>(entity);
 		}
 
-		inline virtual Appearance& getAppearance(EntityId entity) override {
+		virtual Appearance& getAppearance(EntityId entity) override {
 			return m_registry.get<Appearance>(entity);
 		}
 
-		inline virtual const Appearance& getAppearance(EntityId entity) const override {
+		virtual const Appearance& getAppearance(EntityId entity) const override {
 			return m_registry.get<Appearance>(entity);
 		}
 
@@ -67,6 +67,6 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 			const std::function<void(const Transform&, const Appearance&)>& forEach
 		) const override;
 
-		virtual void forEachBehavior(const std::function<void(Behavior&)>& forEach) override;
+		virtual void forEachBehavior(const std::function<void(BehaviorBase&)>& forEach) override;
 	};
 }

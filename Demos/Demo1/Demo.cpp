@@ -1,3 +1,5 @@
+#include <format>
+
 #include <Miracle/Miracle.hpp>
 
 using namespace Miracle;
@@ -5,15 +7,18 @@ using namespace Miracle;
 static void updateTitle() {
 	Window::setTitle(
 		UnicodeConverter::toUtf8(
-			CurrentApp::getName()
-				+ " - FPS: " + std::to_string(PerformanceCounters::getFps())
-				+ " - UPS: " + std::to_string(PerformanceCounters::getUps())
-				+ " - Entity count: " + std::to_string(CurrentScene::getEntityCount())
+			std::format(
+				"{} - FPS: {} - UPS: {} - Entity count: {}",
+				CurrentApp::getName(),
+				PerformanceCounters::getFps(),
+				PerformanceCounters::getUps(),
+				CurrentScene::getEntityCount()
+			)
 		)
 	);
 }
 
-class ProjectileBehavior : public Behavior {
+class ProjectileBehavior : public BehaviorBase {
 private:
 	Vector3 m_velocity;
 
@@ -21,8 +26,8 @@ public:
 	ProjectileBehavior(
 		const EntityContext& context,
 		float movementSpeed
-	) : Behavior(context),
-		m_velocity(Vector3::up * movementSpeed)
+	) : BehaviorBase(context),
+		m_velocity(Vector3s::up * movementSpeed)
 	{}
 
 	virtual void act() override {
@@ -36,7 +41,7 @@ public:
 	}
 };
 
-class PlayerBehavior : public Behavior {
+class PlayerBehavior : public BehaviorBase {
 private:
 	float m_movementSpeed;
 	Degrees m_turnSpeed;
@@ -46,7 +51,7 @@ public:
 		const EntityContext& context,
 		float movementSpeed,
 		Degrees turnSpeed
-	) : Behavior(context),
+	) : BehaviorBase(context),
 		m_movementSpeed(movementSpeed),
 		m_turnSpeed(turnSpeed)
 	{}
@@ -61,7 +66,7 @@ public:
 
 		auto& transform = m_context.getTransform();
 
-		transform.rotate(Quaternion::createRotation(Vector3::forward, rotation * m_turnSpeed * DeltaTime::get()));
+		transform.rotate(Quaternion::createRotation(Vector3s::forward, rotation * m_turnSpeed * DeltaTime::get()));
 		transform.translate(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
 
 		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
@@ -74,7 +79,7 @@ public:
 					},
 					.appearanceConfig = AppearanceConfig{
 						.meshIndex = 1,
-						.color     = ColorRgb::magenta
+						.color     = ColorRgbs::magenta
 					},
 					.behaviorFactory = BehaviorFactory::createFactoryFor<ProjectileBehavior>(3.0f)
 				}
@@ -87,7 +92,7 @@ public:
 	}
 };
 
-class CameraBehavior : public Behavior {
+class CameraBehavior : public BehaviorBase {
 private:
 	float m_movementSpeed;
 	Degrees m_turnSpeed;
@@ -97,7 +102,7 @@ public:
 		const EntityContext& context,
 		float movementSpeed,
 		Degrees turnSpeed
-	) : Behavior(context),
+	) : BehaviorBase(context),
 		m_movementSpeed(movementSpeed),
 		m_turnSpeed(turnSpeed)
 	{}
@@ -113,7 +118,7 @@ public:
 
 		auto& transform = m_context.getTransform();
 
-		transform.rotate(Quaternion::createRotation(Vector3::up, rotation * m_turnSpeed * DeltaTime::get()));
+		transform.rotate(Quaternion::createRotation(Vector3s::up, rotation * m_turnSpeed * DeltaTime::get()));
 		transform.translate(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
 	}
 };
@@ -167,7 +172,7 @@ int main() {
 					{
 						.appearanceConfig = AppearanceConfig{
 							.meshIndex = 0,
-							.color     = ColorRgb::green
+							.color     = ColorRgbs::green
 						},
 						.behaviorFactory = BehaviorFactory::createFactoryFor<PlayerBehavior>(10.0f, 270.0_deg)
 					}

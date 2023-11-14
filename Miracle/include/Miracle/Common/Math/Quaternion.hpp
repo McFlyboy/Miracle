@@ -10,19 +10,15 @@ namespace Miracle {
 		float w = {};
 		Vector3 v = {};
 
-		static const Quaternion identity;
-
 		/* ----- COMPARISON ----- */
 
 		constexpr bool operator==(const Quaternion&) const = default;
 
 		/* ----- SIGNED CONVERTION ----- */
 
-		constexpr inline Quaternion operator+() const {
-			return *this;
-		}
+		constexpr Quaternion operator+() const { return *this; }
 
-		constexpr inline Quaternion operator-() const {
+		constexpr Quaternion operator-() const {
 			return Quaternion{
 				.w = -w,
 				.v = -v
@@ -31,40 +27,37 @@ namespace Miracle {
 
 		/* ----- MULTIPLICATION ----- */
 
-		constexpr inline Quaternion operator*(const Quaternion& rhs) const {
+		constexpr Quaternion operator*(const Quaternion& rhs) const {
 			return Quaternion{
 				.w = w * rhs.w - v.dot(rhs.v),
 				.v = w * rhs.v + v * rhs.w + v.cross(rhs.v)
 			};
 		}
 
-		constexpr inline Quaternion& operator*=(const Quaternion& rhs) {
-			auto newW = w * rhs.w - v.dot(rhs.v);
-			auto newV = w * rhs.v + v * rhs.w + v.cross(rhs.v);
-
-			w = newW;
-			v = newV;
-
-			return *this;
+		constexpr Quaternion& operator*=(const Quaternion& rhs) {
+			return *this = Quaternion{
+				.w = w * rhs.w - v.dot(rhs.v),
+				.v = w * rhs.v + v * rhs.w + v.cross(rhs.v)
+			};
 		}
 
 		/* ----- SCALAR MULTIPLICATION ----- */
 
-		constexpr inline Quaternion operator*(float rhs) const {
+		constexpr Quaternion operator*(float rhs) const {
 			return Quaternion{
 				.w = w * rhs,
 				.v = v * rhs
 			};
 		}
 
-		constexpr inline friend Quaternion operator*(float lhs, const Quaternion& rhs) {
+		constexpr friend Quaternion operator*(float lhs, const Quaternion& rhs) {
 			return Quaternion{
 				.w = lhs * rhs.w,
 				.v = lhs * rhs.v
 			};
 		}
 
-		constexpr inline Quaternion& operator*=(float rhs) {
+		constexpr Quaternion& operator*=(float rhs) {
 			w *= rhs;
 			v *= rhs;
 
@@ -73,21 +66,21 @@ namespace Miracle {
 
 		/* ----- SCALAR DIVISION ----- */
 
-		constexpr inline Quaternion operator/(float rhs) const {
+		constexpr Quaternion operator/(float rhs) const {
 			return Quaternion{
 				.w = w / rhs,
 				.v = v / rhs
 			};
 		}
 
-		constexpr inline friend Quaternion operator/(float lhs, const Quaternion& rhs) {
+		constexpr friend Quaternion operator/(float lhs, const Quaternion& rhs) {
 			return Quaternion{
 				.w = lhs / rhs.w,
 				.v = lhs / rhs.v
 			};
 		}
 
-		constexpr inline Quaternion& operator/=(float rhs) {
+		constexpr Quaternion& operator/=(float rhs) {
 			w /= rhs;
 			v /= rhs;
 
@@ -96,8 +89,7 @@ namespace Miracle {
 
 		/* ----- ROTATION ----- */
 
-		template<Angle TAngle>
-		static inline Quaternion createRotation(const Vector3& axis, TAngle angle) {
+		static Quaternion createRotation(const Vector3& axis, Angle auto angle) {
 			float halfAngle = static_cast<Radians>(angle).value / 2.0f;
 
 			return Quaternion{
@@ -108,31 +100,31 @@ namespace Miracle {
 
 		/* ----- MISC. ----- */
 
-		inline float getMagnitude() const {
+		float getMagnitude() const {
 			return std::sqrt(w * w + v.x * v.x + v.y * v.y + v.z * v.z);
 		}
 
-		constexpr inline Quaternion getConjugate() const {
+		constexpr Quaternion getConjugate() const {
 			return Quaternion{ .w = w, .v = -v };
 		}
 
-		constexpr inline Quaternion getInverse() const {
+		Quaternion getInverse() const {
 			if (*this == Quaternion{}) {
-				return Quaternion{};
+				return *this;
 			}
 
 			return getConjugate() / getMagnitude();
 		}
 
-		constexpr inline Quaternion getDifference(const Quaternion& quaternion) const {
+		Quaternion getDifference(const Quaternion& quaternion) const {
 			return quaternion * getInverse();
 		}
 
-		constexpr inline float dot(const Quaternion& rhs) const {
+		constexpr float dot(const Quaternion& rhs) const {
 			return w * rhs.w + v.dot(rhs.v);
 		}
 
-		inline Quaternion toExponentiated(float exponent) const {
+		Quaternion toExponentiated(float exponent) const {
 			float halfAngle = std::acos(w);
 
 			if (halfAngle == 0.0f) {
@@ -147,7 +139,7 @@ namespace Miracle {
 			};
 		}
 
-		inline Quaternion& exponentiate(float exponent) {
+		Quaternion& exponentiate(float exponent) {
 			float halfAngle = std::acos(w);
 
 			if (halfAngle == 0.0f) {
@@ -162,8 +154,15 @@ namespace Miracle {
 			return *this;
 		}
 
-		inline Quaternion slerp(const Quaternion& quaternion, float t) const {
+		Quaternion slerp(const Quaternion& quaternion, float t) const {
 			return getDifference(quaternion).toExponentiated(t) * *this;
 		}
+	};
+
+	class Quaternions {
+	public:
+		Quaternions() = delete;
+
+		static constexpr Quaternion identity = Quaternion{ .w = 1.0f, .v = Vector3s::zero };
 	};
 }

@@ -15,7 +15,7 @@ namespace Miracle::Application {
 	public:
 		DeltaTimeService(IMultimediaFramework& multimediaFramework);
 
-		inline std::chrono::duration<float> getDeltaTime() const { return m_deltaTime; }
+		std::chrono::duration<float> getDeltaTime() const { return m_deltaTime; }
 
 		void updateDeltaTime();
 	};

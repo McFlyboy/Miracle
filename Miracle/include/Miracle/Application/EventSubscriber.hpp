@@ -1,31 +1,35 @@
 #pragma once
 
+#include <concepts>
+
 #include "EventDispatcher.hpp"
 #include "Events/Event.hpp"
 
 namespace Miracle::Application {
-	template<EventTypes t_subscribedTypes>
+	template<Event... TEvents>
 	class EventSubscriber {
 	private:
 		EventDispatcher& m_dispatcher;
 
-		const EventSubscriptionId m_subscriptionId;
+		const EventSubscriberId m_subscriberId;
 
 	public:
-		EventSubscriber(EventDispatcher& dispatcher) :
+		EventSubscriber(EventDispatcher& dispatcher, const std::invocable<const TEvents&> auto&... callbacks) :
 			m_dispatcher(dispatcher),
-			m_subscriptionId(
+			m_subscriberId(
 				m_dispatcher.subscribe(
-					t_subscribedTypes,
-					std::bind(&EventSubscriber::onEvent, this, std::placeholders::_1)
+					std::vector{
+						std::pair<std::type_index, EventCallback>(
+							typeid(TEvents),
+							[=](const EventBase& event) { callbacks(reinterpret_cast<const TEvents&>(event)); }
+						)...
+					}
 				)
 			)
 		{}
 
 		virtual ~EventSubscriber() {
-			m_dispatcher.unsubscribe(m_subscriptionId);
+			m_dispatcher.unsubscribe(m_subscriberId);
 		}
-
-		virtual void onEvent(const Event& event) = 0;
 	};
 }

@@ -11,17 +11,13 @@ namespace Miracle {
 		float y = {};
 		float z = {};
 
-		static const Vector3 right;
-		static const Vector3 up;
-		static const Vector3 forward;
-
 		/* ----- COMPARISON ----- */
 
 		constexpr bool operator==(const Vector3&) const = default;
 
 		/* ----- CONVERTERS ----- */
 
-		static constexpr inline Vector3 createFromVector2(const Vector2& xy, float z) {
+		static constexpr Vector3 createFromVector2(const Vector2& xy, float z = 0.0f) {
 			return Vector3{
 				.x = xy.x,
 				.y = xy.y,
@@ -29,13 +25,18 @@ namespace Miracle {
 			};
 		}
 
-		/* ----- SIGNED CONVERTION ----- */
-
-		constexpr inline Vector3 operator+() const {
-			return *this;
+		constexpr Vector2 toVector2() {
+			return Vector2{
+				.x = x,
+				.y = y
+			};
 		}
 
-		constexpr inline Vector3 operator-() const {
+		/* ----- SIGNED CONVERTION ----- */
+
+		constexpr Vector3 operator+() const { return *this; }
+
+		constexpr Vector3 operator-() const {
 			return Vector3{
 				.x = -x,
 				.y = -y,
@@ -45,7 +46,7 @@ namespace Miracle {
 
 		/* ----- ADDITION ----- */
 
-		constexpr inline Vector3 operator+(const Vector3& rhs) const {
+		constexpr Vector3 operator+(const Vector3& rhs) const {
 			return Vector3{
 				.x = x + rhs.x,
 				.y = y + rhs.y,
@@ -53,7 +54,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Vector3& operator+=(const Vector3& rhs) {
+		constexpr Vector3& operator+=(const Vector3& rhs) {
 			x += rhs.x;
 			y += rhs.y;
 			z += rhs.z;
@@ -63,7 +64,7 @@ namespace Miracle {
 
 		/* ----- SUBTRACTION ----- */
 
-		constexpr inline Vector3 operator-(const Vector3& rhs) const {
+		constexpr Vector3 operator-(const Vector3& rhs) const {
 			return Vector3{
 				.x = x - rhs.x,
 				.y = y - rhs.y,
@@ -71,7 +72,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Vector3& operator-=(const Vector3& rhs) {
+		constexpr Vector3& operator-=(const Vector3& rhs) {
 			x -= rhs.x;
 			y -= rhs.y;
 			z -= rhs.z;
@@ -81,7 +82,7 @@ namespace Miracle {
 
 		/* ----- SCALAR MULTIPLICATION ----- */
 
-		constexpr inline Vector3 operator*(float rhs) const {
+		constexpr Vector3 operator*(float rhs) const {
 			return Vector3{
 				.x = x * rhs,
 				.y = y * rhs,
@@ -89,7 +90,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline friend Vector3 operator*(float lhs, const Vector3& rhs) {
+		constexpr friend Vector3 operator*(float lhs, const Vector3& rhs) {
 			return Vector3{
 				.x = lhs * rhs.x,
 				.y = lhs * rhs.y,
@@ -97,7 +98,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Vector3& operator*=(float rhs) {
+		constexpr Vector3& operator*=(float rhs) {
 			x *= rhs;
 			y *= rhs;
 			z *= rhs;
@@ -107,7 +108,7 @@ namespace Miracle {
 
 		/* ----- SCALAR DIVISION ----- */
 
-		constexpr inline Vector3 operator/(float rhs) const {
+		constexpr Vector3 operator/(float rhs) const {
 			return Vector3{
 				.x = x / rhs,
 				.y = y / rhs,
@@ -115,7 +116,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline friend Vector3 operator/(float lhs, const Vector3& rhs) {
+		constexpr friend Vector3 operator/(float lhs, const Vector3& rhs) {
 			return Vector3{
 				.x = lhs / rhs.x,
 				.y = lhs / rhs.y,
@@ -123,7 +124,7 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Vector3& operator/=(float rhs) {
+		constexpr Vector3& operator/=(float rhs) {
 			x /= rhs;
 			y /= rhs;
 			z /= rhs;
@@ -133,37 +134,35 @@ namespace Miracle {
 
 		/* ----- MISC. ----- */
 
-		inline float getLength() const {
+		float getLength() const {
 			return std::sqrt(x * x + y * y + z * z);
 		}
 
-		inline Vector3 toNormalized() const {
+		Vector3 toNormalized() const {
 			if (*this == Vector3{}) {
-				return Vector3{};
+				return *this;
 			}
 
 			return *this / getLength();
 		}
 
-		inline Vector3& normalize() {
+		Vector3& normalize() {
 			if (*this == Vector3{}) {
 				return *this;
 			}
 
-			*this /= getLength();
-
-			return *this;
+			return *this /= getLength();
 		}
 
-		inline float distanceTo(const Vector3& vector) const {
+		float distanceTo(const Vector3& vector) const {
 			return (vector - *this).getLength();
 		}
 
-		constexpr inline float dot(const Vector3& rhs) const {
+		constexpr float dot(const Vector3& rhs) const {
 			return x * rhs.x + y * rhs.y + z * rhs.z;
 		}
 
-		constexpr inline Vector3 cross(const Vector3& rhs) const {
+		constexpr Vector3 cross(const Vector3& rhs) const {
 			return Vector3{
 				.x = y * rhs.z - z * rhs.y,
 				.y = z * rhs.x - x * rhs.z,
@@ -171,8 +170,21 @@ namespace Miracle {
 			};
 		}
 
-		constexpr inline Vector3 lerp(const Vector3& vector, float t) const {
+		constexpr Vector3 lerp(const Vector3& vector, float t) const {
 			return *this + (vector - *this) * t;
 		}
+	};
+
+	class Vector3s {
+	public:
+		Vector3s() = delete;
+
+		static constexpr Vector3 zero    = Vector3{ .x =  0.0f, .y =  0.0f, .z =  0.0f };
+		static constexpr Vector3 right	 = Vector3{ .x =  1.0f, .y =  0.0f, .z =  0.0f };
+		static constexpr Vector3 left    = Vector3{ .x = -1.0f, .y =  0.0f, .z =  0.0f };
+		static constexpr Vector3 up		 = Vector3{ .x =  0.0f, .y =  1.0f, .z =  0.0f };
+		static constexpr Vector3 down    = Vector3{ .x =  0.0f, .y = -1.0f, .z =  0.0f };
+		static constexpr Vector3 forward = Vector3{ .x =  0.0f, .y =  0.0f, .z =  1.0f };
+		static constexpr Vector3 back    = Vector3{ .x =  0.0f, .y =  0.0f, .z = -1.0f };
 	};
 }

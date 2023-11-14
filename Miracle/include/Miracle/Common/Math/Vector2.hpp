@@ -8,20 +8,15 @@ namespace Miracle {
 		float x = {};
 		float y = {};
 
-		static const Vector2 right;
-		static const Vector2 up;
-
 		/* ----- COMPARISON ----- */
 
 		constexpr bool operator==(const Vector2&) const = default;
 
 		/* ----- SIGNED CONVERTION ----- */
 
-		constexpr inline Vector2 operator+() const {
-			return *this;
-		}
+		constexpr Vector2 operator+() const { return *this; }
 
-		constexpr inline Vector2 operator-() const {
+		constexpr Vector2 operator-() const {
 			return Vector2{
 				.x = -x,
 				.y = -y
@@ -30,14 +25,14 @@ namespace Miracle {
 
 		/* ----- ADDITION ----- */
 
-		constexpr inline Vector2 operator+(const Vector2& rhs) const {
+		constexpr Vector2 operator+(const Vector2& rhs) const {
 			return Vector2{
 				.x = x + rhs.x,
 				.y = y + rhs.y
 			};
 		}
 
-		constexpr inline Vector2& operator+=(const Vector2& rhs) {
+		constexpr Vector2& operator+=(const Vector2& rhs) {
 			x += rhs.x;
 			y += rhs.y;
 
@@ -46,14 +41,14 @@ namespace Miracle {
 
 		/* ----- SUBTRACTION ----- */
 
-		constexpr inline Vector2 operator-(const Vector2& rhs) const {
+		constexpr Vector2 operator-(const Vector2& rhs) const {
 			return Vector2{
 				.x = x - rhs.x,
 				.y = y - rhs.y
 			};
 		}
 
-		constexpr inline Vector2& operator-=(const Vector2& rhs) {
+		constexpr Vector2& operator-=(const Vector2& rhs) {
 			x -= rhs.x;
 			y -= rhs.y;
 
@@ -62,21 +57,21 @@ namespace Miracle {
 
 		/* ----- SCALAR MULTIPLICATION ----- */
 
-		constexpr inline Vector2 operator*(float rhs) const {
+		constexpr Vector2 operator*(float rhs) const {
 			return Vector2{
 				.x = x * rhs,
 				.y = y * rhs
 			};
 		}
 
-		constexpr inline friend Vector2 operator*(float lhs, const Vector2& rhs) {
+		constexpr friend Vector2 operator*(float lhs, const Vector2& rhs) {
 			return Vector2{
 				.x = lhs * rhs.x,
 				.y = lhs * rhs.y
 			};
 		}
 
-		constexpr inline Vector2& operator*=(float rhs) {
+		constexpr Vector2& operator*=(float rhs) {
 			x *= rhs;
 			y *= rhs;
 
@@ -85,21 +80,21 @@ namespace Miracle {
 
 		/* ----- SCALAR DIVISION ----- */
 
-		constexpr inline Vector2 operator/(float rhs) const {
+		constexpr Vector2 operator/(float rhs) const {
 			return Vector2{
 				.x = x / rhs,
 				.y = y / rhs
 			};
 		}
 
-		constexpr inline friend Vector2 operator/(float lhs, const Vector2& rhs) {
+		constexpr friend Vector2 operator/(float lhs, const Vector2& rhs) {
 			return Vector2{
 				.x = lhs / rhs.x,
 				.y = lhs / rhs.y
 			};
 		}
 
-		constexpr inline Vector2& operator/=(float rhs) {
+		constexpr Vector2& operator/=(float rhs) {
 			x /= rhs;
 			y /= rhs;
 
@@ -108,38 +103,47 @@ namespace Miracle {
 
 		/* ----- MISC. ----- */
 
-		inline float getLength() const {
+		float getLength() const {
 			return std::sqrt(x * x + y * y);
 		}
 
-		inline Vector2 toNormalized() const {
+		Vector2 toNormalized() const {
 			if (*this == Vector2{}) {
-				return Vector2{};
+				return *this;
 			}
 
 			return *this / getLength();
 		}
 
-		inline Vector2& normalize() {
+		Vector2& normalize() {
 			if (*this == Vector2{}) {
 				return *this;
 			}
 
-			*this /= getLength();
-
-			return *this;
+			return *this /= getLength();
 		}
 
-		inline float distanceTo(const Vector2& vector) const {
+		float distanceTo(const Vector2& vector) const {
 			return (vector - *this).getLength();
 		}
 
-		constexpr inline float dot(const Vector2& rhs) const {
+		constexpr float dot(const Vector2& rhs) const {
 			return x * rhs.x + y * rhs.y;
 		}
 
-		constexpr inline Vector2 lerp(const Vector2& vector, float t) const {
+		constexpr Vector2 lerp(const Vector2& vector, float t) const {
 			return *this + (vector - *this) * t;
 		}
+	};
+
+	class Vector2s {
+	public:
+		Vector2s() = delete;
+
+		static constexpr Vector2 zero  = Vector2{ .x =  0.0f, .y =  0.0f };
+		static constexpr Vector2 right = Vector2{ .x =  1.0f, .y =  0.0f };
+		static constexpr Vector2 left  = Vector2{ .x = -1.0f, .y =  0.0f };
+		static constexpr Vector2 up	   = Vector2{ .x =  0.0f, .y =  1.0f };
+		static constexpr Vector2 down  = Vector2{ .x =  0.0f, .y = -1.0f };
 	};
 }

@@ -4,8 +4,7 @@
 #include <algorithm>
 #include <limits>
 #include <array>
-
-#include <fmt/format.h>
+#include <format>
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	Swapchain::Swapchain(
@@ -252,7 +251,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			);
 		}
 		catch (const std::exception& e) {
-			m_logger.error(fmt::format("Failed to create Vulkan swapchain.\n{}", e.what()));
+			m_logger.error(std::format("Failed to create Vulkan swapchain.\n{}", e.what()));
 			throw Application::SwapchainErrors::CreationError();
 		}
 	}
@@ -283,7 +282,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 		catch (const std::exception& e) {
 			m_logger.error(
-				fmt::format(
+				std::format(
 					"Failed to create Vulkan image view for image in swapchain.\n{}",
 					e.what()
 				)
@@ -357,7 +356,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 		catch (const std::exception& e) {
 			m_logger.error(
-				fmt::format("Failed to create Vulkan render pass for swapchain.\n{}", e.what())
+				std::format("Failed to create Vulkan render pass for swapchain.\n{}", e.what())
 			);
 
 			throw Application::SwapchainErrors::CreationError();
@@ -380,7 +379,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 		catch (const std::exception& e) {
 			m_logger.error(
-				fmt::format("Failed to create Vulkan frame buffer for swapchain.\n{}", e.what())
+				std::format("Failed to create Vulkan frame buffer for swapchain.\n{}", e.what())
 			);
 
 			throw Application::SwapchainErrors::CreationError();

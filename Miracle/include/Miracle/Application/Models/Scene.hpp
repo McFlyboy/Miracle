@@ -35,11 +35,11 @@ namespace Miracle::Application {
 			const SceneInitProps& initProps
 		);
 
-		inline const ColorRgb& getBackgroundColor() const { return m_backgroundColor; }
+		const ColorRgb& getBackgroundColor() const { return m_backgroundColor; }
 
 		void setBackgroundColor(const ColorRgb& color);
 
-		inline size_t getEntityCount() const { return m_container->getEntityCount(); }
+		size_t getEntityCount() const { return m_container->getEntityCount(); }
 
 		void createEntity(const EntityConfig& config);
 
@@ -49,19 +49,19 @@ namespace Miracle::Application {
 
 		void destroyScheduledEntities();
 
-		inline void setEntityCreatedCallback(std::function<void(EntityId)>&& entityCreatedCallback) {
+		void setEntityCreatedCallback(std::function<void(EntityId)>&& entityCreatedCallback) {
 			m_container->setEntityCreatedCallback(std::move(entityCreatedCallback));
 		}
 
-		inline void unsetEntityCreatedCallback() {
+		void unsetEntityCreatedCallback() {
 			m_container->unsetEntityCreatedCallback();
 		}
 
-		inline void setEntityDestroyedCallback(std::function<void(EntityId)>&& entityDestroyedCallback) {
+		void setEntityDestroyedCallback(std::function<void(EntityId)>&& entityDestroyedCallback) {
 			m_container->setEntityDestroyedCallback(std::move(entityDestroyedCallback));
 		}
 
-		inline void unsetEntityDestroyedCallback() {
+		void unsetEntityDestroyedCallback() {
 			m_container->unsetEntityDestroyedCallback();
 		}
 

@@ -22,16 +22,16 @@ namespace Miracle {
 			m_color(color)
 		{}
 
-		inline bool isVisible() const { return m_visible; }
+		constexpr bool isVisible() const { return m_visible; }
 
-		inline void setVisible(bool visible) { m_visible = visible; }
+		constexpr void setVisible(bool visible) { m_visible = visible; }
 
-		inline size_t getMeshIndex() const { return m_meshIndex; }
+		constexpr size_t getMeshIndex() const { return m_meshIndex; }
 
-		inline void setMeshIndex(size_t meshIndex) { m_meshIndex = meshIndex; }
+		constexpr void setMeshIndex(size_t meshIndex) { m_meshIndex = meshIndex; }
 
-		inline const ColorRgb& getColor() const { return m_color; }
+		constexpr const ColorRgb& getColor() const { return m_color; }
 
-		inline void setColor(const ColorRgb& color) { m_color = color; }
+		constexpr void setColor(const ColorRgb& color) { m_color = color; }
 	};
 }

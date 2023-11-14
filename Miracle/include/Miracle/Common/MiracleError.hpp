@@ -1,7 +1,8 @@
 #pragma once
 
-#include <stdexcept>
 #include <cstdint>
+#include <stdexcept>
+#include <string>
 
 namespace Miracle {
 	using ErrorCode = uint32_t;
@@ -28,17 +29,17 @@ namespace Miracle {
 		ErrorCode m_errorCode;
 
 	public:
-		MiracleError(ErrorCategory errorCategory, ErrorValue errorValue, const char* message) :
+		MiracleError(ErrorCategory errorCategory, ErrorValue errorValue, const std::string& message) :
 			runtime_error(message),
-			m_errorCode(createErrorCode(static_cast<ErrorCodeSection>(errorCategory), errorValue))
+			m_errorCode(createErrorCode(errorCategory, errorValue))
 		{}
 
-		inline ErrorCode getErrorCode() const { return m_errorCode; }
+		constexpr ErrorCode getErrorCode() const { return m_errorCode; }
 
 	private:
-		inline ErrorCode createErrorCode(ErrorCodeSection section1, ErrorCodeSection section2) const {
-			return (static_cast<ErrorCode>(section1) << (sizeof(ErrorCodeSection) * 8))
-				| static_cast<ErrorCode>(section2);
+		constexpr ErrorCode createErrorCode(ErrorCategory category, ErrorValue value) const {
+			return (static_cast<ErrorCode>(category) << (sizeof(category) * 8))
+				| static_cast<ErrorCode>(value);
 		}
 	};
 
@@ -50,7 +51,7 @@ namespace Miracle {
 			noAppRunningError
 		};
 
-		UncategorizedError(ErrorValue errorValue, const char* message) : MiracleError(
+		UncategorizedError(ErrorValue errorValue, const std::string& message) : MiracleError(
 			ErrorCategory::none,
 			static_cast<Miracle::ErrorValue>(errorValue),
 			message
@@ -64,7 +65,7 @@ namespace Miracle {
 			unableToOpenFileError
 		};
 
-		FileAccessError(ErrorValue errorValue, const char* message) : MiracleError(
+		FileAccessError(ErrorValue errorValue, const std::string& message) : MiracleError(
 			ErrorCategory::fileAccess,
 			static_cast<Miracle::ErrorValue>(errorValue),
 			message
@@ -77,7 +78,7 @@ namespace Miracle {
 			initError
 		};
 
-		MultimediaFrameworkError(ErrorValue errorValue, const char* message) : MiracleError(
+		MultimediaFrameworkError(ErrorValue errorValue, const std::string& message) : MiracleError(
 			ErrorCategory::multimediaFramework,
 			static_cast<Miracle::ErrorValue>(errorValue),
 			message
@@ -90,7 +91,7 @@ namespace Miracle {
 			creationError
 		};
 
-		WindowError(ErrorValue errorValue, const char* message) : MiracleError(
+		WindowError(ErrorValue errorValue, const std::string& message) : MiracleError(
 			ErrorCategory::window,
 			static_cast<Miracle::ErrorValue>(errorValue),
 			message
@@ -107,7 +108,7 @@ namespace Miracle {
 			noGraphicsDeviceSupportedError
 		};
 
-		GraphicsContextError(ErrorValue errorValue, const char* message) : MiracleError(
+		GraphicsContextError(ErrorValue errorValue, const std::string& message) : MiracleError(
 			ErrorCategory::graphicsContext,
 			static_cast<Miracle::ErrorValue>(errorValue),
 			message
@@ -120,7 +121,7 @@ namespace Miracle {
 			creationError
 		};
 
-		SwapchainError(ErrorValue errorValue, const char* message) : MiracleError(
+		SwapchainError(ErrorValue errorValue, const std::string& message) : MiracleError(
 			ErrorCategory::swapchain,
 			static_cast<Miracle::ErrorValue>(errorValue),
 			message
@@ -133,7 +134,7 @@ namespace Miracle {
 			creationError
 		};
 
-		RenderPassError(ErrorValue errorValue, const char* message) : MiracleError(
+		RenderPassError(ErrorValue errorValue, const std::string& message) : MiracleError(
 			ErrorCategory::renderPass,
 			static_cast<Miracle::ErrorValue>(errorValue),
 			message
@@ -146,7 +147,7 @@ namespace Miracle {
 			creationError
 		};
 
-		GraphicsPipelineError(ErrorValue errorValue, const char* message) : MiracleError(
+		GraphicsPipelineError(ErrorValue errorValue, const std::string& message) : MiracleError(
 			ErrorCategory::graphicsPipeline,
 			static_cast<Miracle::ErrorValue>(errorValue),
 			message
@@ -160,7 +161,7 @@ namespace Miracle {
 			creationError
 		};
 
-		VertexBufferError(ErrorValue errorValue, const char* message) : MiracleError(
+		VertexBufferError(ErrorValue errorValue, const std::string& message) : MiracleError(
 			ErrorCategory::vertexBuffer,
 			static_cast<Miracle::ErrorValue>(errorValue),
 			message
@@ -174,7 +175,7 @@ namespace Miracle {
 			creationError
 		};
 
-		IndexBufferError(ErrorValue errorValue, const char* message) : MiracleError(
+		IndexBufferError(ErrorValue errorValue, const std::string& message) : MiracleError(
 			ErrorCategory::indexBuffer,
 			static_cast<Miracle::ErrorValue>(errorValue),
 			message

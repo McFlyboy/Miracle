@@ -5,7 +5,7 @@
 
 namespace Miracle::Application {
 	struct VertexStagePushConstants {
-		Matrix4 transform = Matrix4::identity;
+		Matrix4 transform = Matrix4s::identity;
 	};
 
 	struct FragmentStagePushConstants {

@@ -29,7 +29,7 @@ namespace Miracle::Application {
 
 		virtual void drawIndexed(uint32_t indexCount) = 0;
 
-		virtual inline IContextTarget& getTarget() = 0;
+		virtual IContextTarget& getTarget() = 0;
 
 		virtual void recordCommands(const std::function<void()>& recording) = 0;
 

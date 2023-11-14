@@ -2,8 +2,7 @@
 
 #include <utility>
 #include <exception>
-
-#include <fmt/format.h>
+#include <format>
 
 #include "Infrastructure/Diagnostics/Spdlog/Logger.hpp"
 #include "Infrastructure/View/TinyFileDialogs/MessageBox.hpp"
@@ -73,7 +72,7 @@ namespace Miracle {
 	}
 
 	void App::runApp() {
-		m_logger->info(fmt::format("Running app: {}", getName()));
+		m_logger->info(std::format("Running app: {}", getName()));
 
 		auto& framework = m_dependencies->getMultimediaFramework();
 		auto& window = m_dependencies->getWindow();
@@ -127,7 +126,7 @@ namespace Miracle {
 
 		MessageBox(
 			"Error",
-			fmt::format("{0:#010x}: {1}", error.getErrorCode(), error.what()),
+			std::format("{0:#010x}: {1}", error.getErrorCode(), error.what()),
 			MessageBoxIcon::error
 		).show();
 	}

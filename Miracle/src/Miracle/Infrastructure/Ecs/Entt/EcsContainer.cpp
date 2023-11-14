@@ -65,9 +65,9 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 		}
 		
 		if (config.behaviorFactory.has_value()) {
-			m_registry.emplace<std::unique_ptr<Behavior>>(
+			m_registry.emplace<std::unique_ptr<BehaviorBase>>(
 				entity,
-				config.behaviorFactory.value()(
+				config.behaviorFactory.value().produce(
 					EntityContext(entity, *this)
 				)
 			);
@@ -122,8 +122,8 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 		}
 	}
 
-	void EcsContainer::forEachBehavior(const std::function<void(Behavior&)>& forEach) {
-		for (auto [entity, behavior] : m_registry.view<std::unique_ptr<Behavior>>().each()) {
+	void EcsContainer::forEachBehavior(const std::function<void(BehaviorBase&)>& forEach) {
+		for (auto [entity, behavior] : m_registry.view<std::unique_ptr<BehaviorBase>>().each()) {
 			forEach(*behavior.get());
 		}
 	}

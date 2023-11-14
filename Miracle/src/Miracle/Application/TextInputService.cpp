@@ -2,15 +2,13 @@
 
 #include <utility>
 
-#include <Miracle/Application/Events/TextInputEvent.hpp>
-
 namespace Miracle::Application {
 	TextInputService::TextInputService(EventDispatcher& dispatcher) :
-		EventSubscriber(dispatcher)
+		EventSubscriber(dispatcher, [this](auto& event) { handleTextInputEvent(event); })
 	{}
 
 	void TextInputService::setTextInputReceiver(
-		std::u32string& textInputReceiver,
+		std::u8string& textInputReceiver,
 		TextInputReceivedCallback&& textInputReceivedCallback
 	) {
 		m_receiver = &textInputReceiver;
@@ -22,18 +20,39 @@ namespace Miracle::Application {
 		m_callback = []() {};
 	}
 
-	void TextInputService::onEvent(const Event& event) {
+	void TextInputService::handleTextInputEvent(const TextInputEvent& event) {
 		if (m_receiver == nullptr) return;
 
-		auto& textInputEvent = reinterpret_cast<const TextInputEvent&>(event);
+		if (event.text == u8"\b") [[unlikely]] {
+			if (m_receiver->empty()) {
+				return;
+			}
 
-		if (textInputEvent.getText() == U"\b") {
-			if (!m_receiver->empty()) {
+			auto reverseIterator = m_receiver->rbegin();
+			if (*reverseIterator >> 7 == 0) [[likely]] {
 				m_receiver->pop_back();
+			}
+			else if (*(++reverseIterator) >> 5 == 0b110) {
+				m_receiver->pop_back();
+				m_receiver->pop_back();
+			}
+			else if (*(++reverseIterator) >> 4 == 0b1110) {
+				m_receiver->pop_back();
+				m_receiver->pop_back();
+				m_receiver->pop_back();
+			}
+			else if (*(++reverseIterator) >> 3 == 0b11110) {
+				m_receiver->pop_back();
+				m_receiver->pop_back();
+				m_receiver->pop_back();
+				m_receiver->pop_back();
+			}
+			else {
+				return;
 			}
 		}
 		else {
-			*m_receiver += textInputEvent.getText();
+			*m_receiver += event.text;
 		}
 
 		m_callback();
