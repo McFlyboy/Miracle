@@ -4,9 +4,9 @@
 
 namespace Miracle {
 	enum class Platform {
-		windows,
-		macos,
-		linux
+		platformWindows,
+		platformMacos,
+		platformLinux
 	};
 
 	class Environment {
@@ -15,11 +15,11 @@ namespace Miracle {
 
 		static constexpr Platform getCurrentPlatform() {
 #if defined(MIRACLE_PLATFORM_WINDOWS)
-			return Platform::windows;
+			return Platform::platformWindows;
 #elif defined(MIRACLE_PLATFORM_MACOS)
-			return Platform::macos;
+			return Platform::platformMacos;
 #elif defined(MIRACLE_PLATFORM_LINUX)
-			return Platform::linux;
+			return Platform::platformLinux;
 #endif
 		}
 

@@ -12,7 +12,7 @@ namespace Miracle {
 	public:
 		UnicodeConverter() = delete;
 
-		static constexpr std::u8string_view toUtf8(const std::string_view& ascii) {
+		static std::u8string_view toUtf8(const std::string_view& ascii) {
 			return std::u8string_view(
 				reinterpret_cast<const char8_t*>(ascii.data()),
 				ascii.size()

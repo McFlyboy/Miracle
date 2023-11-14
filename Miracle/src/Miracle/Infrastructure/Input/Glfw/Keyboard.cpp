@@ -106,7 +106,7 @@ namespace Miracle::Infrastructure::Input::Glfw {
 			return;
 		}
 
-		constexpr KeyboardModifierKeys pasteModifierKey = Environment::getCurrentPlatform() == Platform::macos
+		constexpr KeyboardModifierKeys pasteModifierKey = Environment::getCurrentPlatform() == Platform::platformMacos
 			? KeyboardModifierKeys::modSuper
 			: KeyboardModifierKeys::modControl;
 
