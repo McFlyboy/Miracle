@@ -44,10 +44,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	) {
 		auto queueFamilyIndices = QueueFamilyIndices{};
 
-		auto queueFamiliesProperties = device.getQueueFamilyProperties();
+		auto queueFamilyPropertiesList = device.getQueueFamilyProperties();
 
-		for (size_t i = 0; i < queueFamiliesProperties.size(); i++) {
-			if (queueFamiliesProperties[i].queueFlags & vk::QueueFlagBits::eGraphics) {
+		for (size_t i = 0; i < queueFamilyPropertiesList.size(); i++) {
+			if (queueFamilyPropertiesList[i].queueFlags & vk::QueueFlagBits::eGraphics) {
 				queueFamilyIndices.graphicsFamilyIndex = static_cast<uint32_t>(i);
 			}
 

@@ -127,7 +127,7 @@ namespace Miracle::Infrastructure::View::Glfw {
 	vk::raii::SurfaceKHR Window::createVulkanSurface(
 		vk::raii::Instance& instance
 	) const {
-		VkSurfaceKHR surface = nullptr;
+		VkSurfaceKHR surface;
 		auto result = vk::Result(glfwCreateWindowSurface(*instance, m_window, nullptr, &surface));
 
 		if (result != vk::Result::eSuccess) {

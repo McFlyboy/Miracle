@@ -26,11 +26,11 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		IContextTarget& m_target;
 
 		vk::raii::Context m_context;
-		vk::raii::Instance m_instance = nullptr;
+		vk::raii::Instance m_instance;
 #ifdef MIRACLE_CONFIG_DEBUG
-		vk::raii::DebugUtilsMessengerEXT m_debugMessenger = nullptr;
+		vk::raii::DebugUtilsMessengerEXT m_debugMessenger;
 #endif
-		vk::raii::SurfaceKHR m_surface = nullptr;
+		vk::raii::SurfaceKHR m_surface;
 		vk::raii::PhysicalDevice m_physicalDevice = nullptr;
 		DeviceInfo m_deviceInfo;
 		vk::raii::Device m_device = nullptr;
@@ -118,9 +118,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	private:
 		vk::raii::Instance createInstance(const std::string_view& appName);
 
-		void checkExtensionsAvailable(
-			const std::span<const char*>& extensionNames
-		) const;
+		void checkExtensionsAvailable(const std::span<const char*>& extensionNames) const;
 
 #ifdef MIRACLE_CONFIG_DEBUG
 		void checkValidationLayersAvailable() const;

@@ -4,7 +4,9 @@
 #include <exception>
 #include <limits>
 #include <format>
+#include <ranges>
 
+#include <Miracle/Environment.hpp>
 #include "DeviceExplorer.hpp"
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
@@ -14,14 +16,13 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		IContextTarget& target
 	) :
 		m_logger(logger),
-		m_target(target)
-	{
-		m_instance = createInstance(appName);
+		m_target(target),
+		m_instance(createInstance(appName)),
 #ifdef MIRACLE_CONFIG_DEBUG
-		m_debugMessenger = createDebugMessenger();
+		m_debugMessenger(createDebugMessenger()),
 #endif
-		m_surface = target.createVulkanSurface(m_instance);
-
+		m_surface(target.createVulkanSurface(m_instance))
+	{
 		auto [physicalDevice, deviceInfo] = getMostOptimalPhysicalDevice();
 
 		m_physicalDevice = std::move(physicalDevice);
@@ -201,6 +202,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		auto debugMessengerCreateInfo = getDebugMessengerCreateInfo();
 #endif
+		
+		if constexpr (Environment::getCurrentPlatform() == Platform::platformMacos) {
+			extensionNames.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+		}
 
 		checkExtensionsAvailable(extensionNames);
 
@@ -210,7 +215,9 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 #ifdef MIRACLE_CONFIG_DEBUG
 					.pNext                   = &debugMessengerCreateInfo,
 #endif
-					.flags                   = {},
+#ifdef MIRACLE_PLATFORM_MACOS
+					.flags                   = vk::InstanceCreateFlagBits::eEnumeratePortabilityKHR,
+#endif
 					.pApplicationInfo        = &appInfo,
 #ifdef MIRACLE_CONFIG_DEBUG
 					.enabledLayerCount       = static_cast<uint32_t>(s_validationLayerNames.size()),
@@ -233,67 +240,55 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 	}
 
-	void GraphicsContext::checkExtensionsAvailable(
-		const std::span<const char*>& extensionNames
-	) const {
+	void GraphicsContext::checkExtensionsAvailable(const std::span<const char*>& extensionNames) const {
 		bool allExtensionsFound = true;
 
-		auto extensionsProperties = m_context.enumerateInstanceExtensionProperties();
+		auto extensionPropertiesList = m_context.enumerateInstanceExtensionProperties();
 
 		for (auto& extensionName : extensionNames) {
 			bool extensionFound = false;
 
-			for (auto& extensionProperties : extensionsProperties) {
+			for (auto& extensionProperties : extensionPropertiesList) {
 				if (std::strcmp(extensionName, extensionProperties.extensionName) == 0) {
 					extensionFound = true;
 					break;
 				}
 			}
 
-			if (extensionFound) {
-				continue;
-			}
+			if (extensionFound) continue;
 
 			m_logger.error(std::format("Vulkan extension missing: {}", extensionName));
 			allExtensionsFound = false;
 		}
 
-		if (allExtensionsFound) {
-			return;
+		if (!allExtensionsFound) {
+			throw Application::GraphicsContextErrors::FunctionalityNotSupportedError();
 		}
-
-		throw Application::GraphicsContextErrors::FunctionalityNotSupportedError();
 	}
 
 #ifdef MIRACLE_CONFIG_DEBUG
 	void GraphicsContext::checkValidationLayersAvailable() const {
 		bool allLayersFound = true;
 
-		auto layersProperties = m_context.enumerateInstanceLayerProperties();
+		auto layerPropertiesList = m_context.enumerateInstanceLayerProperties();
 
 		for (auto& validationLayerName : s_validationLayerNames) {
 			bool layerFound = false;
 
-			for (auto& layerProperties : layersProperties) {
+			for (auto& layerProperties : layerPropertiesList) {
 				if (std::strcmp(validationLayerName, layerProperties.layerName) == 0) {
 					layerFound = true;
 					break;
 				}
 			}
 
-			if (layerFound) {
-				continue;
-			}
+			if (layerFound) continue;
 
 			m_logger.error(std::format("Vulkan validation layer missing: {}", validationLayerName));
 			allLayersFound = false;
 		}
 
-		if (allLayersFound) {
-			return;
-		}
-
-		throw Application::GraphicsContextErrors::DebugToolsUnavailableError();
+		if (!allLayersFound) throw Application::GraphicsContextErrors::DebugToolsUnavailableError();
 	}
 
 	vk::raii::DebugUtilsMessengerEXT GraphicsContext::createDebugMessenger() {
@@ -314,14 +309,14 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 	vk::DebugUtilsMessengerCreateInfoEXT GraphicsContext::getDebugMessengerCreateInfo() {
 		return vk::DebugUtilsMessengerCreateInfoEXT{
-			.flags = {},
+			.flags           = {},
 			.messageSeverity = vk::DebugUtilsMessageSeverityFlagBitsEXT::eError
 				| vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning,
-			.messageType = vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral
+			.messageType     = vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral
 				| vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance
 				| vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation,
 			.pfnUserCallback = logDebugMessage,
-			.pUserData = this
+			.pUserData       = this
 		};
 	}
 
