@@ -47,11 +47,17 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		auto queueFamilyPropertiesList = device.getQueueFamilyProperties();
 
 		for (size_t i = 0; i < queueFamilyPropertiesList.size(); i++) {
-			if (queueFamilyPropertiesList[i].queueFlags & vk::QueueFlagBits::eGraphics) {
+			if (
+				!queueFamilyIndices.graphicsFamilyIndex.has_value()
+					&& queueFamilyPropertiesList[i].queueFlags & vk::QueueFlagBits::eGraphics
+			) {
 				queueFamilyIndices.graphicsFamilyIndex = static_cast<uint32_t>(i);
 			}
 
-			if (device.getSurfaceSupportKHR(i, *surface)) {
+			if (
+				!queueFamilyIndices.presentFamilyIndex.has_value()
+					&& device.getSurfaceSupportKHR(i, *surface)
+			) {
 				queueFamilyIndices.presentFamilyIndex = static_cast<uint32_t>(i);
 			}
 
@@ -70,6 +76,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		for (auto& extensionProperties : device.enumerateDeviceExtensionProperties()) {
 			if (std::strcmp(extensionProperties.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0) {
 				extensionSupport.swapchainSupport = querySwapchainSupport(device, surface);
+				break;
 			}
 		}
 
