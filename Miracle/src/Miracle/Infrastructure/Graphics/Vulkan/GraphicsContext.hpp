@@ -19,8 +19,8 @@
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	class GraphicsContext : public Application::IGraphicsContext {
 	private:
-		static constexpr inline uint32_t s_vulkanApiVersion = VK_API_VERSION_1_1;
-		static constexpr inline auto s_validationLayerNames = std::array{ "VK_LAYER_KHRONOS_validation" };
+		static constexpr uint32_t s_vulkanApiVersion = VK_API_VERSION_1_1;
+		static constexpr auto s_validationLayerNames = std::array{ "VK_LAYER_KHRONOS_validation" };
 
 		Application::ILogger& m_logger;
 		IContextTarget& m_target;

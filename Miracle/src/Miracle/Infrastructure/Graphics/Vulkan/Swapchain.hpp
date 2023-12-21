@@ -46,7 +46,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		const vk::raii::RenderPass& getRenderPass() const { return m_renderPass; }
 
 	private:
-		uint32_t selectImageCount() const;
+		uint32_t selectImageCount(bool useTripleBuffering) const;
 
 		vk::SurfaceFormatKHR selectSurfaceFormat(bool useSrgb) const;
 

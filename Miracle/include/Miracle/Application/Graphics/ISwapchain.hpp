@@ -27,6 +27,7 @@ namespace Miracle::Application {
 	struct SwapchainInitProps {
 		bool useSrgb;
 		bool useVsync;
+		bool useTripleBuffering;
 	};
 
 	namespace SwapchainErrors {

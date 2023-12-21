@@ -33,8 +33,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	};
 
 	struct SwapchainSupport {
-		uint32_t minImageCount = {};
-		std::optional<uint32_t> maxImageCount = {};
+		bool hasDoubleBufferingSupport = {};
+		bool hasTripleBufferingSupport = {};
 		std::vector<vk::SurfaceFormatKHR> surfaceFormats = {};
 		bool hasImmediateModePresentationSupport = {};
 		bool hasMailboxModePresentationSupport = {};

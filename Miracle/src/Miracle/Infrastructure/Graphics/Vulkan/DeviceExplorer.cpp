@@ -34,6 +34,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		return deviceInfo.queueFamilyIndices.graphicsFamilyIndex.has_value()
 			&& deviceInfo.queueFamilyIndices.presentFamilyIndex.has_value()
 			&& deviceInfo.extensionSupport.swapchainSupport.has_value()
+			&& deviceInfo.extensionSupport.swapchainSupport.value().hasDoubleBufferingSupport
 			&& !deviceInfo.extensionSupport.swapchainSupport.value().surfaceFormats.empty()
 			&& deviceInfo.extensionSupport.swapchainSupport.value().hasImmediateModePresentationSupport;
 	}
@@ -103,10 +104,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 
 		return SwapchainSupport{
-			.minImageCount                       = surfaceCapabilities.minImageCount,
-			.maxImageCount                       = surfaceCapabilities.maxImageCount != 0
-				? std::optional(surfaceCapabilities.maxImageCount)
-				: std::nullopt,
+			.hasDoubleBufferingSupport           = surfaceCapabilities.minImageCount <= 2
+				&& (surfaceCapabilities.maxImageCount == 0 || surfaceCapabilities.maxImageCount >= 2),
+			.hasTripleBufferingSupport           = surfaceCapabilities.minImageCount <= 3
+				&& (surfaceCapabilities.maxImageCount == 0 || surfaceCapabilities.maxImageCount >= 3),
 			.surfaceFormats                      = device.getSurfaceFormatsKHR(*surface),
 			.hasImmediateModePresentationSupport = hasImmediateMode,
 			.hasMailboxModePresentationSupport   = hasMailboxMode

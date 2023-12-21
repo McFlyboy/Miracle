@@ -14,7 +14,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	) :
 		m_logger(logger),
 		m_context(context),
-		m_preferredImageCount(selectImageCount()),
+		m_preferredImageCount(selectImageCount(initProps.useTripleBuffering)),
 		m_surfaceFormat(selectSurfaceFormat(initProps.useSrgb)),
 		m_imageExtent(selectExtent()),
 		m_presentMode(selectPresentMode(initProps.useVsync))
@@ -39,7 +39,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		m_imageIndex = getNextImageIndex();
 
-		m_logger.info("Vulkan swapchain created");
+		m_logger.info(std::format("Vulkan swapchain created with {} images", m_images.size()));
 	}
 
 	Swapchain::~Swapchain() {
@@ -132,17 +132,21 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		m_imageIndex = getNextImageIndex();
 
-		m_logger.info("Vulkan swapchain re-created");
+		m_logger.info(std::format("Vulkan swapchain re-created with {} images", m_images.size()));
 	}
 
-	uint32_t Swapchain::selectImageCount() const {
+	uint32_t Swapchain::selectImageCount(bool useTripleBuffering) const {
 		auto& swapchainSupport = m_context.getDeviceInfo().extensionSupport.swapchainSupport.value();
 
-		auto preferredImageCount = swapchainSupport.minImageCount + 1;
+		if (useTripleBuffering) {
+			if (swapchainSupport.hasTripleBufferingSupport) {
+				return 3;
+			}
 
-		return swapchainSupport.maxImageCount.has_value()
-			? std::min(preferredImageCount, swapchainSupport.maxImageCount.value())
-			: preferredImageCount;
+			m_logger.warning("Triple buffering not supported. Falling back to double buffering");
+		}
+
+		return 2;
 	}
 
 	vk::SurfaceFormatKHR Swapchain::selectSurfaceFormat(bool useSrgb) const {
