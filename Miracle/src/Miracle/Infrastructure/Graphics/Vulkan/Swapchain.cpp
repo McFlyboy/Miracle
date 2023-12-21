@@ -139,9 +139,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		auto& swapchainSupport = m_context.getDeviceInfo().extensionSupport.swapchainSupport.value();
 
 		if (useTripleBuffering) {
-			if (swapchainSupport.hasTripleBufferingSupport) {
-				return 3;
-			}
+			if (swapchainSupport.hasTripleBufferingSupport) return 3;
 
 			m_logger.warning("Triple buffering not supported. Falling back to double buffering");
 		}
