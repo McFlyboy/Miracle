@@ -48,7 +48,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	private:
 		uint32_t selectImageCount(bool useTripleBuffering) const;
 
-		vk::SurfaceFormatKHR selectSurfaceFormat(bool useSrgb) const;
+		vk::SurfaceFormatKHR selectSurfaceFormat() const;
 
 		vk::Extent2D selectExtent() const;
 

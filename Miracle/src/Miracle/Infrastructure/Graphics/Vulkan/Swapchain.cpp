@@ -15,7 +15,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		m_logger(logger),
 		m_context(context),
 		m_preferredImageCount(selectImageCount(initProps.useTripleBuffering)),
-		m_surfaceFormat(selectSurfaceFormat(initProps.useSrgb)),
+		m_surfaceFormat(selectSurfaceFormat()),
 		m_imageExtent(selectExtent()),
 		m_presentMode(selectPresentMode(initProps.useVsync))
 	{
@@ -132,7 +132,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		m_imageIndex = getNextImageIndex();
 
-		m_logger.info(std::format("Vulkan swapchain re-created with {} images", m_images.size()));
+		m_logger.info("Vulkan swapchain re-created");
 	}
 
 	uint32_t Swapchain::selectImageCount(bool useTripleBuffering) const {
@@ -147,34 +147,24 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		return 2;
 	}
 
-	vk::SurfaceFormatKHR Swapchain::selectSurfaceFormat(bool useSrgb) const {
+	vk::SurfaceFormatKHR Swapchain::selectSurfaceFormat() const {
 		auto& swapchainSupport = m_context.getDeviceInfo().extensionSupport.swapchainSupport.value();
 
 		for (auto& surfaceFormat : swapchainSupport.surfaceFormats) {
-			switch (surfaceFormat.format) {
-			case vk::Format::eB8G8R8A8Srgb:
-			case vk::Format::eR8G8B8A8Srgb:
-				if (useSrgb && surfaceFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
-					return surfaceFormat;
-				}
-
-				break;
-
-			case vk::Format::eB8G8R8A8Unorm:
-			case vk::Format::eR8G8B8A8Unorm:
-				if (!useSrgb && surfaceFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
-					return surfaceFormat;
-				}
-
-				break;
-
-			default:
-				continue;
+			if (
+				surfaceFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear
+					&& (
+						surfaceFormat.format == vk::Format::eR8G8B8A8Srgb
+							|| surfaceFormat.format == vk::Format::eB8G8R8A8Srgb
+							|| surfaceFormat.format == vk::Format::eA8B8G8R8SrgbPack32
+					)
+			) {
+				return surfaceFormat;
 			}
 		}
 
 		m_logger.warning(
-			"Common Vulkan surface formats for swapchain not available.\nFallback solution might not give intended result!"
+			"Preferred surface formats for swapchain not available.\nFallback solution might not give intended visual results!"
 		);
 
 		return swapchainSupport.surfaceFormats.front();

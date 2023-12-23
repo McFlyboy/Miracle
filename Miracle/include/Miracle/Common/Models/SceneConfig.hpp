@@ -9,11 +9,7 @@
 
 namespace Miracle {
 	struct SceneConfig {
-		ColorRgb backgroundColor = {
-			.redChannel   = 0.125f,
-			.greenChannel = 0.125f,
-			.blueChannel  = 0.125f
-		};
+		ColorRgb backgroundColor = ColorRgb::createFromNonlinearSrgbColorCode(0x202020);
 		std::vector<EntityConfig> entityConfigs = {};
 		std::function<void(EntityId)> entityCreatedCallback = [](EntityId) {};
 		std::function<void(EntityId)> entityDestroyedCallback = [](EntityId) {};

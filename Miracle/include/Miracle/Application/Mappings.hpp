@@ -31,7 +31,6 @@ namespace Miracle::Application {
 		) {
 			return RendererInitProps{
 				.swapchainInitProps = SwapchainInitProps{
-					.useSrgb            = false,
 					.useVsync           = false,
 					.useTripleBuffering = false
 				},
