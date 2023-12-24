@@ -14,13 +14,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	) :
 		m_logger(logger),
 		m_context(context),
-		m_preferredImageCount(selectImageCount(initProps.useTripleBuffering)),
+		m_minimumImageCount(selectMinimumImageCount(initProps.useTripleBuffering)),
 		m_surfaceFormat(selectSurfaceFormat()),
 		m_imageExtent(selectExtent()),
-		m_presentMode(selectPresentMode(initProps.useVsync))
+		m_presentMode(selectPresentMode(initProps.useVsync)),
+		m_swapchain(createSwapchain())
 	{
-		m_swapchain = createSwapchain();
-
 		auto images = m_swapchain.getImages();
 
 		m_images.reserve(images.size());
@@ -39,7 +38,13 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		m_imageIndex = getNextImageIndex();
 
-		m_logger.info(std::format("Vulkan swapchain created with {} images", m_images.size()));
+		m_logger.info(
+			std::format(
+				"Vulkan swapchain created with {} images and {} present mode",
+				m_images.size(),
+				vk::to_string(m_presentMode)
+			)
+		);
 	}
 
 	Swapchain::~Swapchain() {
@@ -135,7 +140,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		m_logger.info("Vulkan swapchain re-created");
 	}
 
-	uint32_t Swapchain::selectImageCount(bool useTripleBuffering) const {
+	uint32_t Swapchain::selectMinimumImageCount(bool useTripleBuffering) const {
 		auto& swapchainSupport = m_context.getDeviceInfo().extensionSupport.swapchainSupport.value();
 
 		if (useTripleBuffering) {
@@ -173,22 +178,24 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	vk::Extent2D Swapchain::selectExtent() const {
 		auto currentExtent = m_context.getCurrentSurfaceExtent();
 		
-		if (currentExtent.extent.has_value()) {
-			return currentExtent.extent.value();
+		if (std::holds_alternative<vk::Extent2D>(currentExtent.extent)) {
+			return std::get<vk::Extent2D>(currentExtent.extent);
 		}
 
 		auto currentTargetExtent = m_context.getTarget().getCurrentVulkanExtent();
 
+		auto& extentBounds = std::get<SurfaceExtentBounds>(currentExtent.extent);
+
 		return vk::Extent2D{
 			.width  = std::clamp(
 				currentTargetExtent.width,
-				currentExtent.minExtent.width,
-				currentExtent.maxExtent.width
+				extentBounds.minExtent.width,
+				extentBounds.maxExtent.width
 			),
 			.height = std::clamp(
 				currentTargetExtent.height,
-				currentExtent.minExtent.height,
-				currentExtent.maxExtent.height
+				extentBounds.minExtent.height,
+				extentBounds.maxExtent.height
 			)
 		};
 	}
@@ -197,7 +204,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		auto& swapchainSupport = m_context.getDeviceInfo().extensionSupport.swapchainSupport.value();
 
 		return useVsync
-			? swapchainSupport.hasMailboxModePresentationSupport
+			? swapchainSupport.hasMailboxModePresentationSupport && m_minimumImageCount > 2
 				? vk::PresentModeKHR::eMailbox
 				: vk::PresentModeKHR::eFifo
 			: vk::PresentModeKHR::eImmediate;
@@ -206,7 +213,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	vk::raii::SwapchainKHR Swapchain::createSwapchain() const {
 		auto& queueFamilyIndices = m_context.getDeviceInfo().queueFamilyIndices;
 
-		bool sharingModeEnabled = queueFamilyIndices.graphicsFamilyIndex.value()
+		bool useSharingMode = queueFamilyIndices.graphicsFamilyIndex.value()
 			!= queueFamilyIndices.presentFamilyIndex.value();
 
 		auto queueFamilyIndexArray = std::array{
@@ -219,19 +226,19 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				vk::SwapchainCreateInfoKHR{
 					.flags = {},
 					.surface = *m_context.getSurface(),
-					.minImageCount = m_preferredImageCount,
+					.minImageCount = m_minimumImageCount,
 					.imageFormat = m_surfaceFormat.format,
 					.imageColorSpace = m_surfaceFormat.colorSpace,
 					.imageExtent = m_imageExtent,
 					.imageArrayLayers = 1,
 					.imageUsage = vk::ImageUsageFlagBits::eColorAttachment,
-					.imageSharingMode = sharingModeEnabled
+					.imageSharingMode = useSharingMode
 						? vk::SharingMode::eConcurrent
 						: vk::SharingMode::eExclusive,
-					.queueFamilyIndexCount = sharingModeEnabled
+					.queueFamilyIndexCount = useSharingMode
 						? static_cast<uint32_t>(queueFamilyIndexArray.size())
 						: 0,
-					.pQueueFamilyIndices = sharingModeEnabled
+					.pQueueFamilyIndices = useSharingMode
 						? queueFamilyIndexArray.data()
 						: nullptr,
 					.preTransform = m_context.getCurrentSurfaceTransformation(),

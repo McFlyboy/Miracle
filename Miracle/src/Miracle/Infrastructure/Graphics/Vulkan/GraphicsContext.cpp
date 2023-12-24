@@ -161,13 +161,16 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	SurfaceExtent GraphicsContext::getCurrentSurfaceExtent() const {
 		auto surfaceCapabilities = m_physicalDevice.getSurfaceCapabilitiesKHR(*m_surface);
 
-		return SurfaceExtent{
-			.extent    = surfaceCapabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()
-				? std::optional(surfaceCapabilities.currentExtent)
-				: std::nullopt,
-			.minExtent = surfaceCapabilities.minImageExtent,
-			.maxExtent = surfaceCapabilities.maxImageExtent
-		};
+		return surfaceCapabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()
+			? SurfaceExtent{
+				.extent = surfaceCapabilities.currentExtent
+			}
+			: SurfaceExtent{
+				.extent = SurfaceExtentBounds{
+					.minExtent = surfaceCapabilities.minImageExtent,
+					.maxExtent = surfaceCapabilities.maxImageExtent
+				}
+			};
 	}
 
 	void GraphicsContext::recreateSemaphores() {
