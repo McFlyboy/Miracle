@@ -8,8 +8,10 @@ namespace Miracle::Application {
 	public:
 		virtual ~IGraphicsPipeline() = default;
 
+		// Graphics command
 		virtual void bind() = 0;
 
+		// Graphics command
 		virtual void pushConstants(const PushConstants& constants) = 0;
 	};
 

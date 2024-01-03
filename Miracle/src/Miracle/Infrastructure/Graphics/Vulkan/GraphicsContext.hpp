@@ -36,13 +36,16 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::Device m_device = nullptr;
 		vk::raii::Queue m_graphicsQueue = nullptr;
 		vk::raii::Queue m_presentQueue = nullptr;
-		vk::raii::CommandPool m_commandPool = nullptr;
-		std::vector<vk::raii::CommandBuffer> m_commandBuffers;
-		std::vector<vk::raii::Semaphore> m_commandExecutionWaitSemaphores;
-		std::vector<vk::raii::Semaphore> m_commandExecutionSignalSemaphores;
-		std::vector<vk::raii::Fence> m_commandExecutionSignalFences;
-		size_t m_currentCommandBufferIndex = 0;
-		vma::Allocator m_allocator = nullptr;
+		vk::raii::Queue m_transferQueue = nullptr;
+		vk::raii::CommandPool m_graphicsCommandPool = nullptr;
+		vk::raii::CommandPool m_transferCommandPool = nullptr;
+		std::vector<vk::raii::CommandBuffer> m_graphicsCommandBuffers;
+		vk::raii::CommandBuffer m_transferCommandBuffer = nullptr;
+		std::vector<vk::raii::Fence> m_graphicsCommandExecutionCompletedFences;
+		std::vector<vk::raii::Semaphore> m_graphicsCommandExecutionCompletedSemaphores;
+		std::vector<vk::raii::Semaphore> m_graphicsCommandPresentCompletedSemaphores;
+		size_t m_currentGraphicsCommandBufferIndex = 0;
+		vma::Allocator m_allocator;
 
 	public:
 		GraphicsContext(
@@ -73,9 +76,13 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		IContextTarget& getTarget() override { return m_target; }
 
-		virtual void recordCommands(const std::function<void()>& recording) override;
+		virtual void recordGraphicsCommands(const std::function<void()>& recording) override;
 
-		virtual void submitRecording() override;
+		virtual void recordTransferCommands(const std::function<void()>& recording) override;
+
+		virtual void submitGraphicsRecording() override;
+
+		virtual void submitTransferRecording() override;
 
 		virtual void waitForDeviceIdle() override;
 
@@ -89,16 +96,22 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		const vk::raii::Queue& getPresentQueue() const { return m_presentQueue; }
 
-		const vk::raii::CommandBuffer& getCommandBuffer() const {
-			return m_commandBuffers[m_currentCommandBufferIndex];
+		const vk::raii::Queue& getTransferQueue() const { return m_transferQueue; }
+
+		const vk::raii::CommandBuffer& getGraphicsCommandBuffer() const {
+			return m_graphicsCommandBuffers[m_currentGraphicsCommandBufferIndex];
 		}
 
-		const vk::raii::Semaphore& getCommandExecutionWaitSemaphore() const {
-			return m_commandExecutionWaitSemaphores[m_currentCommandBufferIndex];
+		const vk::raii::CommandBuffer& getTransferCommandBuffer() const {
+			return m_transferCommandBuffer;
 		}
 
-		const vk::raii::Semaphore& getCommandExecutionSignalSemaphore() const {
-			return m_commandExecutionSignalSemaphores[m_currentCommandBufferIndex];
+		const vk::raii::Semaphore& getGraphicsCommandExecutionCompletedSemaphore() const {
+			return m_graphicsCommandExecutionCompletedSemaphores[m_currentGraphicsCommandBufferIndex];
+		}
+
+		const vk::raii::Semaphore& getGraphicsCommandPresentCompletedSemaphore() const {
+			return m_graphicsCommandPresentCompletedSemaphores[m_currentGraphicsCommandBufferIndex];
 		}
 
 		const vma::Allocator& getAllocator() const { return m_allocator; }
@@ -109,11 +122,11 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			return m_physicalDevice.getSurfaceCapabilitiesKHR(*m_surface).currentTransform;
 		}
 
-		void nextCommandBuffer() {
-			++m_currentCommandBufferIndex %= m_commandBuffers.size();
+		void nextGraphicsCommandBuffer() {
+			++m_currentGraphicsCommandBufferIndex %= m_graphicsCommandBuffers.size();
 		}
 
-		void recreateSemaphores();
+		void recreatePresentCompletedSemaphores();
 
 	private:
 		vk::raii::Instance createInstance(const std::string_view& appName);
@@ -139,9 +152,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		vk::raii::Device createDevice() const;
 
-		vk::raii::CommandPool createCommandPool() const;
+		vk::raii::CommandPool createCommandPool(uint32_t queueFamilyIndex) const;
 
-		std::vector<vk::raii::CommandBuffer> allocateCommandBuffers(size_t count) const;
+		std::vector<vk::raii::CommandBuffer> allocateCommandBuffers(
+			vk::raii::CommandPool& commandPool,
+			size_t count
+		) const;
 
 		vk::raii::Fence createFence(bool preSignaled) const;
 

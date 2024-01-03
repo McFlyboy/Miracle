@@ -11,10 +11,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	struct QueueFamilyIndices {
 		std::optional<uint32_t> graphicsFamilyIndex = {};
 		std::optional<uint32_t> presentFamilyIndex = {};
+		std::optional<uint32_t> transferFamilyIndex = {};
 
 		bool hasAllIndicesSet() const {
 			return graphicsFamilyIndex.has_value()
-				&& presentFamilyIndex.has_value();
+				&& presentFamilyIndex.has_value()
+				&& transferFamilyIndex.has_value();
 		}
 
 		std::set<uint32_t> createSetOfAllUniqueIndices() const {
@@ -26,6 +28,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 			if (presentFamilyIndex.has_value()) {
 				uniqueIndices.insert(presentFamilyIndex.value());
+			}
+
+			if (transferFamilyIndex.has_value()) {
+				uniqueIndices.insert(transferFamilyIndex.value());
 			}
 
 			return uniqueIndices;

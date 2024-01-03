@@ -78,6 +78,6 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	}
 
 	void VertexBuffer::bind() {
-		m_context.getCommandBuffer().bindVertexBuffers(0, m_buffer, {0});
+		m_context.getGraphicsCommandBuffer().bindVertexBuffers(0, m_buffer, {0});
 	}
 }

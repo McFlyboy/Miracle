@@ -15,8 +15,10 @@ namespace Miracle::Application {
 
 		virtual SwapchainImageSize getImageSize() const = 0;
 
+		// Graphics command
 		virtual void beginRenderPass(ColorRgb clearColor) = 0;
 
+		// Graphics command
 		virtual void endRenderPass() = 0;
 
 		virtual void swap() = 0;

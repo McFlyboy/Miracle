@@ -33,6 +33,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	bool DeviceExplorer::isDeviceSupported(const DeviceInfo& deviceInfo) {
 		return deviceInfo.queueFamilyIndices.graphicsFamilyIndex.has_value()
 			&& deviceInfo.queueFamilyIndices.presentFamilyIndex.has_value()
+			&& deviceInfo.queueFamilyIndices.transferFamilyIndex.has_value()
 			&& deviceInfo.extensionSupport.swapchainSupport.has_value()
 			&& deviceInfo.extensionSupport.swapchainSupport.value().hasDoubleBufferingSupport
 			&& !deviceInfo.extensionSupport.swapchainSupport.value().surfaceFormats.empty()
@@ -62,7 +63,20 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				queueFamilyIndices.presentFamilyIndex = static_cast<uint32_t>(i);
 			}
 
+			if (
+				!queueFamilyIndices.transferFamilyIndex.has_value()
+					&& queueFamilyPropertiesList[i].queueFlags & vk::QueueFlagBits::eTransfer
+					&& !(queueFamilyPropertiesList[i].queueFlags & vk::QueueFlagBits::eGraphics)
+					&& !(queueFamilyPropertiesList[i].queueFlags & vk::QueueFlagBits::eCompute)
+			) {
+				queueFamilyIndices.transferFamilyIndex = static_cast<uint32_t>(i);
+			}
+
 			if (queueFamilyIndices.hasAllIndicesSet()) break;
+		}
+
+		if (!queueFamilyIndices.transferFamilyIndex.has_value()) {
+			queueFamilyIndices.transferFamilyIndex = queueFamilyIndices.graphicsFamilyIndex;
 		}
 
 		return queueFamilyIndices;

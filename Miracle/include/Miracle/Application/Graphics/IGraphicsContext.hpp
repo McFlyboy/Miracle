@@ -11,6 +11,7 @@ namespace Miracle::Application {
 	public:
 		virtual ~IGraphicsContext() = default;
 
+		// Graphics command
 		virtual void setViewport(
 			float x,
 			float y,
@@ -18,6 +19,7 @@ namespace Miracle::Application {
 			float height
 		) = 0;
 
+		// Graphics command
 		virtual void setScissor(
 			int x,
 			int y,
@@ -25,15 +27,21 @@ namespace Miracle::Application {
 			unsigned int height
 		) = 0;
 
+		// Graphics command
 		virtual void draw(uint32_t vertexCount) = 0;
 
+		// Graphics command
 		virtual void drawIndexed(uint32_t indexCount) = 0;
 
 		virtual IContextTarget& getTarget() = 0;
 
-		virtual void recordCommands(const std::function<void()>& recording) = 0;
+		virtual void recordGraphicsCommands(const std::function<void()>& recording) = 0;
 
-		virtual void submitRecording() = 0;
+		virtual void recordTransferCommands(const std::function<void()>& recording) = 0;
+
+		virtual void submitGraphicsRecording() = 0;
+
+		virtual void submitTransferRecording() = 0;
 
 		virtual void waitForDeviceIdle() = 0;
 	};

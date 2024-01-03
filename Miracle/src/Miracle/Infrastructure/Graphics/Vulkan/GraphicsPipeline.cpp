@@ -205,18 +205,18 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	}
 
 	void GraphicsPipeline::bind() {
-		m_context.getCommandBuffer().bindPipeline(vk::PipelineBindPoint::eGraphics, *m_pipeline);
+		m_context.getGraphicsCommandBuffer().bindPipeline(vk::PipelineBindPoint::eGraphics, *m_pipeline);
 	}
 
 	void GraphicsPipeline::pushConstants(const Application::PushConstants& constants) {
-		m_context.getCommandBuffer().pushConstants<Application::VertexStagePushConstants>(
+		m_context.getGraphicsCommandBuffer().pushConstants<Application::VertexStagePushConstants>(
 			*m_layout,
 			vk::ShaderStageFlagBits::eVertex,
 			0,
 			constants.vertexStageConstants
 		);
 
-		m_context.getCommandBuffer().pushConstants<Application::FragmentStagePushConstants>(
+		m_context.getGraphicsCommandBuffer().pushConstants<Application::FragmentStagePushConstants>(
 			*m_layout,
 			vk::ShaderStageFlagBits::eFragment,
 			static_cast<uint32_t>(offsetof(Application::PushConstants, fragmentStageConstants)),

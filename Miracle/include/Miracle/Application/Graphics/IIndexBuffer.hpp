@@ -11,6 +11,7 @@ namespace Miracle::Application {
 
 		virtual uint32_t getIndexCount() const = 0;
 
+		// Graphics command
 		virtual void bind() = 0;
 	};
 

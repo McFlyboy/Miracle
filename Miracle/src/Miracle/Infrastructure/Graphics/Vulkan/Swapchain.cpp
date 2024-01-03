@@ -72,7 +72,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			)
 		};
 
-		m_context.getCommandBuffer().beginRenderPass(
+		m_context.getGraphicsCommandBuffer().beginRenderPass(
 			vk::RenderPassBeginInfo{
 				.renderPass      = *m_renderPass,
 				.framebuffer     = *m_frameBuffers[m_imageIndex],
@@ -91,14 +91,14 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	}
 
 	void Swapchain::endRenderPass() {
-		m_context.getCommandBuffer().endRenderPass();
+		m_context.getGraphicsCommandBuffer().endRenderPass();
 	}
 
 	void Swapchain::swap() {
 		auto result = m_context.getPresentQueue().presentKHR(
 			vk::PresentInfoKHR{
 				.waitSemaphoreCount = 1,
-				.pWaitSemaphores    = &*m_context.getCommandExecutionSignalSemaphore(),
+				.pWaitSemaphores    = &*m_context.getGraphicsCommandExecutionCompletedSemaphore(),
 				.swapchainCount     = 1,
 				.pSwapchains        = &*m_swapchain,
 				.pImageIndices      = &m_imageIndex,
@@ -110,7 +110,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_logger.warning("Swapped Vulkan swapchain in suboptimal state");
 		}
 
-		m_context.nextCommandBuffer();
+		m_context.nextGraphicsCommandBuffer();
 
 		m_imageIndex = getNextImageIndex();
 	}
@@ -133,7 +133,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_frameBuffers.push_back(createFrameBuffer(imageView));
 		}
 
-		m_context.recreateSemaphores();
+		m_context.recreatePresentCompletedSemaphores();
 
 		m_imageIndex = getNextImageIndex();
 
@@ -388,7 +388,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	uint32_t Swapchain::getNextImageIndex() {
 		auto [result, imageIndex] = m_swapchain.acquireNextImage(
 			std::numeric_limits<uint64_t>().max(),
-			*m_context.getCommandExecutionWaitSemaphore()
+			*m_context.getGraphicsCommandPresentCompletedSemaphore()
 		);
 
 		switch (result) {
