@@ -61,37 +61,21 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::Buffer source,
 		vk::DeviceSize size
 	) {
-		m_context.getCommandBuffer().reset();
-		m_context.getCommandBuffer().begin(
-			vk::CommandBufferBeginInfo{
-				.flags            = {},
-				.pInheritanceInfo = {}
+		m_context.recordTransferCommands(
+			[&]() {
+				m_context.getTransferCommandBuffer().copyBuffer(
+					source,
+					destination,
+					vk::BufferCopy{
+						.srcOffset = 0,
+						.dstOffset = 0,
+						.size = size
+					}
+				);
 			}
 		);
 
-		m_context.getCommandBuffer().copyBuffer(
-			source,
-			destination,
-			vk::BufferCopy{
-				.srcOffset = 0,
-				.dstOffset = 0,
-				.size      = size
-			}
-		);
-
-		m_context.getCommandBuffer().end();
-		m_context.getGraphicsQueue().submit(
-			vk::SubmitInfo{
-				.waitSemaphoreCount   = 0,
-				.pWaitSemaphores      = nullptr,
-				.pWaitDstStageMask    = nullptr,
-				.commandBufferCount   = 1,
-				.pCommandBuffers      = &*m_context.getCommandBuffer(),
-				.signalSemaphoreCount = 0,
-				.pSignalSemaphores    = nullptr
-			}
-		);
-
-		m_context.getGraphicsQueue().waitIdle();
+		m_context.submitTransferRecording();
+		m_context.waitForDeviceIdle();
 	}
 }

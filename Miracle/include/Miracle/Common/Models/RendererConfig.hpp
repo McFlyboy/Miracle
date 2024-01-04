@@ -2,10 +2,12 @@
 
 #include <vector>
 
-#include <Miracle/Common/Models/Mesh.hpp>
+#include "SwapchainConfig.hpp"
+#include "Mesh.hpp"
 
 namespace Miracle {
 	struct RendererConfig {
+		SwapchainConfig swapchainConfig = {};
 		std::vector<Mesh> meshes = {};
 	};
 }

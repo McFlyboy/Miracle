@@ -188,6 +188,21 @@ int main() {
 				if (Keyboard::isKeyPressed(KeyboardKey::keyEscape)) {
 					CurrentApp::close();
 				}
+
+				if (Keyboard::isKeyPressed(KeyboardKey::keyF1)) {
+					Renderer::setVsync(!Renderer::isUsingVsync());
+				}
+
+				if (Keyboard::isKeyPressed(KeyboardKey::keyF2)) {
+					Renderer::setTripleBuffering(!Renderer::isUsingTripleBuffering());
+				}
+
+				if (Keyboard::isKeyPressed(KeyboardKey::keyF3)) {
+					Renderer::setVsyncAndTripleBuffering(
+						!Renderer::isUsingVsync(),
+						!Renderer::isUsingTripleBuffering()
+					);
+				}
 			}
 		}
 	);

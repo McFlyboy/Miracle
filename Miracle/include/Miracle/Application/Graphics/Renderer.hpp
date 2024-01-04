@@ -43,6 +43,29 @@ namespace Miracle::Application {
 
 		~Renderer();
 
+		bool isUsingVsync() const { return m_swapchain->isUsingVsync(); }
+
+		void setVsync(bool useVsync) {
+			m_swapchain->setVsync(useVsync);
+			m_context.waitForDeviceIdle();
+			m_swapchain->recreate();
+		}
+
+		bool isUsingTripleBuffering() const { return m_swapchain->isUsingTripleBuffering(); }
+
+		void setTripleBuffering(bool useTripleBuffering) {
+			m_swapchain->setTripleBuffering(useTripleBuffering);
+			m_context.waitForDeviceIdle();
+			m_swapchain->recreate();
+		}
+
+		void setVsyncAndTripleBuffering(bool useVsync, bool useTripleBuffering) {
+			m_swapchain->setVsync(useVsync);
+			m_swapchain->setTripleBuffering(useTripleBuffering);
+			m_context.waitForDeviceIdle();
+			m_swapchain->recreate();
+		}
+
 		bool render(const Scene& scene);
 
 	private:

@@ -14,11 +14,11 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		Application::ILogger& m_logger;
 		GraphicsContext& m_context;
 
-		uint32_t m_preferredImageCount;
+		uint32_t m_minimumImageCount;
 		const vk::SurfaceFormatKHR m_surfaceFormat;
 		vk::Extent2D m_imageExtent;
 		vk::PresentModeKHR m_presentMode;
-		vk::raii::SwapchainKHR m_swapchain = nullptr;
+		vk::raii::SwapchainKHR m_swapchain;
 		std::vector<std::pair<vk::Image, vk::raii::ImageView>> m_images;
 		vk::raii::RenderPass m_renderPass = nullptr;
 		std::vector<vk::raii::Framebuffer> m_frameBuffers;
@@ -43,12 +43,24 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		virtual void recreate() override;
 
+		virtual bool isUsingVsync() const override {
+			return m_presentMode != vk::PresentModeKHR::eImmediate;
+		}
+
+		virtual void setVsync(bool useVsync) override;
+
+		virtual bool isUsingTripleBuffering() const override {
+			return m_minimumImageCount > 2;
+		}
+
+		virtual void setTripleBuffering(bool useTripleBuffering) override;
+
 		const vk::raii::RenderPass& getRenderPass() const { return m_renderPass; }
 
 	private:
-		uint32_t selectImageCount() const;
+		uint32_t selectMinimumImageCount(bool useTripleBuffering) const;
 
-		vk::SurfaceFormatKHR selectSurfaceFormat(bool useSrgb) const;
+		vk::SurfaceFormatKHR selectSurfaceFormat() const;
 
 		vk::Extent2D selectExtent() const;
 

@@ -31,8 +31,8 @@ namespace Miracle::Application {
 		) {
 			return RendererInitProps{
 				.swapchainInitProps = SwapchainInitProps{
-					.useSrgb  = false,
-					.useVsync = false
+					.useVsync           = rendererConfig.swapchainConfig.useVsync,
+					.useTripleBuffering = rendererConfig.swapchainConfig.useTripleBuffering
 				},
 				.meshes               = rendererConfig.meshes
 			};

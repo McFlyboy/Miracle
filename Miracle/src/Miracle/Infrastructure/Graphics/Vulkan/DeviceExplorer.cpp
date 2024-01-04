@@ -33,7 +33,9 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	bool DeviceExplorer::isDeviceSupported(const DeviceInfo& deviceInfo) {
 		return deviceInfo.queueFamilyIndices.graphicsFamilyIndex.has_value()
 			&& deviceInfo.queueFamilyIndices.presentFamilyIndex.has_value()
+			&& deviceInfo.queueFamilyIndices.transferFamilyIndex.has_value()
 			&& deviceInfo.extensionSupport.swapchainSupport.has_value()
+			&& deviceInfo.extensionSupport.swapchainSupport.value().hasDoubleBufferingSupport
 			&& !deviceInfo.extensionSupport.swapchainSupport.value().surfaceFormats.empty()
 			&& deviceInfo.extensionSupport.swapchainSupport.value().hasImmediateModePresentationSupport;
 	}
@@ -44,18 +46,37 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	) {
 		auto queueFamilyIndices = QueueFamilyIndices{};
 
-		auto queueFamiliesProperties = device.getQueueFamilyProperties();
+		auto queueFamilyPropertiesList = device.getQueueFamilyProperties();
 
-		for (size_t i = 0; i < queueFamiliesProperties.size(); i++) {
-			if (queueFamiliesProperties[i].queueFlags & vk::QueueFlagBits::eGraphics) {
+		for (size_t i = 0; i < queueFamilyPropertiesList.size(); i++) {
+			if (
+				!queueFamilyIndices.graphicsFamilyIndex.has_value()
+					&& queueFamilyPropertiesList[i].queueFlags & vk::QueueFlagBits::eGraphics
+			) {
 				queueFamilyIndices.graphicsFamilyIndex = static_cast<uint32_t>(i);
 			}
 
-			if (device.getSurfaceSupportKHR(i, *surface)) {
+			if (
+				!queueFamilyIndices.presentFamilyIndex.has_value()
+					&& device.getSurfaceSupportKHR(i, *surface)
+			) {
 				queueFamilyIndices.presentFamilyIndex = static_cast<uint32_t>(i);
 			}
 
+			if (
+				!queueFamilyIndices.transferFamilyIndex.has_value()
+					&& queueFamilyPropertiesList[i].queueFlags & vk::QueueFlagBits::eTransfer
+					&& !(queueFamilyPropertiesList[i].queueFlags & vk::QueueFlagBits::eGraphics)
+					&& !(queueFamilyPropertiesList[i].queueFlags & vk::QueueFlagBits::eCompute)
+			) {
+				queueFamilyIndices.transferFamilyIndex = static_cast<uint32_t>(i);
+			}
+
 			if (queueFamilyIndices.hasAllIndicesSet()) break;
+		}
+
+		if (!queueFamilyIndices.transferFamilyIndex.has_value()) {
+			queueFamilyIndices.transferFamilyIndex = queueFamilyIndices.graphicsFamilyIndex;
 		}
 
 		return queueFamilyIndices;
@@ -70,6 +91,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		for (auto& extensionProperties : device.enumerateDeviceExtensionProperties()) {
 			if (std::strcmp(extensionProperties.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0) {
 				extensionSupport.swapchainSupport = querySwapchainSupport(device, surface);
+				break;
 			}
 		}
 
@@ -96,10 +118,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 
 		return SwapchainSupport{
-			.minImageCount                       = surfaceCapabilities.minImageCount,
-			.maxImageCount                       = surfaceCapabilities.maxImageCount != 0
-				? std::optional(surfaceCapabilities.maxImageCount)
-				: std::nullopt,
+			.hasDoubleBufferingSupport           = surfaceCapabilities.minImageCount <= 2
+				&& (surfaceCapabilities.maxImageCount == 0 || surfaceCapabilities.maxImageCount >= 2),
+			.hasTripleBufferingSupport           = surfaceCapabilities.minImageCount <= 3
+				&& (surfaceCapabilities.maxImageCount == 0 || surfaceCapabilities.maxImageCount >= 3),
 			.surfaceFormats                      = device.getSurfaceFormatsKHR(*surface),
 			.hasImmediateModePresentationSupport = hasImmediateMode,
 			.hasMailboxModePresentationSupport   = hasMailboxMode

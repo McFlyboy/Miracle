@@ -11,10 +11,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	struct QueueFamilyIndices {
 		std::optional<uint32_t> graphicsFamilyIndex = {};
 		std::optional<uint32_t> presentFamilyIndex = {};
+		std::optional<uint32_t> transferFamilyIndex = {};
 
 		bool hasAllIndicesSet() const {
 			return graphicsFamilyIndex.has_value()
-				&& presentFamilyIndex.has_value();
+				&& presentFamilyIndex.has_value()
+				&& transferFamilyIndex.has_value();
 		}
 
 		std::set<uint32_t> createSetOfAllUniqueIndices() const {
@@ -28,13 +30,17 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				uniqueIndices.insert(presentFamilyIndex.value());
 			}
 
+			if (transferFamilyIndex.has_value()) {
+				uniqueIndices.insert(transferFamilyIndex.value());
+			}
+
 			return uniqueIndices;
 		}
 	};
 
 	struct SwapchainSupport {
-		uint32_t minImageCount = {};
-		std::optional<uint32_t> maxImageCount = {};
+		bool hasDoubleBufferingSupport = {};
+		bool hasTripleBufferingSupport = {};
 		std::vector<vk::SurfaceFormatKHR> surfaceFormats = {};
 		bool hasImmediateModePresentationSupport = {};
 		bool hasMailboxModePresentationSupport = {};

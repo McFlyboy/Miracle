@@ -1,13 +1,16 @@
 #pragma once
 
-#include <optional>
+#include <variant>
 
 #include "Vulkan.hpp"
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
-	struct SurfaceExtent {
-		std::optional<vk::Extent2D> extent = {};
+	struct SurfaceExtentBounds {
 		vk::Extent2D minExtent = {};
 		vk::Extent2D maxExtent = {};
+	};
+
+	struct SurfaceExtent {
+		std::variant<vk::Extent2D, SurfaceExtentBounds> extent = {};
 	};
 }

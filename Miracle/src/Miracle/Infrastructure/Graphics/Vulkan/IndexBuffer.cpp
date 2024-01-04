@@ -78,6 +78,6 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	}
 
 	void IndexBuffer::bind() {
-		m_context.getCommandBuffer().bindIndexBuffer(m_buffer, 0, vk::IndexType::eUint32);
+		m_context.getGraphicsCommandBuffer().bindIndexBuffer(m_buffer, 0, vk::IndexType::eUint32);
 	}
 }

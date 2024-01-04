@@ -5,6 +5,7 @@
 #include <limits>
 #include <format>
 
+#include <Miracle/Environment.hpp>
 #include "DeviceExplorer.hpp"
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
@@ -14,14 +15,13 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		IContextTarget& target
 	) :
 		m_logger(logger),
-		m_target(target)
-	{
-		m_instance = createInstance(appName);
+		m_target(target),
+		m_instance(createInstance(appName)),
 #ifdef MIRACLE_CONFIG_DEBUG
-		m_debugMessenger = createDebugMessenger();
+		m_debugMessenger(createDebugMessenger()),
 #endif
-		m_surface = target.createVulkanSurface(m_instance);
-
+		m_surface(target.createVulkanSurface(m_instance))
+	{
 		auto [physicalDevice, deviceInfo] = getMostOptimalPhysicalDevice();
 
 		m_physicalDevice = std::move(physicalDevice);
@@ -38,17 +38,27 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			0
 		);
 
-		m_commandPool = createCommandPool();
-		m_commandBuffers = allocateCommandBuffers(2);
+		m_transferQueue = m_device.getQueue(
+			m_deviceInfo.queueFamilyIndices.transferFamilyIndex.value(),
+			0
+		);
 
-		m_commandExecutionWaitSemaphores.reserve(m_commandBuffers.size());
-		m_commandExecutionSignalSemaphores.reserve(m_commandBuffers.size());
-		m_commandExecutionSignalFences.reserve(m_commandBuffers.size());
+		m_graphicsCommandPool = createCommandPool(m_deviceInfo.queueFamilyIndices.graphicsFamilyIndex.value());
+		m_transferCommandPool = createCommandPool(m_deviceInfo.queueFamilyIndices.transferFamilyIndex.value());
+		m_graphicsCommandBuffers = allocateCommandBuffers(m_graphicsCommandPool, 2);
+		m_transferCommandBuffer = std::move(
+			allocateCommandBuffers(m_transferCommandPool, 1)
+				.front()
+		);
 
-		for (auto& commandBuffer : m_commandBuffers) {
-			m_commandExecutionWaitSemaphores.push_back(createSemaphore());
-			m_commandExecutionSignalSemaphores.push_back(createSemaphore());
-			m_commandExecutionSignalFences.push_back(createFence(true));
+		m_graphicsCommandExecutionCompletedFences.reserve(m_graphicsCommandBuffers.size());
+		m_graphicsCommandExecutionCompletedSemaphores.reserve(m_graphicsCommandBuffers.size());
+		m_graphicsCommandPresentCompletedSemaphores.reserve(m_graphicsCommandBuffers.size());
+
+		for (size_t i = 0; i < m_graphicsCommandBuffers.size(); i++) {
+			m_graphicsCommandExecutionCompletedFences.push_back(createFence(true));
+			m_graphicsCommandExecutionCompletedSemaphores.push_back(createSemaphore());
+			m_graphicsCommandPresentCompletedSemaphores.push_back(createSemaphore());
 		}
 
 		m_allocator = createAllocator();
@@ -68,7 +78,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		float width,
 		float height
 	) {
-		getCommandBuffer().setViewport(
+		getGraphicsCommandBuffer().setViewport(
 			0,
 			vk::Viewport{
 				.x        = x,
@@ -87,7 +97,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		unsigned int width,
 		unsigned int height
 	) {
-		getCommandBuffer().setScissor(
+		getGraphicsCommandBuffer().setScissor(
 			0,
 			vk::Rect2D{
 				.offset = vk::Offset2D{
@@ -103,16 +113,16 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	}
 
 	void GraphicsContext::draw(uint32_t vertexCount) {
-		getCommandBuffer().draw(vertexCount, 1, 0, 0);
+		getGraphicsCommandBuffer().draw(vertexCount, 1, 0, 0);
 	}
 
 	void GraphicsContext::drawIndexed(uint32_t indexCount) {
-		getCommandBuffer().drawIndexed(indexCount, 1, 0, 0, 0);
+		getGraphicsCommandBuffer().drawIndexed(indexCount, 1, 0, 0, 0);
 	}
 
-	void GraphicsContext::recordCommands(const std::function<void()>& recording) {
+	void GraphicsContext::recordGraphicsCommands(const std::function<void()>& recording) {
 		auto result = m_device.waitForFences(
-			*m_commandExecutionSignalFences[m_currentCommandBufferIndex],
+			*m_graphicsCommandExecutionCompletedFences[m_currentGraphicsCommandBufferIndex],
 			true,
 			std::numeric_limits<uint64_t>::max()
 		);
@@ -121,8 +131,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_logger.warning("Timed out on waiting for Vulkan fence");
 		}
 
-		m_commandBuffers[m_currentCommandBufferIndex].reset();
-		m_commandBuffers[m_currentCommandBufferIndex].begin(
+		m_graphicsCommandBuffers[m_currentGraphicsCommandBufferIndex].reset();
+		m_graphicsCommandBuffers[m_currentGraphicsCommandBufferIndex].begin(
 			vk::CommandBufferBeginInfo{
 				.flags            = {},
 				.pInheritanceInfo = {}
@@ -131,25 +141,53 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		recording();
 
-		m_commandBuffers[m_currentCommandBufferIndex].end();
+		m_graphicsCommandBuffers[m_currentGraphicsCommandBufferIndex].end();
 	}
 
-	void GraphicsContext::submitRecording() {
+	void GraphicsContext::recordTransferCommands(const std::function<void()>& recording) {
+		m_transferCommandBuffer.reset();
+		m_transferCommandBuffer.begin(
+			vk::CommandBufferBeginInfo{
+				.flags            = {},
+				.pInheritanceInfo = {}
+			}
+		);
+
+		recording();
+
+		m_transferCommandBuffer.end();
+	}
+
+	void GraphicsContext::submitGraphicsRecording() {
 		vk::PipelineStageFlags waitStage = vk::PipelineStageFlagBits::eColorAttachmentOutput;
 
-		m_device.resetFences(*m_commandExecutionSignalFences[m_currentCommandBufferIndex]);
+		m_device.resetFences(*m_graphicsCommandExecutionCompletedFences[m_currentGraphicsCommandBufferIndex]);
 
 		m_graphicsQueue.submit(
 			vk::SubmitInfo{
 				.waitSemaphoreCount   = 1,
-				.pWaitSemaphores      = &*m_commandExecutionWaitSemaphores[m_currentCommandBufferIndex],
+				.pWaitSemaphores      = &*m_graphicsCommandPresentCompletedSemaphores[m_currentGraphicsCommandBufferIndex],
 				.pWaitDstStageMask    = &waitStage,
 				.commandBufferCount   = 1,
-				.pCommandBuffers      = &*m_commandBuffers[m_currentCommandBufferIndex],
+				.pCommandBuffers      = &*m_graphicsCommandBuffers[m_currentGraphicsCommandBufferIndex],
 				.signalSemaphoreCount = 1,
-				.pSignalSemaphores    = &*m_commandExecutionSignalSemaphores[m_currentCommandBufferIndex]
+				.pSignalSemaphores    = &*m_graphicsCommandExecutionCompletedSemaphores[m_currentGraphicsCommandBufferIndex]
 			},
-			*m_commandExecutionSignalFences[m_currentCommandBufferIndex]
+			* m_graphicsCommandExecutionCompletedFences[m_currentGraphicsCommandBufferIndex]
+		);
+	}
+
+	void GraphicsContext::submitTransferRecording() {
+		m_transferQueue.submit(
+			vk::SubmitInfo{
+				.waitSemaphoreCount   = 0,
+				.pWaitSemaphores      = nullptr,
+				.pWaitDstStageMask    = {},
+				.commandBufferCount   = 1,
+				.pCommandBuffers      = &*m_transferCommandBuffer,
+				.signalSemaphoreCount = 0,
+				.pSignalSemaphores    = nullptr
+			}
 		);
 	}
 
@@ -160,20 +198,23 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	SurfaceExtent GraphicsContext::getCurrentSurfaceExtent() const {
 		auto surfaceCapabilities = m_physicalDevice.getSurfaceCapabilitiesKHR(*m_surface);
 
-		return SurfaceExtent{
-			.extent    = surfaceCapabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()
-				? std::optional(surfaceCapabilities.currentExtent)
-				: std::nullopt,
-			.minExtent = surfaceCapabilities.minImageExtent,
-			.maxExtent = surfaceCapabilities.maxImageExtent
-		};
+		return surfaceCapabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()
+			? SurfaceExtent{
+				.extent = surfaceCapabilities.currentExtent
+			}
+			: SurfaceExtent{
+				.extent = SurfaceExtentBounds{
+					.minExtent = surfaceCapabilities.minImageExtent,
+					.maxExtent = surfaceCapabilities.maxImageExtent
+				}
+			};
 	}
 
-	void GraphicsContext::recreateSemaphores() {
-		m_commandExecutionWaitSemaphores.clear();
+	void GraphicsContext::recreatePresentCompletedSemaphores() {
+		m_graphicsCommandPresentCompletedSemaphores.clear();
 
-		for (auto& commandBuffer : m_commandBuffers) {
-			m_commandExecutionWaitSemaphores.push_back(createSemaphore());
+		for (size_t i = 0; i < m_graphicsCommandBuffers.size(); i++) {
+			m_graphicsCommandPresentCompletedSemaphores.push_back(createSemaphore());
 		}
 	}
 
@@ -201,6 +242,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		auto debugMessengerCreateInfo = getDebugMessengerCreateInfo();
 #endif
+		
+		if constexpr (Environment::getCurrentPlatform() == Platform::platformMacos) {
+			extensionNames.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+		}
 
 		checkExtensionsAvailable(extensionNames);
 
@@ -210,7 +255,9 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 #ifdef MIRACLE_CONFIG_DEBUG
 					.pNext                   = &debugMessengerCreateInfo,
 #endif
-					.flags                   = {},
+#ifdef MIRACLE_PLATFORM_MACOS
+					.flags                   = vk::InstanceCreateFlagBits::eEnumeratePortabilityKHR,
+#endif
 					.pApplicationInfo        = &appInfo,
 #ifdef MIRACLE_CONFIG_DEBUG
 					.enabledLayerCount       = static_cast<uint32_t>(s_validationLayerNames.size()),
@@ -233,67 +280,55 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 	}
 
-	void GraphicsContext::checkExtensionsAvailable(
-		const std::span<const char*>& extensionNames
-	) const {
+	void GraphicsContext::checkExtensionsAvailable(const std::span<const char*>& extensionNames) const {
 		bool allExtensionsFound = true;
 
-		auto extensionsProperties = m_context.enumerateInstanceExtensionProperties();
+		auto extensionPropertiesList = m_context.enumerateInstanceExtensionProperties();
 
 		for (auto& extensionName : extensionNames) {
 			bool extensionFound = false;
 
-			for (auto& extensionProperties : extensionsProperties) {
+			for (auto& extensionProperties : extensionPropertiesList) {
 				if (std::strcmp(extensionName, extensionProperties.extensionName) == 0) {
 					extensionFound = true;
 					break;
 				}
 			}
 
-			if (extensionFound) {
-				continue;
-			}
+			if (extensionFound) continue;
 
 			m_logger.error(std::format("Vulkan extension missing: {}", extensionName));
 			allExtensionsFound = false;
 		}
 
-		if (allExtensionsFound) {
-			return;
+		if (!allExtensionsFound) {
+			throw Application::GraphicsContextErrors::FunctionalityNotSupportedError();
 		}
-
-		throw Application::GraphicsContextErrors::FunctionalityNotSupportedError();
 	}
 
 #ifdef MIRACLE_CONFIG_DEBUG
 	void GraphicsContext::checkValidationLayersAvailable() const {
 		bool allLayersFound = true;
 
-		auto layersProperties = m_context.enumerateInstanceLayerProperties();
+		auto layerPropertiesList = m_context.enumerateInstanceLayerProperties();
 
 		for (auto& validationLayerName : s_validationLayerNames) {
 			bool layerFound = false;
 
-			for (auto& layerProperties : layersProperties) {
+			for (auto& layerProperties : layerPropertiesList) {
 				if (std::strcmp(validationLayerName, layerProperties.layerName) == 0) {
 					layerFound = true;
 					break;
 				}
 			}
 
-			if (layerFound) {
-				continue;
-			}
+			if (layerFound) continue;
 
 			m_logger.error(std::format("Vulkan validation layer missing: {}", validationLayerName));
 			allLayersFound = false;
 		}
 
-		if (allLayersFound) {
-			return;
-		}
-
-		throw Application::GraphicsContextErrors::DebugToolsUnavailableError();
+		if (!allLayersFound) throw Application::GraphicsContextErrors::DebugToolsUnavailableError();
 	}
 
 	vk::raii::DebugUtilsMessengerEXT GraphicsContext::createDebugMessenger() {
@@ -314,14 +349,14 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 	vk::DebugUtilsMessengerCreateInfoEXT GraphicsContext::getDebugMessengerCreateInfo() {
 		return vk::DebugUtilsMessengerCreateInfoEXT{
-			.flags = {},
+			.flags           = {},
 			.messageSeverity = vk::DebugUtilsMessageSeverityFlagBitsEXT::eError
 				| vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning,
-			.messageType = vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral
+			.messageType     = vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral
 				| vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance
 				| vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation,
 			.pfnUserCallback = logDebugMessage,
-			.pUserData = this
+			.pUserData       = this
 		};
 	}
 
@@ -459,12 +494,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 	}
 
-	vk::raii::CommandPool GraphicsContext::createCommandPool() const {
+	vk::raii::CommandPool GraphicsContext::createCommandPool(uint32_t queueFamilyIndex) const {
 		try {
 			return m_device.createCommandPool(
 				vk::CommandPoolCreateInfo{
 					.flags            = vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
-					.queueFamilyIndex = m_deviceInfo.queueFamilyIndices.graphicsFamilyIndex.value()
+					.queueFamilyIndex = queueFamilyIndex
 				}
 			);
 		}
@@ -477,11 +512,14 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 	}
 
-	std::vector<vk::raii::CommandBuffer> GraphicsContext::allocateCommandBuffers(size_t count) const {
+	std::vector<vk::raii::CommandBuffer> GraphicsContext::allocateCommandBuffers(
+		vk::raii::CommandPool& commandPool,
+		size_t count
+	) const {
 		try {
 			return m_device.allocateCommandBuffers(
 				vk::CommandBufferAllocateInfo{
-					.commandPool        = *m_commandPool,
+					.commandPool        = *commandPool,
 					.level              = vk::CommandBufferLevel::ePrimary,
 					.commandBufferCount = static_cast<uint32_t>(count)
 				}

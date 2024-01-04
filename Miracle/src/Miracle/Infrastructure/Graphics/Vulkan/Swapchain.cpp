@@ -14,13 +14,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	) :
 		m_logger(logger),
 		m_context(context),
-		m_preferredImageCount(selectImageCount()),
-		m_surfaceFormat(selectSurfaceFormat(initProps.useSrgb)),
+		m_minimumImageCount(selectMinimumImageCount(initProps.useTripleBuffering)),
+		m_surfaceFormat(selectSurfaceFormat()),
 		m_imageExtent(selectExtent()),
-		m_presentMode(selectPresentMode(initProps.useVsync))
+		m_presentMode(selectPresentMode(initProps.useVsync)),
+		m_swapchain(createSwapchain())
 	{
-		m_swapchain = createSwapchain();
-
 		auto images = m_swapchain.getImages();
 
 		m_images.reserve(images.size());
@@ -39,7 +38,13 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		m_imageIndex = getNextImageIndex();
 
-		m_logger.info("Vulkan swapchain created");
+		m_logger.info(
+			std::format(
+				"Vulkan swapchain created with {} images and {} present mode",
+				m_images.size(),
+				vk::to_string(m_presentMode)
+			)
+		);
 	}
 
 	Swapchain::~Swapchain() {
@@ -67,7 +72,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			)
 		};
 
-		m_context.getCommandBuffer().beginRenderPass(
+		m_context.getGraphicsCommandBuffer().beginRenderPass(
 			vk::RenderPassBeginInfo{
 				.renderPass      = *m_renderPass,
 				.framebuffer     = *m_frameBuffers[m_imageIndex],
@@ -86,14 +91,14 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	}
 
 	void Swapchain::endRenderPass() {
-		m_context.getCommandBuffer().endRenderPass();
+		m_context.getGraphicsCommandBuffer().endRenderPass();
 	}
 
 	void Swapchain::swap() {
 		auto result = m_context.getPresentQueue().presentKHR(
 			vk::PresentInfoKHR{
 				.waitSemaphoreCount = 1,
-				.pWaitSemaphores    = &*m_context.getCommandExecutionSignalSemaphore(),
+				.pWaitSemaphores    = &*m_context.getGraphicsCommandExecutionCompletedSemaphore(),
 				.swapchainCount     = 1,
 				.pSwapchains        = &*m_swapchain,
 				.pImageIndices      = &m_imageIndex,
@@ -105,7 +110,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_logger.warning("Swapped Vulkan swapchain in suboptimal state");
 		}
 
-		m_context.nextCommandBuffer();
+		m_context.nextGraphicsCommandBuffer();
 
 		m_imageIndex = getNextImageIndex();
 	}
@@ -128,51 +133,58 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_frameBuffers.push_back(createFrameBuffer(imageView));
 		}
 
-		m_context.recreateSemaphores();
+		m_context.recreatePresentCompletedSemaphores();
 
 		m_imageIndex = getNextImageIndex();
 
-		m_logger.info("Vulkan swapchain re-created");
+		m_logger.info(
+			std::format(
+				"Vulkan swapchain re-created with {} images and {} present mode",
+				m_images.size(),
+				vk::to_string(m_presentMode)
+			)
+		);
 	}
 
-	uint32_t Swapchain::selectImageCount() const {
+	void Swapchain::setVsync(bool useVsync) {
+		m_presentMode = selectPresentMode(useVsync);
+	}
+
+	void Swapchain::setTripleBuffering(bool useTripleBuffering) {
+		m_minimumImageCount = selectMinimumImageCount(useTripleBuffering);
+		m_presentMode = selectPresentMode(isUsingVsync());
+	}
+
+	uint32_t Swapchain::selectMinimumImageCount(bool useTripleBuffering) const {
 		auto& swapchainSupport = m_context.getDeviceInfo().extensionSupport.swapchainSupport.value();
 
-		auto preferredImageCount = swapchainSupport.minImageCount + 1;
+		if (useTripleBuffering) {
+			if (swapchainSupport.hasTripleBufferingSupport) return 3;
 
-		return swapchainSupport.maxImageCount.has_value()
-			? std::min(preferredImageCount, swapchainSupport.maxImageCount.value())
-			: preferredImageCount;
+			m_logger.warning("Triple buffering not supported. Falling back to double buffering");
+		}
+
+		return 2;
 	}
 
-	vk::SurfaceFormatKHR Swapchain::selectSurfaceFormat(bool useSrgb) const {
+	vk::SurfaceFormatKHR Swapchain::selectSurfaceFormat() const {
 		auto& swapchainSupport = m_context.getDeviceInfo().extensionSupport.swapchainSupport.value();
 
 		for (auto& surfaceFormat : swapchainSupport.surfaceFormats) {
-			switch (surfaceFormat.format) {
-			case vk::Format::eB8G8R8A8Srgb:
-			case vk::Format::eR8G8B8A8Srgb:
-				if (useSrgb && surfaceFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
-					return surfaceFormat;
-				}
-
-				break;
-
-			case vk::Format::eB8G8R8A8Unorm:
-			case vk::Format::eR8G8B8A8Unorm:
-				if (!useSrgb && surfaceFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
-					return surfaceFormat;
-				}
-
-				break;
-
-			default:
-				continue;
+			if (
+				surfaceFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear
+					&& (
+						surfaceFormat.format == vk::Format::eR8G8B8A8Srgb
+							|| surfaceFormat.format == vk::Format::eB8G8R8A8Srgb
+							|| surfaceFormat.format == vk::Format::eA8B8G8R8SrgbPack32
+					)
+			) {
+				return surfaceFormat;
 			}
 		}
 
 		m_logger.warning(
-			"Common Vulkan surface formats for swapchain not available.\nFallback solution might not give intended result!"
+			"Preferred surface formats for swapchain not available.\nFallback solution might not give intended visual results!"
 		);
 
 		return swapchainSupport.surfaceFormats.front();
@@ -181,22 +193,24 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	vk::Extent2D Swapchain::selectExtent() const {
 		auto currentExtent = m_context.getCurrentSurfaceExtent();
 		
-		if (currentExtent.extent.has_value()) {
-			return currentExtent.extent.value();
+		if (std::holds_alternative<vk::Extent2D>(currentExtent.extent)) {
+			return std::get<vk::Extent2D>(currentExtent.extent);
 		}
 
 		auto currentTargetExtent = m_context.getTarget().getCurrentVulkanExtent();
 
+		auto& extentBounds = std::get<SurfaceExtentBounds>(currentExtent.extent);
+
 		return vk::Extent2D{
 			.width  = std::clamp(
 				currentTargetExtent.width,
-				currentExtent.minExtent.width,
-				currentExtent.maxExtent.width
+				extentBounds.minExtent.width,
+				extentBounds.maxExtent.width
 			),
 			.height = std::clamp(
 				currentTargetExtent.height,
-				currentExtent.minExtent.height,
-				currentExtent.maxExtent.height
+				extentBounds.minExtent.height,
+				extentBounds.maxExtent.height
 			)
 		};
 	}
@@ -205,7 +219,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		auto& swapchainSupport = m_context.getDeviceInfo().extensionSupport.swapchainSupport.value();
 
 		return useVsync
-			? swapchainSupport.hasMailboxModePresentationSupport
+			? swapchainSupport.hasMailboxModePresentationSupport && m_minimumImageCount > 2
 				? vk::PresentModeKHR::eMailbox
 				: vk::PresentModeKHR::eFifo
 			: vk::PresentModeKHR::eImmediate;
@@ -214,7 +228,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	vk::raii::SwapchainKHR Swapchain::createSwapchain() const {
 		auto& queueFamilyIndices = m_context.getDeviceInfo().queueFamilyIndices;
 
-		bool sharingModeEnabled = queueFamilyIndices.graphicsFamilyIndex.value()
+		bool useSharingMode = queueFamilyIndices.graphicsFamilyIndex.value()
 			!= queueFamilyIndices.presentFamilyIndex.value();
 
 		auto queueFamilyIndexArray = std::array{
@@ -227,19 +241,19 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				vk::SwapchainCreateInfoKHR{
 					.flags = {},
 					.surface = *m_context.getSurface(),
-					.minImageCount = m_preferredImageCount,
+					.minImageCount = m_minimumImageCount,
 					.imageFormat = m_surfaceFormat.format,
 					.imageColorSpace = m_surfaceFormat.colorSpace,
 					.imageExtent = m_imageExtent,
 					.imageArrayLayers = 1,
 					.imageUsage = vk::ImageUsageFlagBits::eColorAttachment,
-					.imageSharingMode = sharingModeEnabled
+					.imageSharingMode = useSharingMode
 						? vk::SharingMode::eConcurrent
 						: vk::SharingMode::eExclusive,
-					.queueFamilyIndexCount = sharingModeEnabled
+					.queueFamilyIndexCount = useSharingMode
 						? static_cast<uint32_t>(queueFamilyIndexArray.size())
 						: 0,
-					.pQueueFamilyIndices = sharingModeEnabled
+					.pQueueFamilyIndices = useSharingMode
 						? queueFamilyIndexArray.data()
 						: nullptr,
 					.preTransform = m_context.getCurrentSurfaceTransformation(),
@@ -389,7 +403,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	uint32_t Swapchain::getNextImageIndex() {
 		auto [result, imageIndex] = m_swapchain.acquireNextImage(
 			std::numeric_limits<uint64_t>().max(),
-			*m_context.getCommandExecutionWaitSemaphore()
+			*m_context.getGraphicsCommandPresentCompletedSemaphore()
 		);
 
 		switch (result) {

@@ -18,8 +18,6 @@ namespace Miracle::Application {
 		m_pipeline(m_api.createGraphicsPipeline(m_fileAccess, m_context, *m_swapchain.get())),
 		m_meshBuffersList(createMeshBuffersList(initProps.meshes))
 	{
-		auto swapchainImageSize = m_swapchain->getImageSize();
-
 		m_logger.info("Renderer created");
 	}
 
@@ -79,7 +77,7 @@ namespace Miracle::Application {
 
 		auto viewProjection = view * projection;
 
-		m_context.recordCommands(
+		m_context.recordGraphicsCommands(
 			[&]() {
 				m_swapchain->beginRenderPass(scene.getBackgroundColor());
 				m_context.setViewport(0.0f, 0.0f, swapchainImageSize.width, swapchainImageSize.height);
@@ -117,7 +115,7 @@ namespace Miracle::Application {
 			}
 		);
 
-		m_context.submitRecording();
+		m_context.submitGraphicsRecording();
 
 		m_swapchain->swap();
 
