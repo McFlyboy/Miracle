@@ -8,6 +8,7 @@
 #include "Interface/Logger.hpp"
 #include "Interface/Window.hpp"
 #include "Interface/Keyboard.hpp"
+#include "Interface/Renderer.hpp"
 #include "Interface/CurrentScene.hpp"
 #include "Interface/TextInput.hpp"
 #include "Interface/Clipboard.hpp"

@@ -137,7 +137,22 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		m_imageIndex = getNextImageIndex();
 
-		m_logger.info("Vulkan swapchain re-created");
+		m_logger.info(
+			std::format(
+				"Vulkan swapchain re-created with {} images and {} present mode",
+				m_images.size(),
+				vk::to_string(m_presentMode)
+			)
+		);
+	}
+
+	void Swapchain::setVsync(bool useVsync) {
+		m_presentMode = selectPresentMode(useVsync);
+	}
+
+	void Swapchain::setTripleBuffering(bool useTripleBuffering) {
+		m_minimumImageCount = selectMinimumImageCount(useTripleBuffering);
+		m_presentMode = selectPresentMode(isUsingVsync());
 	}
 
 	uint32_t Swapchain::selectMinimumImageCount(bool useTripleBuffering) const {

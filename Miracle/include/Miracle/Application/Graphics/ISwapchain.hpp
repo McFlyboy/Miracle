@@ -24,6 +24,14 @@ namespace Miracle::Application {
 		virtual void swap() = 0;
 
 		virtual void recreate() = 0;
+
+		virtual bool isUsingVsync() const = 0;
+
+		virtual void setVsync(bool useVsync) = 0;
+
+		virtual bool isUsingTripleBuffering() const = 0;
+
+		virtual void setTripleBuffering(bool useTripleBuffering) = 0;
 	};
 
 	struct SwapchainInitProps {

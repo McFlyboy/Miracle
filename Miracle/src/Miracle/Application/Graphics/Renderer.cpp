@@ -18,8 +18,6 @@ namespace Miracle::Application {
 		m_pipeline(m_api.createGraphicsPipeline(m_fileAccess, m_context, *m_swapchain.get())),
 		m_meshBuffersList(createMeshBuffersList(initProps.meshes))
 	{
-		auto swapchainImageSize = m_swapchain->getImageSize();
-
 		m_logger.info("Renderer created");
 	}
 

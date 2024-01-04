@@ -43,6 +43,18 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		virtual void recreate() override;
 
+		virtual bool isUsingVsync() const override {
+			return m_presentMode != vk::PresentModeKHR::eImmediate;
+		}
+
+		virtual void setVsync(bool useVsync) override;
+
+		virtual bool isUsingTripleBuffering() const override {
+			return m_minimumImageCount > 2;
+		}
+
+		virtual void setTripleBuffering(bool useTripleBuffering) override;
+
 		const vk::raii::RenderPass& getRenderPass() const { return m_renderPass; }
 
 	private:
