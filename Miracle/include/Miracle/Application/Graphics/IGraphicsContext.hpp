@@ -37,11 +37,7 @@ namespace Miracle::Application {
 
 		virtual void recordGraphicsCommands(const std::function<void()>& recording) = 0;
 
-		virtual void recordTransferCommands(const std::function<void()>& recording) = 0;
-
 		virtual void submitGraphicsRecording() = 0;
-
-		virtual void submitTransferRecording() = 0;
 
 		virtual void waitForDeviceIdle() = 0;
 	};

@@ -51,12 +51,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				.front()
 		);
 
-		m_graphicsCommandExecutionCompletedFences.reserve(m_graphicsCommandBuffers.size());
+		m_graphicsCommandBufferSubmittedFences.reserve(m_graphicsCommandBuffers.size());
 		m_graphicsCommandExecutionCompletedSemaphores.reserve(m_graphicsCommandBuffers.size());
 		m_graphicsCommandPresentCompletedSemaphores.reserve(m_graphicsCommandBuffers.size());
 
 		for (size_t i = 0; i < m_graphicsCommandBuffers.size(); i++) {
-			m_graphicsCommandExecutionCompletedFences.push_back(createFence(true));
+			m_graphicsCommandBufferSubmittedFences.push_back(createFence(true));
 			m_graphicsCommandExecutionCompletedSemaphores.push_back(createSemaphore());
 			m_graphicsCommandPresentCompletedSemaphores.push_back(createSemaphore());
 		}
@@ -122,7 +122,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 	void GraphicsContext::recordGraphicsCommands(const std::function<void()>& recording) {
 		auto result = m_device.waitForFences(
-			*m_graphicsCommandExecutionCompletedFences[m_currentGraphicsCommandBufferIndex],
+			*m_graphicsCommandBufferSubmittedFences[m_currentGraphicsCommandBufferIndex],
 			true,
 			std::numeric_limits<uint64_t>::max()
 		);
@@ -131,7 +131,6 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_logger.warning("Timed out on waiting for Vulkan fence");
 		}
 
-		m_graphicsCommandBuffers[m_currentGraphicsCommandBufferIndex].reset();
 		m_graphicsCommandBuffers[m_currentGraphicsCommandBufferIndex].begin(
 			vk::CommandBufferBeginInfo{
 				.flags            = {},
@@ -161,7 +160,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	void GraphicsContext::submitGraphicsRecording() {
 		vk::PipelineStageFlags waitStage = vk::PipelineStageFlagBits::eColorAttachmentOutput;
 
-		m_device.resetFences(*m_graphicsCommandExecutionCompletedFences[m_currentGraphicsCommandBufferIndex]);
+		m_device.resetFences(*m_graphicsCommandBufferSubmittedFences[m_currentGraphicsCommandBufferIndex]);
 
 		m_graphicsQueue.submit(
 			vk::SubmitInfo{
@@ -173,7 +172,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				.signalSemaphoreCount = 1,
 				.pSignalSemaphores    = &*m_graphicsCommandExecutionCompletedSemaphores[m_currentGraphicsCommandBufferIndex]
 			},
-			* m_graphicsCommandExecutionCompletedFences[m_currentGraphicsCommandBufferIndex]
+			* m_graphicsCommandBufferSubmittedFences[m_currentGraphicsCommandBufferIndex]
 		);
 	}
 
@@ -514,14 +513,14 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 	std::vector<vk::raii::CommandBuffer> GraphicsContext::allocateCommandBuffers(
 		vk::raii::CommandPool& commandPool,
-		size_t count
+		uint32_t count
 	) const {
 		try {
 			return m_device.allocateCommandBuffers(
 				vk::CommandBufferAllocateInfo{
 					.commandPool        = *commandPool,
 					.level              = vk::CommandBufferLevel::ePrimary,
-					.commandBufferCount = static_cast<uint32_t>(count)
+					.commandBufferCount = count
 				}
 			);
 		}

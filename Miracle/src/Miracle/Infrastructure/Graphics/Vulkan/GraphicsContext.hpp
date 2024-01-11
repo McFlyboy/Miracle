@@ -41,7 +41,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::CommandPool m_transferCommandPool = nullptr;
 		std::vector<vk::raii::CommandBuffer> m_graphicsCommandBuffers;
 		vk::raii::CommandBuffer m_transferCommandBuffer = nullptr;
-		std::vector<vk::raii::Fence> m_graphicsCommandExecutionCompletedFences;
+		std::vector<vk::raii::Fence> m_graphicsCommandBufferSubmittedFences;
 		std::vector<vk::raii::Semaphore> m_graphicsCommandExecutionCompletedSemaphores;
 		std::vector<vk::raii::Semaphore> m_graphicsCommandPresentCompletedSemaphores;
 		size_t m_currentGraphicsCommandBufferIndex = 0;
@@ -78,11 +78,11 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		virtual void recordGraphicsCommands(const std::function<void()>& recording) override;
 
-		virtual void recordTransferCommands(const std::function<void()>& recording) override;
+		void recordTransferCommands(const std::function<void()>& recording);
 
 		virtual void submitGraphicsRecording() override;
 
-		virtual void submitTransferRecording() override;
+		void submitTransferRecording();
 
 		virtual void waitForDeviceIdle() override;
 
@@ -156,7 +156,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		std::vector<vk::raii::CommandBuffer> allocateCommandBuffers(
 			vk::raii::CommandPool& commandPool,
-			size_t count
+			uint32_t count
 		) const;
 
 		vk::raii::Fence createFence(bool preSignaled) const;
