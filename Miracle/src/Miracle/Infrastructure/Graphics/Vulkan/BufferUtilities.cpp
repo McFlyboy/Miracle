@@ -1,5 +1,7 @@
 #include "BufferUtilities.hpp"
 
+#include <array>
+
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	std::pair<vk::Buffer, vma::Allocation> BufferUtilities::createStagingBuffer(
 		GraphicsContext& m_context,
@@ -33,14 +35,30 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::BufferUsageFlags usage,
 		vk::DeviceSize bufferSize
 	) {
+		auto& deviceInfo = m_context.getDeviceInfo();
+
+		bool useSharingMode = deviceInfo.queueFamilyIndices.graphicsFamilyIndex.value()
+			!= deviceInfo.queueFamilyIndices.transferFamilyIndex.value();
+
+		auto queueFamilyIndexArray = std::array{
+			deviceInfo.queueFamilyIndices.graphicsFamilyIndex.value(),
+			deviceInfo.queueFamilyIndices.transferFamilyIndex.value()
+		};
+
 		return m_context.getAllocator().createBuffer(
 			vk::BufferCreateInfo{
 				.flags                 = {},
 				.size                  = bufferSize,
 				.usage                 = usage | vk::BufferUsageFlagBits::eTransferDst,
-				.sharingMode           = vk::SharingMode::eExclusive,
-				.queueFamilyIndexCount = 0,
-				.pQueueFamilyIndices   = nullptr
+				.sharingMode           = useSharingMode
+					? vk::SharingMode::eConcurrent
+					: vk::SharingMode::eExclusive,
+				.queueFamilyIndexCount = useSharingMode
+					? static_cast<uint32_t>(queueFamilyIndexArray.size())
+					: 0,
+				.pQueueFamilyIndices   = useSharingMode
+					? queueFamilyIndexArray.data()
+					: nullptr
 			},
 			vma::AllocationCreateInfo{
 				.flags          = vma::AllocationCreateFlagBits::eDedicatedMemory,

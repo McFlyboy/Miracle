@@ -41,9 +41,9 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::CommandPool m_transferCommandPool = nullptr;
 		std::vector<vk::raii::CommandBuffer> m_graphicsCommandBuffers;
 		vk::raii::CommandBuffer m_transferCommandBuffer = nullptr;
-		std::vector<vk::raii::Fence> m_graphicsCommandBufferSubmittedFences;
-		std::vector<vk::raii::Semaphore> m_graphicsCommandExecutionCompletedSemaphores;
-		std::vector<vk::raii::Semaphore> m_graphicsCommandPresentCompletedSemaphores;
+		std::vector<vk::raii::Fence> m_renderingCompletedFences;
+		std::vector<vk::raii::Semaphore> m_renderingCompletedSemaphores;
+		std::vector<vk::raii::Semaphore> m_presentCompletedSemaphores;
 		size_t m_currentGraphicsCommandBufferIndex = 0;
 		vma::Allocator m_allocator;
 
@@ -107,11 +107,11 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 
 		const vk::raii::Semaphore& getGraphicsCommandExecutionCompletedSemaphore() const {
-			return m_graphicsCommandExecutionCompletedSemaphores[m_currentGraphicsCommandBufferIndex];
+			return m_renderingCompletedSemaphores[m_currentGraphicsCommandBufferIndex];
 		}
 
 		const vk::raii::Semaphore& getGraphicsCommandPresentCompletedSemaphore() const {
-			return m_graphicsCommandPresentCompletedSemaphores[m_currentGraphicsCommandBufferIndex];
+			return m_presentCompletedSemaphores[m_currentGraphicsCommandBufferIndex];
 		}
 
 		const vma::Allocator& getAllocator() const { return m_allocator; }
