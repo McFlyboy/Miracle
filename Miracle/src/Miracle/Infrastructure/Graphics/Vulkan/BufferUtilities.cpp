@@ -61,7 +61,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 					: nullptr
 			},
 			vma::AllocationCreateInfo{
-				.flags          = vma::AllocationCreateFlagBits::eDedicatedMemory,
+				.flags          = {},
 				.usage          = vma::MemoryUsage::eAuto,
 				.requiredFlags  = {},
 				.preferredFlags = {},
