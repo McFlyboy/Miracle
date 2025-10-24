@@ -61,8 +61,8 @@ int main() {
 				.resizable = true
 			},
 			.rendererConfig = RendererConfig{
-				.meshes = std::vector<Mesh>{
-					{
+				.meshes = std::vector{
+					Mesh{
 						.vertices = std::vector{
 							Vertex{ .position = Vector3{ .x = -0.5f, .y = -0.5f, .z = 0.0f } },
 							Vertex{ .position = Vector3{ .x =  0.5f, .y = -0.5f, .z = 0.0f } },
@@ -77,21 +77,21 @@ int main() {
 				}
 			},
 			.sceneConfig = SceneConfig{
-				.entityConfigs = std::vector<EntityConfig>{
-					{
+				.entityConfigs = std::vector{
+					EntityConfig{
 						.transformConfig = TransformConfig{
 							.translation = Vector3{ 0.0f, 0.0f, -1.0f }
 						},
 						.cameraConfig    = PerspectiveCameraConfig{},
 						.behaviorFactory = BehaviorFactory::createFactoryFor<CameraBehavior>(1.0f, 120.0_deg)
 					},
-					{
+					EntityConfig{
 						.appearanceConfig = AppearanceConfig{
 							.meshIndex = 0,
 							.color     = ColorRgb::createFromNonlinearSrgbColorCode(0xFF7700)
 						}
 					},
-					{
+					EntityConfig{
 						.transformConfig = TransformConfig{
 							.translation = Vector3{
 								.x = -1.5f,
@@ -135,6 +135,6 @@ int main() {
 	);
 
 	int exitCode = app.run();
-
+	
 	return exitCode;
 }
