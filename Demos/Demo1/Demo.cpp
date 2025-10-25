@@ -83,7 +83,7 @@ int main() {
 							.translation = Vector3{ 0.0f, 0.0f, -1.0f }
 						},
 						.cameraConfig    = PerspectiveCameraConfig{},
-						.behaviorFactory = BehaviorFactory::createFactoryFor<CameraBehavior>(1.0f, 120.0_deg)
+						.behaviorFactory = BehaviorFactory::createFactoryFor<CameraBehavior>(2.0f, 120.0_deg)
 					},
 					EntityConfig{
 						.appearanceConfig = AppearanceConfig{

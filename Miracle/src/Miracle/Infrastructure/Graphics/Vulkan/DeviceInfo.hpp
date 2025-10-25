@@ -54,6 +54,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		std::string name = {};
 		vk::PhysicalDeviceType type = {};
 		vk::DeviceSize deviceLocalMemorySize = {};
+		std::vector<vk::Format> depthStencilOptimalTilingImageFormatsSupported = {};
 		QueueFamilyIndices queueFamilyIndices = {};
 		DeviceExtensionSupport extensionSupport = {};
 	};
