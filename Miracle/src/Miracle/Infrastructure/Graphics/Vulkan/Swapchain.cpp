@@ -59,6 +59,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	Swapchain::~Swapchain() {
 		m_logger.info("Destroying Vulkan swapchain...");
 
+		m_frameBuffers.clear();
+		m_depthImageView.clear();
 		m_context.getAllocator().destroyImage(m_depthImage, m_depthImageAllocation);
 	}
 
