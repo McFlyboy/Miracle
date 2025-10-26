@@ -34,7 +34,8 @@ namespace Miracle::Application {
 					.useVsync           = rendererConfig.swapchainConfig.useVsync,
 					.useTripleBuffering = rendererConfig.swapchainConfig.useTripleBuffering
 				},
-				.meshes               = rendererConfig.meshes
+				.useDepthTesting    = rendererConfig.useDepthTesting,
+				.meshes             = rendererConfig.meshes
 			};
 		}
 

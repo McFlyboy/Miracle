@@ -112,6 +112,14 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		);
 	}
 
+	void GraphicsContext::setDepthTestEnabled(bool enabled) {
+		getGraphicsCommandBuffer().setDepthTestEnable(enabled);
+	}
+
+	void GraphicsContext::setDepthWriteEnabled(bool enabled) {
+		getGraphicsCommandBuffer().setDepthWriteEnable(enabled);
+	}
+
 	void GraphicsContext::draw(uint32_t vertexCount) {
 		getGraphicsCommandBuffer().draw(vertexCount, 1, 0, 0);
 	}
@@ -469,11 +477,19 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			);
 		}
 
-		auto extensionNames = std::array{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+		auto extensionNames = std::array{
+			VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+			VK_EXT_EXTENDED_DYNAMIC_STATE_EXTENSION_NAME
+		};
+
+		auto extendedDynamicStateFeatures = vk::PhysicalDeviceExtendedDynamicStateFeaturesEXT{
+			.extendedDynamicState = true
+		};
 
 		try {
 			return m_physicalDevice.createDevice(
 				vk::DeviceCreateInfo{
+					.pNext                   = &extendedDynamicStateFeatures,
 					.flags                   = {},
 					.queueCreateInfoCount    = static_cast<uint32_t>(deviceQueueCreateInfos.size()),
 					.pQueueCreateInfos       = deviceQueueCreateInfos.data(),

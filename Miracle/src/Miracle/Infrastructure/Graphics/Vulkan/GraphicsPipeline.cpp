@@ -107,8 +107,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		auto depthStencilStateCreateInfo = vk::PipelineDepthStencilStateCreateInfo{
 			.flags                 = {},
-			.depthTestEnable       = true,
-			.depthWriteEnable      = true,
+			.depthTestEnable       = {},
+			.depthWriteEnable      = {},
 			.depthCompareOp        = vk::CompareOp::eLess,
 			.depthBoundsTestEnable = false,
 			.stencilTestEnable     = false,
@@ -143,7 +143,9 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		auto dynamicStates = std::array{
 			vk::DynamicState::eViewport,
-			vk::DynamicState::eScissor
+			vk::DynamicState::eScissor,
+			vk::DynamicState::eDepthTestEnable,
+			vk::DynamicState::eDepthWriteEnable
 		};
 
 		auto dynamicStateCreateInfo = vk::PipelineDynamicStateCreateInfo{

@@ -70,6 +70,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			unsigned int height
 		) override;
 
+		virtual void setDepthTestEnabled(bool enabled) override;
+
+		virtual void setDepthWriteEnabled(bool enabled) override;
+
 		virtual void draw(uint32_t vertexCount) override;
 
 		virtual void drawIndexed(uint32_t indexCount) override;

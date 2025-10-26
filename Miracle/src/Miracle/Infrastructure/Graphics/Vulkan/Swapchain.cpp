@@ -34,7 +34,6 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		m_depthImage = depthImage;
 		m_depthImageAllocation = depthImageAllocation;
-
 		m_depthImageView = createDepthImageView(m_depthImage);
 
 		m_renderPass = createRenderPass();

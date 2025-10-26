@@ -48,6 +48,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 	struct DeviceExtensionSupport {
 		std::optional<SwapchainSupport> swapchainSupport = {};
+		bool hasExtendedDynamicStateSupport = {};
 	};
 
 	struct DeviceInfo {

@@ -58,7 +58,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			&& deviceInfo.extensionSupport.swapchainSupport.has_value()
 			&& deviceInfo.extensionSupport.swapchainSupport.value().hasDoubleBufferingSupport
 			&& !deviceInfo.extensionSupport.swapchainSupport.value().surfaceFormats.empty()
-			&& deviceInfo.extensionSupport.swapchainSupport.value().hasImmediateModePresentationSupport;
+			&& deviceInfo.extensionSupport.swapchainSupport.value().hasImmediateModePresentationSupport
+			&& deviceInfo.extensionSupport.hasExtendedDynamicStateSupport;
 	}
 
 	QueueFamilyIndices DeviceExplorer::queryQueueFamilyIndices(
@@ -112,7 +113,9 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		for (auto& extensionProperties : device.enumerateDeviceExtensionProperties()) {
 			if (std::strcmp(extensionProperties.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0) {
 				extensionSupport.swapchainSupport = querySwapchainSupport(device, surface);
-				break;
+			}
+			else if (std::strcmp(extensionProperties.extensionName, VK_EXT_EXTENDED_DYNAMIC_STATE_EXTENSION_NAME) == 0) {
+				extensionSupport.hasExtendedDynamicStateSupport = true;
 			}
 		}
 

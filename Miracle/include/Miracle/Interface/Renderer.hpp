@@ -37,5 +37,17 @@ namespace Miracle {
 			App::s_currentApp->m_dependencies->getRenderer()
 				.setVsyncAndTripleBuffering(useVsync, useTripleBuffering);
 		}
+
+		static bool isUsingDepthTesting() {
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
+
+			return App::s_currentApp->m_dependencies->getRenderer().isUsingDepthTesting();
+		}
+
+		static void setDepthTesting(bool useDepthTesting) {
+			if (App::s_currentApp == nullptr) [[unlikely]] throw NoAppRunningError();
+
+			App::s_currentApp->m_dependencies->getRenderer().setDepthTesting(useDepthTesting);
+		}
 	};
 }

@@ -61,7 +61,8 @@ int main() {
 				.resizable = true
 			},
 			.rendererConfig = RendererConfig{
-				.meshes = std::vector{
+				.useDepthTesting = true,
+				.meshes          = std::vector{
 					Mesh{
 						.vertices = std::vector{
 							Vertex{ .position = Vector3{ .x = -0.5f, .y = -0.5f, .z = 0.0f } },
@@ -125,10 +126,7 @@ int main() {
 				}
 
 				if (Keyboard::isKeyPressed(KeyboardKey::keyF3)) {
-					Renderer::setVsyncAndTripleBuffering(
-						!Renderer::isUsingVsync(),
-						!Renderer::isUsingTripleBuffering()
-					);
+					Renderer::setDepthTesting(!Renderer::isUsingDepthTesting());
 				}
 			}
 		}

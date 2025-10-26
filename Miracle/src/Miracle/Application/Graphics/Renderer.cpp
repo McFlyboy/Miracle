@@ -16,7 +16,8 @@ namespace Miracle::Application {
 		m_context(context),
 		m_swapchain(m_api.createSwapchain(m_context, initProps.swapchainInitProps)),
 		m_pipeline(m_api.createGraphicsPipeline(m_fileAccess, m_context, *m_swapchain.get())),
-		m_meshBuffersList(createMeshBuffersList(initProps.meshes))
+		m_meshBuffersList(createMeshBuffersList(initProps.meshes)),
+		m_useDepthTesting(initProps.useDepthTesting)
 	{
 		m_logger.info("Renderer created");
 	}
@@ -82,6 +83,8 @@ namespace Miracle::Application {
 				m_swapchain->beginRenderPass(scene.getBackgroundColor());
 				m_context.setViewport(0.0f, 0.0f, swapchainImageSize.width, swapchainImageSize.height);
 				m_context.setScissor(0, 0, swapchainImageSize.width, swapchainImageSize.height);
+				m_context.setDepthTestEnabled(m_useDepthTesting);
+				m_context.setDepthWriteEnabled(m_useDepthTesting);
 
 				if (!m_meshBuffersList.empty()) {
 					scene.forEachEntityAppearance(
