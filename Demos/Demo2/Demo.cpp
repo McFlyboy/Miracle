@@ -56,7 +56,7 @@ public:
 		auto& transform = m_context.getTransform();
 		transform.translate(m_velocity * DeltaTime::get());
 
-		if (transform.getTranslation().distanceTo(Vector3s::zero) > 10.0f)
+		if (transform.getTranslation().distanceTo(Vector3s::zero) > 15.0f)
 			m_context.destroyEntity();
 	}
 };
