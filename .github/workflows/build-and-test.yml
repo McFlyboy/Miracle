@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Setup MSVC dev environment
       uses: ilammy/msvc-dev-cmd@v1
@@ -43,7 +43,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Install ninja-build tool
       uses: seanmiddleditch/gha-setup-ninja@v3
@@ -72,7 +72,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Install ninja-build tool
       uses: seanmiddleditch/gha-setup-ninja@v3
