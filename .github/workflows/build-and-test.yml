@@ -18,11 +18,8 @@ jobs:
     - name: Setup MSVC dev environment
       uses: ilammy/msvc-dev-cmd@v1
 
-    - name: Install ninja-build tool
-      uses: seanmiddleditch/gha-setup-ninja@v3
-
     - name: Install Vulkan SDK
-      uses: humbletim/install-vulkan-sdk@81f46b36426f4ccdc1c0e7ab48109f3c98cfdc81
+      uses: humbletim/install-vulkan-sdk@v1.2
       with:
         version: 1.3.243.0
 
@@ -45,11 +42,8 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install ninja-build tool
-      uses: seanmiddleditch/gha-setup-ninja@v3
-
     - name: Install Vulkan SDK
-      uses: humbletim/install-vulkan-sdk@81f46b36426f4ccdc1c0e7ab48109f3c98cfdc81
+      uses: humbletim/install-vulkan-sdk@v1.2
       with:
         version: 1.3.243.0
 
@@ -74,16 +68,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install ninja-build tool
-      uses: seanmiddleditch/gha-setup-ninja@v3
-
     - name: Install platform-specific dependencies
       run: |
         sudo apt update
         sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev
 
     - name: Install Vulkan SDK
-      uses: humbletim/install-vulkan-sdk@81f46b36426f4ccdc1c0e7ab48109f3c98cfdc81
+      uses: humbletim/install-vulkan-sdk@v1.2
       with:
         version: 1.3.243.0
 
