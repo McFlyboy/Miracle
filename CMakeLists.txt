@@ -19,4 +19,5 @@ add_subdirectory("Miracle")
 # Demo targets
 if(MIRACLE_BUILD_DEMO_TARGETS)
 	add_subdirectory("Demos/Demo1")
+	add_subdirectory("Demos/Demo2")
 endif()

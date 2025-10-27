@@ -8,8 +8,9 @@ static void updateTitle() {
 	Window::setTitle(
 		UnicodeConverter::toUtf8(
 			std::format(
-				"{} - FPS: {} - UPS: {} - Entity count: {}",
+				"{} - Depth test: {} - FPS: {} - UPS: {} - Entity count: {}",
 				CurrentApp::getName(),
+				Renderer::isUsingDepthTesting() ? "enabled" : "disabled",
 				PerformanceCounters::getFps(),
 				PerformanceCounters::getUps(),
 				CurrentScene::getEntityCount()
@@ -61,6 +62,9 @@ int main() {
 				.resizable = true
 			},
 			.rendererConfig = RendererConfig{
+				.swapchainConfig = SwapchainConfig{
+					.useVsync = true
+				},
 				.useDepthTesting = true,
 				.meshes          = std::vector{
 					Mesh{
@@ -83,7 +87,9 @@ int main() {
 						.transformConfig = TransformConfig{
 							.translation = Vector3{ 0.0f, 0.0f, -1.0f }
 						},
-						.cameraConfig    = PerspectiveCameraConfig{},
+						.cameraConfig    = PerspectiveCameraConfig{
+							.fieldOfView = 80.0_deg
+						},
 						.behaviorFactory = BehaviorFactory::createFactoryFor<CameraBehavior>(2.0f, 120.0_deg)
 					},
 					EntityConfig{
@@ -95,13 +101,28 @@ int main() {
 					EntityConfig{
 						.transformConfig = TransformConfig{
 							.translation = Vector3{
-								.x = -1.5f,
-								.z =  1.5f
+								.x = -1.0f,
+								.z =  1.0f
 							}
 						},
 						.appearanceConfig = AppearanceConfig{
 							.meshIndex = 0,
 							.color = ColorRgbs::magenta
+						}
+					},
+					EntityConfig{
+						.transformConfig = TransformConfig{
+							.translation = Vector3{
+								.x = -0.5f,
+								.y = -0.5f,
+								.z =  0.5f
+							},
+							.rotation    = Quaternion::createRotation(Vector3s::right, 90.0_deg),
+							.scale = Vector3{ .x = 1.0f, .y = 1.0f, .z = 1.0f } * 6.0f
+						},
+						.appearanceConfig = AppearanceConfig{
+							.meshIndex = 0,
+							.color = ColorRgbs::green
 						}
 					}
 				},
@@ -127,6 +148,7 @@ int main() {
 
 				if (Keyboard::isKeyPressed(KeyboardKey::keyF3)) {
 					Renderer::setDepthTesting(!Renderer::isUsingDepthTesting());
+					updateTitle();
 				}
 			}
 		}
