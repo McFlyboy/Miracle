@@ -60,7 +60,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		m_frameBuffers.clear();
 		m_depthImageView.clear();
-		m_context.getAllocator().destroyImage(m_depthImage, m_depthImageAllocation);
+		vmaDestroyImage(m_context.getAllocator(), m_depthImage, m_depthImageAllocation);
 	}
 
 	Application::SwapchainImageSize Swapchain::getImageSize() const {
@@ -137,7 +137,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		m_frameBuffers.clear();
 
 		m_depthImageView.clear();
-		m_context.getAllocator().destroyImage(m_depthImage, m_depthImageAllocation);
+		vmaDestroyImage(m_context.getAllocator(), m_depthImage, m_depthImageAllocation);
 
 		m_images.clear();
 		m_swapchain.clear();
@@ -457,47 +457,62 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		return m_context.getDeviceInfo().depthStencilOptimalTilingImageFormatsSupported.back();
 	}
 
-	std::pair<vk::Image, vma::Allocation> Swapchain::createDepthImage() const {
-		try {
-			return m_context.getAllocator().createImage(
-				vk::ImageCreateInfo{
-					.flags                 = {},
-					.imageType             = vk::ImageType::e2D,
-					.format                = m_depthImageFormat,
-					.extent                = vk::Extent3D{
-						.width  = m_imageExtent.width,
-						.height = m_imageExtent.height,
-						.depth  = 1
-					},
-					.mipLevels             = 1,
-					.arrayLayers           = 1,
-					.samples               = vk::SampleCountFlagBits::e1,
-					.tiling                = vk::ImageTiling::eOptimal,
-					.usage                 = vk::ImageUsageFlagBits::eDepthStencilAttachment,
-					.sharingMode           = vk::SharingMode::eExclusive,
-					.queueFamilyIndexCount = 0,
-					.pQueueFamilyIndices   = nullptr,
-					.initialLayout         = vk::ImageLayout::eUndefined
-				},
-				vma::AllocationCreateInfo{
-					.flags          = {},
-					.usage          = vma::MemoryUsage::eAuto,
-					.requiredFlags  = {},
-					.preferredFlags = {},
-					.memoryTypeBits = {},
-					.pool           = nullptr,
-					.pUserData      = nullptr,
-					.priority       = 1.0
-				}
-			);
-		}
-		catch (const std::exception& e) {
+	std::pair<vk::Image, VmaAllocation> Swapchain::createDepthImage() const {
+		auto createInfo = VkImageCreateInfo{
+			.sType				   = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+			.pNext				   = {},
+			.flags                 = {},
+			.imageType             = VK_IMAGE_TYPE_2D,
+			.format                = static_cast<VkFormat>(m_depthImageFormat),
+			.extent                = VkExtent3D{
+				.width  = m_imageExtent.width,
+				.height = m_imageExtent.height,
+				.depth  = 1
+			},
+			.mipLevels             = 1,
+			.arrayLayers           = 1,
+			.samples               = VK_SAMPLE_COUNT_1_BIT,
+			.tiling                = VK_IMAGE_TILING_OPTIMAL,
+			.usage                 = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+			.sharingMode           = VK_SHARING_MODE_EXCLUSIVE,
+			.queueFamilyIndexCount = 0,
+			.pQueueFamilyIndices   = nullptr,
+			.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED
+		};
+
+		auto allocationCreateInfo = VmaAllocationCreateInfo{
+			.flags          = {},
+			.usage          = VMA_MEMORY_USAGE_AUTO,
+			.requiredFlags  = {},
+			.preferredFlags = {},
+			.memoryTypeBits = {},
+			.pool           = nullptr,
+			.pUserData      = nullptr,
+			.priority       = 1.0
+		};
+
+		VkImage image;
+		VmaAllocation allocation;
+		VmaAllocationInfo allocationInfo;
+
+		auto result = vmaCreateImage(
+			m_context.getAllocator(),
+			&createInfo,
+			&allocationCreateInfo,
+			&image,
+			&allocation,
+			&allocationInfo
+		);
+
+		if (result != VK_SUCCESS) {
 			m_logger.error(
-				std::format("Failed to create Vulkan depth image for swapchain.\n{}", e.what())
+				std::format("Failed to create Vulkan depth image for swapchain.\n{}", "vmaCreateImage")
 			);
 
 			throw Application::SwapchainErrors::CreationError();
 		}
+
+		return { image, allocation };
 	}
 
 	vk::raii::ImageView Swapchain::createDepthImageView(const vk::Image& depthImage) const {

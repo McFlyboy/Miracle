@@ -18,7 +18,9 @@ namespace Miracle::Infrastructure::Ecs::Entt {
 
 	public:
 		virtual size_t getEntityCount() const override {
-			return m_registry.storage<EntityId>()->in_use();
+			auto test = m_registry.storage<EntityId>()->each();
+
+			return test.cend().base() - test.cbegin().base();
 		}
 
 		virtual EntityId createEntity(const EntityConfig& config) override;

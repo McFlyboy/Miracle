@@ -23,7 +23,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		std::vector<std::pair<vk::Image, vk::raii::ImageView>> m_images;
 		vk::Format m_depthImageFormat;
 		vk::Image m_depthImage;
-		vma::Allocation m_depthImageAllocation;
+		VmaAllocation m_depthImageAllocation;
 		vk::raii::ImageView m_depthImageView = nullptr;
 		vk::raii::RenderPass m_renderPass = nullptr;
 		std::vector<vk::raii::Framebuffer> m_frameBuffers;
@@ -81,7 +81,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		vk::Format selectOptimalTilingDepthImageFormat() const;
 
-		std::pair<vk::Image, vma::Allocation> createDepthImage() const;
+		std::pair<vk::Image, VmaAllocation> createDepthImage() const;
 
 		vk::raii::ImageView createDepthImageView(const vk::Image& depthImage) const;
 

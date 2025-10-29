@@ -45,7 +45,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		std::vector<vk::raii::Semaphore> m_renderingCompletedSemaphores;
 		std::vector<vk::raii::Semaphore> m_presentCompletedSemaphores;
 		size_t m_currentGraphicsCommandBufferIndex = 0;
-		vma::Allocator m_allocator;
+		VmaAllocator m_allocator;
 
 	public:
 		GraphicsContext(
@@ -118,7 +118,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			return m_presentCompletedSemaphores[m_currentGraphicsCommandBufferIndex];
 		}
 
-		const vma::Allocator& getAllocator() const { return m_allocator; }
+		VmaAllocator getAllocator() const { return m_allocator; }
 
 		SurfaceExtent getCurrentSurfaceExtent() const;
 
@@ -144,10 +144,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		vk::DebugUtilsMessengerCreateInfoEXT getDebugMessengerCreateInfo();
 
-		static VKAPI_ATTR VkBool32 VKAPI_CALL logDebugMessage(
-			VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-			VkDebugUtilsMessageTypeFlagsEXT messageType,
-			const VkDebugUtilsMessengerCallbackDataEXT* callbackData,
+		static vk::Bool32 VKAPI_PTR logDebugMessage(
+			vk::DebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+			vk::DebugUtilsMessageTypeFlagsEXT messageType,
+			const vk::DebugUtilsMessengerCallbackDataEXT* callbackData,
 			void* userData
 		);
 #endif
@@ -167,6 +167,6 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		vk::raii::Semaphore createSemaphore() const;
 
-		vma::Allocator createAllocator() const;
+		VmaAllocator createAllocator() const;
 	};
 }

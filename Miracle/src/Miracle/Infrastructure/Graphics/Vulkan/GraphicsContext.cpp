@@ -69,7 +69,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	GraphicsContext::~GraphicsContext() {
 		m_logger.info("Destroying Vulkan graphics context...");
 
-		m_allocator.destroy();
+		vmaDestroyAllocator(m_allocator);
 	}
 
 	void GraphicsContext::setViewport(
@@ -367,19 +367,19 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		};
 	}
 
-	VKAPI_ATTR VkBool32 VKAPI_CALL GraphicsContext::logDebugMessage(
-		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-		VkDebugUtilsMessageTypeFlagsEXT messageType,
-		const VkDebugUtilsMessengerCallbackDataEXT* callbackData,
+	vk::Bool32 VKAPI_PTR GraphicsContext::logDebugMessage(
+		vk::DebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+		vk::DebugUtilsMessageTypeFlagsEXT messageType,
+		const vk::DebugUtilsMessengerCallbackDataEXT* callbackData,
 		void* userData
 	) {
 		switch (messageSeverity) {
-		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+		case vk::DebugUtilsMessageSeverityFlagBitsEXT::eError:
 			reinterpret_cast<GraphicsContext*>(userData)
 				->m_logger.error(callbackData->pMessage);
 			break;
 
-		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+		case vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning:
 			reinterpret_cast<GraphicsContext*>(userData)
 				->m_logger.warning(callbackData->pMessage);
 			break;
@@ -582,27 +582,30 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 	}
 
-	vma::Allocator GraphicsContext::createAllocator() const {
-		try {
-			return vma::createAllocator(
-				vma::AllocatorCreateInfo{
-					.flags							= {},
-					.physicalDevice					= *m_physicalDevice,
-					.device							= *m_device,
-					.preferredLargeHeapBlockSize	= {},
-					.pAllocationCallbacks			= {},
-					.pDeviceMemoryCallbacks			= {},
-					.pHeapSizeLimit					= {},
-					.pVulkanFunctions				= {},
-					.instance						= *m_instance,
-					.vulkanApiVersion				= s_vulkanApiVersion,
-					.pTypeExternalMemoryHandleTypes	= {}
-				}
-			);
-		}
-		catch (const std::exception& e) {
-			m_logger.error(std::format("Failed to create Vulkan memory allocator for context.\n{}", e.what()));
+	VmaAllocator GraphicsContext::createAllocator() const {
+		auto createInfo = VmaAllocatorCreateInfo{
+			.flags							= {},
+			.physicalDevice					= *m_physicalDevice,
+			.device							= *m_device,
+			.preferredLargeHeapBlockSize	= {},
+			.pAllocationCallbacks			= {},
+			.pDeviceMemoryCallbacks			= {},
+			.pHeapSizeLimit					= {},
+			.pVulkanFunctions				= {},
+			.instance						= *m_instance,
+			.vulkanApiVersion				= s_vulkanApiVersion,
+			.pTypeExternalMemoryHandleTypes	= {}
+		};
+
+		VmaAllocator allocator;
+
+		auto result = vmaCreateAllocator(&createInfo, &allocator);
+
+		if (result != VK_SUCCESS) {
+			m_logger.error(std::format("Failed to create Vulkan memory allocator for context.\n{}", "vmaCreateAllocator"));
 			throw Application::GraphicsContextErrors::CreationError();
 		}
+
+		return allocator;
 	}
 }
