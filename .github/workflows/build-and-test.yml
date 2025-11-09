@@ -52,7 +52,7 @@ jobs:
         export VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT
         cmake --preset macos-release
       env:
-        CXX: gcc-13
+        CXX: g++-13
 
     - name: Build
       run: cmake --build --preset macos-release-build
