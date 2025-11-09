@@ -78,6 +78,8 @@ namespace Miracle::Application {
 
 		auto viewProjection = view * projection;
 
+		m_swapchain->prepareNextImage();
+
 		m_context.recordGraphicsCommands(
 			[&]() {
 				m_swapchain->beginRenderPass(scene.getBackgroundColor());

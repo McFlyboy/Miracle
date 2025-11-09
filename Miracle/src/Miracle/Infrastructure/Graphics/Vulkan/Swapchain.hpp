@@ -44,6 +44,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		virtual void endRenderPass() override;
 
+		virtual void prepareNextImage() override;
+
 		virtual void swap() override;
 
 		virtual void recreate() override;

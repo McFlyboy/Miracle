@@ -51,14 +51,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				.front()
 		);
 
+		m_imageAcquiredSemaphores.reserve(m_graphicsCommandBuffers.size());
 		m_renderingCompletedFences.reserve(m_graphicsCommandBuffers.size());
-		m_renderingCompletedSemaphores.reserve(m_graphicsCommandBuffers.size());
-		m_presentCompletedSemaphores.reserve(m_graphicsCommandBuffers.size());
 
 		for (size_t i = 0; i < m_graphicsCommandBuffers.size(); i++) {
+			m_imageAcquiredSemaphores.push_back(createSemaphore());
 			m_renderingCompletedFences.push_back(createFence(true));
-			m_renderingCompletedSemaphores.push_back(createSemaphore());
-			m_presentCompletedSemaphores.push_back(createSemaphore());
 		}
 
 		m_allocator = createAllocator();
@@ -129,16 +127,6 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	}
 
 	void GraphicsContext::recordGraphicsCommands(const std::function<void()>& recording) {
-		auto result = m_device.waitForFences(
-			*m_renderingCompletedFences[m_currentGraphicsCommandBufferIndex],
-			true,
-			std::numeric_limits<uint64_t>::max()
-		);
-
-		if (result == vk::Result::eTimeout) [[unlikely]] {
-			m_logger.warning("Timed out on waiting for Vulkan fence");
-		}
-
 		m_graphicsCommandBuffers[m_currentGraphicsCommandBufferIndex].begin(
 			vk::CommandBufferBeginInfo{
 				.flags            = {},
@@ -173,12 +161,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		m_graphicsQueue.submit(
 			vk::SubmitInfo{
 				.waitSemaphoreCount   = 1,
-				.pWaitSemaphores      = &*m_presentCompletedSemaphores[m_currentGraphicsCommandBufferIndex],
+				.pWaitSemaphores      = &*m_imageAcquiredSemaphores[m_currentGraphicsCommandBufferIndex],
 				.pWaitDstStageMask    = &waitStage,
 				.commandBufferCount   = 1,
 				.pCommandBuffers      = &*m_graphicsCommandBuffers[m_currentGraphicsCommandBufferIndex],
 				.signalSemaphoreCount = 1,
-				.pSignalSemaphores    = &*m_renderingCompletedSemaphores[m_currentGraphicsCommandBufferIndex]
+				.pSignalSemaphores    = &*getGraphicsCommandsExecutedSemaphore()
 			},
 			* m_renderingCompletedFences[m_currentGraphicsCommandBufferIndex]
 		);
@@ -217,11 +205,20 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			};
 	}
 
-	void GraphicsContext::recreatePresentCompletedSemaphores() {
-		m_presentCompletedSemaphores.clear();
+	void GraphicsContext::allocateGraphicsCommandsExecutedSemaphores(size_t count) {
+		m_graphicsCommandsExecutedSemaphores.clear();
+		m_graphicsCommandsExecutedSemaphores.reserve(count);
 
-		for (size_t i = 0; i < m_graphicsCommandBuffers.size(); i++) {
-			m_presentCompletedSemaphores.push_back(createSemaphore());
+		for (size_t i = 0; i < count; i++) {
+			m_graphicsCommandsExecutedSemaphores.push_back(
+				std::make_pair<std::array<vk::raii::Semaphore, 2>, size_t>(
+					std::array{
+						createSemaphore(),
+						createSemaphore()
+					},
+					0
+				)
+			);
 		}
 	}
 

@@ -44,7 +44,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_frameBuffers.push_back(createFrameBuffer(imageView));
 		}
 
-		m_imageIndex = getNextImageIndex();
+		m_context.allocateGraphicsCommandsExecutedSemaphores(m_images.size());
 
 		m_logger.info(
 			std::format(
@@ -112,11 +112,26 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		m_context.getGraphicsCommandBuffer().endRenderPass();
 	}
 
+	void Swapchain::prepareNextImage() {
+		auto result = m_context.getDevice().waitForFences(
+			*m_context.getRenderingCompletedFence(),
+			true,
+			std::numeric_limits<uint64_t>::max()
+		);
+
+		if (result == vk::Result::eTimeout) [[unlikely]] {
+			m_logger.warning("Timed out on waiting for Vulkan fence");
+		}
+
+		m_imageIndex = getNextImageIndex();
+		m_context.setGraphicsCommandsExecutedSemaphoreIndex(m_imageIndex);
+	}
+
 	void Swapchain::swap() {
 		auto result = m_context.getPresentQueue().presentKHR(
 			vk::PresentInfoKHR{
 				.waitSemaphoreCount = 1,
-				.pWaitSemaphores    = &*m_context.getGraphicsCommandExecutionCompletedSemaphore(),
+				.pWaitSemaphores    = &*m_context.getGraphicsCommandsExecutedSemaphore(),
 				.swapchainCount     = 1,
 				.pSwapchains        = &*m_swapchain,
 				.pImageIndices      = &m_imageIndex,
@@ -129,8 +144,6 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 
 		m_context.nextGraphicsCommandBuffer();
-
-		m_imageIndex = getNextImageIndex();
 	}
 
 	void Swapchain::recreate() {
@@ -161,9 +174,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_frameBuffers.push_back(createFrameBuffer(imageView));
 		}
 
-		m_context.recreatePresentCompletedSemaphores();
-
-		m_imageIndex = getNextImageIndex();
+		m_context.allocateGraphicsCommandsExecutedSemaphores(m_images.size());
 
 		m_logger.info(
 			std::format(
@@ -554,7 +565,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	uint32_t Swapchain::getNextImageIndex() {
 		auto [result, imageIndex] = m_swapchain.acquireNextImage(
 			std::numeric_limits<uint64_t>().max(),
-			*m_context.getGraphicsCommandPresentCompletedSemaphore()
+			*m_context.getImageAcquiredSemaphore()
 		);
 
 		switch (result) {

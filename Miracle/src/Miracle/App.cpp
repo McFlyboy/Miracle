@@ -105,7 +105,7 @@ namespace Miracle {
 				currentScene.update();
 				performanceCountingService.incrementUpdateCounter();
 
-				bool frameRendered = renderer.render(sceneManager.getCurrentScene());
+				bool frameRendered = renderer.render(currentScene);
 
 				if (frameRendered) {
 					performanceCountingService.incrementFrameCounter();

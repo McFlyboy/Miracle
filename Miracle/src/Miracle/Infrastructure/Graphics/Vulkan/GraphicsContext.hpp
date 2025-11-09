@@ -6,6 +6,7 @@
 #include <array>
 #include <vector>
 #include <cstdint>
+#include <cstddef>
 
 #include <Miracle/Definitions.hpp>
 #include <Miracle/Application/Graphics/IGraphicsContext.hpp>
@@ -19,7 +20,7 @@
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	class GraphicsContext : public Application::IGraphicsContext {
 	private:
-		static constexpr uint32_t s_vulkanApiVersion = VK_API_VERSION_1_1;
+		static constexpr uint32_t s_vulkanApiVersion = vk::ApiVersion11;
 		static constexpr auto s_validationLayerNames = std::array{ "VK_LAYER_KHRONOS_validation" };
 
 		Application::ILogger& m_logger;
@@ -41,10 +42,11 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::CommandPool m_transferCommandPool = nullptr;
 		std::vector<vk::raii::CommandBuffer> m_graphicsCommandBuffers;
 		vk::raii::CommandBuffer m_transferCommandBuffer = nullptr;
+		std::vector<vk::raii::Semaphore> m_imageAcquiredSemaphores;
+		std::vector<std::pair<std::array<vk::raii::Semaphore, 2>, size_t>> m_graphicsCommandsExecutedSemaphores;
 		std::vector<vk::raii::Fence> m_renderingCompletedFences;
-		std::vector<vk::raii::Semaphore> m_renderingCompletedSemaphores;
-		std::vector<vk::raii::Semaphore> m_presentCompletedSemaphores;
 		size_t m_currentGraphicsCommandBufferIndex = 0;
+		size_t m_graphicsCommandsExecutedSemaphoreIndex = 0;
 		VmaAllocator m_allocator;
 
 	public:
@@ -110,12 +112,22 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			return m_transferCommandBuffer;
 		}
 
-		const vk::raii::Semaphore& getGraphicsCommandExecutionCompletedSemaphore() const {
-			return m_renderingCompletedSemaphores[m_currentGraphicsCommandBufferIndex];
+		const vk::raii::Semaphore& getImageAcquiredSemaphore() const {
+			return m_imageAcquiredSemaphores[m_currentGraphicsCommandBufferIndex];
 		}
 
-		const vk::raii::Semaphore& getGraphicsCommandPresentCompletedSemaphore() const {
-			return m_presentCompletedSemaphores[m_currentGraphicsCommandBufferIndex];
+		const vk::raii::Semaphore& getGraphicsCommandsExecutedSemaphore() const {
+			auto& [semaphores, index] = m_graphicsCommandsExecutedSemaphores[m_graphicsCommandsExecutedSemaphoreIndex];
+			return semaphores[index];
+		}
+
+		void setGraphicsCommandsExecutedSemaphoreIndex(size_t index) {
+			m_graphicsCommandsExecutedSemaphoreIndex = index;
+			++m_graphicsCommandsExecutedSemaphores[m_graphicsCommandsExecutedSemaphoreIndex].second %= 2;
+		}
+
+		const vk::raii::Fence& getRenderingCompletedFence() const {
+			return m_renderingCompletedFences[m_currentGraphicsCommandBufferIndex];
 		}
 
 		VmaAllocator getAllocator() const { return m_allocator; }
@@ -126,11 +138,11 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			return m_physicalDevice.getSurfaceCapabilitiesKHR(*m_surface).currentTransform;
 		}
 
+		void allocateGraphicsCommandsExecutedSemaphores(size_t count);
+
 		void nextGraphicsCommandBuffer() {
 			++m_currentGraphicsCommandBufferIndex %= m_graphicsCommandBuffers.size();
 		}
-
-		void recreatePresentCompletedSemaphores();
 
 	private:
 		vk::raii::Instance createInstance(const std::string_view& appName);
