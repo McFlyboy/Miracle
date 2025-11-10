@@ -18,6 +18,9 @@ jobs:
     - name: Setup MSVC dev environment
       uses: ilammy/msvc-dev-cmd@v1
 
+    - name: Test
+      run: curl https://sourceforge.net/p/tinyfiledialogs/code/ci/b071fb40ad9b321408d480a6d1433bf21be01578/tree/tinyfiledialogs.c?format=raw --output test.c
+
     - name: Install Vulkan SDK
       uses: humbletim/install-vulkan-sdk@v1.2
       with:
