@@ -2,7 +2,7 @@
 
 namespace Miracle {
 	struct SwapchainConfig {
-		bool useVsync           = false;
+		bool useVsync = false;
 		bool useTripleBuffering = false;
 	};
 }

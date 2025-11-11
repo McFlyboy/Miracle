@@ -16,7 +16,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		GraphicsContext& m_context;
 
 		vk::Buffer m_buffer = nullptr;
-		vma::Allocation m_allocation = nullptr;
+		VmaAllocation m_allocation = nullptr;
 		uint32_t m_indexCount = 0;
 
 	public:

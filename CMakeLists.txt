@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
+﻿cmake_minimum_required(VERSION 3.21)
 
 project("Miracle")
 
@@ -19,4 +19,5 @@ add_subdirectory("Miracle")
 # Demo targets
 if(MIRACLE_BUILD_DEMO_TARGETS)
 	add_subdirectory("Demos/Demo1")
+	add_subdirectory("Demos/Demo2")
 endif()

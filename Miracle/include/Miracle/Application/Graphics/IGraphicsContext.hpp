@@ -28,6 +28,12 @@ namespace Miracle::Application {
 		) = 0;
 
 		// Graphics command
+		virtual void setDepthTestEnabled(bool enabled) = 0;
+
+		// Graphics command
+		virtual void setDepthWriteEnabled(bool enabled) = 0;
+
+		// Graphics command
 		virtual void draw(uint32_t vertexCount) = 0;
 
 		// Graphics command

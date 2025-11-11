@@ -21,6 +21,8 @@ namespace Miracle::Application {
 		// Graphics command
 		virtual void endRenderPass() = 0;
 
+		virtual void prepareNextImage() = 0;
+
 		virtual void swap() = 0;
 
 		virtual void recreate() = 0;

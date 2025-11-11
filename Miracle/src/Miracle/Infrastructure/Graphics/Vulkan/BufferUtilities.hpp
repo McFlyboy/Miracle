@@ -1,6 +1,6 @@
 #pragma once
 
-#include <utility>
+#include <tuple>
 
 #include "Vulkan.hpp"
 #include "Vma.hpp"
@@ -11,12 +11,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	public:
 		BufferUtilities() = delete;
 
-		static std::pair<vk::Buffer, vma::Allocation> createStagingBuffer(
+		static std::tuple<vk::Buffer, VmaAllocation, VmaAllocationInfo> createStagingBuffer(
 			GraphicsContext& m_context,
 			vk::DeviceSize bufferSize
 		);
 
-		static std::pair<vk::Buffer, vma::Allocation> createBuffer(
+		static std::tuple<vk::Buffer, VmaAllocation, VmaAllocationInfo> createBuffer(
 			GraphicsContext& m_context,
 			vk::BufferUsageFlags usage,
 			vk::DeviceSize bufferSize

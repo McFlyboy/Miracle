@@ -21,16 +21,18 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		auto requiredBufferSize = static_cast<vk::DeviceSize>(sizeof(vertices.front()) * vertices.size());
 
-		auto [stagingBuffer, stagingAllocation] = std::pair<vk::Buffer, vma::Allocation>();
+		auto [stagingBuffer, stagingAllocation, stagingAllocationInfo] =
+			std::tuple<vk::Buffer, VmaAllocation, VmaAllocationInfo>();
 
 		try {
-			auto [buffer, allocation] = BufferUtilities::createStagingBuffer(
+			auto [buffer, allocation, allocationInfo] = BufferUtilities::createStagingBuffer(
 				m_context,
 				requiredBufferSize
 			);
 
 			stagingBuffer = buffer;
 			stagingAllocation = allocation;
+			stagingAllocationInfo = allocationInfo;
 		}
 		catch (const std::exception& e) {
 			m_logger.error(
@@ -40,11 +42,11 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			throw Application::VertexBufferErrors::CreationError();
 		}
 
-		auto stagingBufferData = m_context.getAllocator().getAllocationInfo(stagingAllocation).pMappedData;
+		auto stagingBufferData = stagingAllocationInfo.pMappedData;
 		std::memcpy(stagingBufferData, vertices.data(), requiredBufferSize);
 
 		try {
-			auto [buffer, allocation] = BufferUtilities::createBuffer(
+			auto [buffer, allocation, allocationInfo] = BufferUtilities::createBuffer(
 				m_context,
 				vk::BufferUsageFlagBits::eVertexBuffer,
 				requiredBufferSize
@@ -58,13 +60,13 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				std::format("Failed to create Vulkan vertex buffer.\n{}", e.what())
 			);
 
-			m_context.getAllocator().destroyBuffer(stagingBuffer, stagingAllocation);
+			vmaDestroyBuffer(m_context.getAllocator(), stagingBuffer, stagingAllocation);
 			throw Application::VertexBufferErrors::CreationError();
 		}
 
 		BufferUtilities::copyBuffer(m_context, m_buffer, stagingBuffer, requiredBufferSize);
 
-		m_context.getAllocator().destroyBuffer(stagingBuffer, stagingAllocation);
+		vmaDestroyBuffer(m_context.getAllocator(), stagingBuffer, stagingAllocation);
 
 		m_vertexCount = vertices.size();
 
@@ -74,7 +76,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	VertexBuffer::~VertexBuffer() {
 		m_logger.info("Destroying Vulkan vertex buffer...");
 
-		m_context.getAllocator().destroyBuffer(m_buffer, m_allocation);
+		vmaDestroyBuffer(m_context.getAllocator(), m_buffer, m_allocation);
 	}
 
 	void VertexBuffer::bind() {

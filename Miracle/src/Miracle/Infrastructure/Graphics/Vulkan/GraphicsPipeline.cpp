@@ -105,6 +105,19 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			.alphaToOneEnable      = {}
 		};
 
+		auto depthStencilStateCreateInfo = vk::PipelineDepthStencilStateCreateInfo{
+			.flags                 = {},
+			.depthTestEnable       = {},
+			.depthWriteEnable      = {},
+			.depthCompareOp        = vk::CompareOp::eLess,
+			.depthBoundsTestEnable = false,
+			.stencilTestEnable     = false,
+			.front                 = {},
+			.back                  = {},
+			.minDepthBounds        = {},
+			.maxDepthBounds        = {}
+		};
+
 		auto colorBlendAttachmentState = vk::PipelineColorBlendAttachmentState{
 			.blendEnable         = false,
 			.srcColorBlendFactor = {},
@@ -130,7 +143,9 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 		auto dynamicStates = std::array{
 			vk::DynamicState::eViewport,
-			vk::DynamicState::eScissor
+			vk::DynamicState::eScissor,
+			vk::DynamicState::eDepthTestEnable,
+			vk::DynamicState::eDepthWriteEnable
 		};
 
 		auto dynamicStateCreateInfo = vk::PipelineDynamicStateCreateInfo{
@@ -181,7 +196,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 					.pViewportState      = &viewportStateCreateInfo,
 					.pRasterizationState = &rasterizationStateCreateInfo,
 					.pMultisampleState   = &multisampleStateCreateInfo,
-					.pDepthStencilState  = nullptr,
+					.pDepthStencilState  = &depthStencilStateCreateInfo,
 					.pColorBlendState    = &colorBlendStateCreateInfo,
 					.pDynamicState       = &dynamicStateCreateInfo,
 					.layout              = *m_layout,

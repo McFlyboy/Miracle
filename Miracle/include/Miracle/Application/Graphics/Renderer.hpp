@@ -18,6 +18,7 @@
 namespace Miracle::Application {
 	struct RendererInitProps{
 		SwapchainInitProps swapchainInitProps = {};
+		bool useDepthTesting;
 		const std::vector<Mesh>& meshes = {};
 	};
 
@@ -31,6 +32,7 @@ namespace Miracle::Application {
 		std::unique_ptr<ISwapchain> m_swapchain;
 		std::unique_ptr<IGraphicsPipeline> m_pipeline;
 		std::vector<MeshBuffers> m_meshBuffersList;
+		bool m_useDepthTesting;
 
 	public:
 		Renderer(
@@ -64,6 +66,12 @@ namespace Miracle::Application {
 			m_swapchain->setTripleBuffering(useTripleBuffering);
 			m_context.waitForDeviceIdle();
 			m_swapchain->recreate();
+		}
+
+		bool isUsingDepthTesting() const { return m_useDepthTesting; }
+
+		void setDepthTesting(bool useDepthTesting) {
+			m_useDepthTesting = useDepthTesting;
 		}
 
 		bool render(const Scene& scene);

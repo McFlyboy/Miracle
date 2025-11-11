@@ -51,14 +51,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				.front()
 		);
 
-		m_graphicsCommandBufferSubmittedFences.reserve(m_graphicsCommandBuffers.size());
-		m_graphicsCommandExecutionCompletedSemaphores.reserve(m_graphicsCommandBuffers.size());
-		m_graphicsCommandPresentCompletedSemaphores.reserve(m_graphicsCommandBuffers.size());
+		m_imageAcquiredSemaphores.reserve(m_graphicsCommandBuffers.size());
+		m_renderingCompletedFences.reserve(m_graphicsCommandBuffers.size());
 
 		for (size_t i = 0; i < m_graphicsCommandBuffers.size(); i++) {
-			m_graphicsCommandBufferSubmittedFences.push_back(createFence(true));
-			m_graphicsCommandExecutionCompletedSemaphores.push_back(createSemaphore());
-			m_graphicsCommandPresentCompletedSemaphores.push_back(createSemaphore());
+			m_imageAcquiredSemaphores.push_back(createSemaphore());
+			m_renderingCompletedFences.push_back(createFence(true));
 		}
 
 		m_allocator = createAllocator();
@@ -69,7 +67,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	GraphicsContext::~GraphicsContext() {
 		m_logger.info("Destroying Vulkan graphics context...");
 
-		m_allocator.destroy();
+		vmaDestroyAllocator(m_allocator);
 	}
 
 	void GraphicsContext::setViewport(
@@ -112,6 +110,14 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		);
 	}
 
+	void GraphicsContext::setDepthTestEnabled(bool enabled) {
+		getGraphicsCommandBuffer().setDepthTestEnable(enabled);
+	}
+
+	void GraphicsContext::setDepthWriteEnabled(bool enabled) {
+		getGraphicsCommandBuffer().setDepthWriteEnable(enabled);
+	}
+
 	void GraphicsContext::draw(uint32_t vertexCount) {
 		getGraphicsCommandBuffer().draw(vertexCount, 1, 0, 0);
 	}
@@ -121,16 +127,6 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	}
 
 	void GraphicsContext::recordGraphicsCommands(const std::function<void()>& recording) {
-		auto result = m_device.waitForFences(
-			*m_graphicsCommandBufferSubmittedFences[m_currentGraphicsCommandBufferIndex],
-			true,
-			std::numeric_limits<uint64_t>::max()
-		);
-
-		if (result == vk::Result::eTimeout) [[unlikely]] {
-			m_logger.warning("Timed out on waiting for Vulkan fence");
-		}
-
 		m_graphicsCommandBuffers[m_currentGraphicsCommandBufferIndex].begin(
 			vk::CommandBufferBeginInfo{
 				.flags            = {},
@@ -160,19 +156,19 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	void GraphicsContext::submitGraphicsRecording() {
 		vk::PipelineStageFlags waitStage = vk::PipelineStageFlagBits::eColorAttachmentOutput;
 
-		m_device.resetFences(*m_graphicsCommandBufferSubmittedFences[m_currentGraphicsCommandBufferIndex]);
+		m_device.resetFences(*m_renderingCompletedFences[m_currentGraphicsCommandBufferIndex]);
 
 		m_graphicsQueue.submit(
 			vk::SubmitInfo{
 				.waitSemaphoreCount   = 1,
-				.pWaitSemaphores      = &*m_graphicsCommandPresentCompletedSemaphores[m_currentGraphicsCommandBufferIndex],
+				.pWaitSemaphores      = &*m_imageAcquiredSemaphores[m_currentGraphicsCommandBufferIndex],
 				.pWaitDstStageMask    = &waitStage,
 				.commandBufferCount   = 1,
 				.pCommandBuffers      = &*m_graphicsCommandBuffers[m_currentGraphicsCommandBufferIndex],
 				.signalSemaphoreCount = 1,
-				.pSignalSemaphores    = &*m_graphicsCommandExecutionCompletedSemaphores[m_currentGraphicsCommandBufferIndex]
+				.pSignalSemaphores    = &*getGraphicsCommandsExecutedSemaphore()
 			},
-			* m_graphicsCommandBufferSubmittedFences[m_currentGraphicsCommandBufferIndex]
+			* m_renderingCompletedFences[m_currentGraphicsCommandBufferIndex]
 		);
 	}
 
@@ -209,11 +205,20 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			};
 	}
 
-	void GraphicsContext::recreatePresentCompletedSemaphores() {
-		m_graphicsCommandPresentCompletedSemaphores.clear();
+	void GraphicsContext::allocateGraphicsCommandsExecutedSemaphores(size_t count) {
+		m_graphicsCommandsExecutedSemaphores.clear();
+		m_graphicsCommandsExecutedSemaphores.reserve(count);
 
-		for (size_t i = 0; i < m_graphicsCommandBuffers.size(); i++) {
-			m_graphicsCommandPresentCompletedSemaphores.push_back(createSemaphore());
+		for (size_t i = 0; i < count; i++) {
+			m_graphicsCommandsExecutedSemaphores.push_back(
+				std::make_pair<std::array<vk::raii::Semaphore, 2>, size_t>(
+					std::array{
+						createSemaphore(),
+						createSemaphore()
+					},
+					0
+				)
+			);
 		}
 	}
 
@@ -359,19 +364,19 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		};
 	}
 
-	VKAPI_ATTR VkBool32 VKAPI_CALL GraphicsContext::logDebugMessage(
-		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-		VkDebugUtilsMessageTypeFlagsEXT messageType,
-		const VkDebugUtilsMessengerCallbackDataEXT* callbackData,
+	vk::Bool32 VKAPI_PTR GraphicsContext::logDebugMessage(
+		vk::DebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+		vk::DebugUtilsMessageTypeFlagsEXT messageType,
+		const vk::DebugUtilsMessengerCallbackDataEXT* callbackData,
 		void* userData
 	) {
 		switch (messageSeverity) {
-		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+		case vk::DebugUtilsMessageSeverityFlagBitsEXT::eError:
 			reinterpret_cast<GraphicsContext*>(userData)
 				->m_logger.error(callbackData->pMessage);
 			break;
 
-		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+		case vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning:
 			reinterpret_cast<GraphicsContext*>(userData)
 				->m_logger.warning(callbackData->pMessage);
 			break;
@@ -469,11 +474,19 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			);
 		}
 
-		auto extensionNames = std::array{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+		auto extensionNames = std::array{
+			VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+			VK_EXT_EXTENDED_DYNAMIC_STATE_EXTENSION_NAME
+		};
+
+		auto extendedDynamicStateFeatures = vk::PhysicalDeviceExtendedDynamicStateFeaturesEXT{
+			.extendedDynamicState = true
+		};
 
 		try {
 			return m_physicalDevice.createDevice(
 				vk::DeviceCreateInfo{
+					.pNext                   = &extendedDynamicStateFeatures,
 					.flags                   = {},
 					.queueCreateInfoCount    = static_cast<uint32_t>(deviceQueueCreateInfos.size()),
 					.pQueueCreateInfos       = deviceQueueCreateInfos.data(),
@@ -566,27 +579,30 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 	}
 
-	vma::Allocator GraphicsContext::createAllocator() const {
-		try {
-			return vma::createAllocator(
-				vma::AllocatorCreateInfo{
-					.flags							= {},
-					.physicalDevice					= *m_physicalDevice,
-					.device							= *m_device,
-					.preferredLargeHeapBlockSize	= {},
-					.pAllocationCallbacks			= {},
-					.pDeviceMemoryCallbacks			= {},
-					.pHeapSizeLimit					= {},
-					.pVulkanFunctions				= {},
-					.instance						= *m_instance,
-					.vulkanApiVersion				= s_vulkanApiVersion,
-					.pTypeExternalMemoryHandleTypes	= {}
-				}
-			);
-		}
-		catch (const std::exception& e) {
-			m_logger.error(std::format("Failed to create Vulkan memory allocator for context.\n{}", e.what()));
+	VmaAllocator GraphicsContext::createAllocator() const {
+		auto createInfo = VmaAllocatorCreateInfo{
+			.flags							= {},
+			.physicalDevice					= *m_physicalDevice,
+			.device							= *m_device,
+			.preferredLargeHeapBlockSize	= {},
+			.pAllocationCallbacks			= {},
+			.pDeviceMemoryCallbacks			= {},
+			.pHeapSizeLimit					= {},
+			.pVulkanFunctions				= {},
+			.instance						= *m_instance,
+			.vulkanApiVersion				= s_vulkanApiVersion,
+			.pTypeExternalMemoryHandleTypes	= {}
+		};
+
+		VmaAllocator allocator;
+
+		auto result = vmaCreateAllocator(&createInfo, &allocator);
+
+		if (result != VK_SUCCESS) {
+			m_logger.error(std::format("Failed to create Vulkan memory allocator for context.\n{}", "vmaCreateAllocator"));
 			throw Application::GraphicsContextErrors::CreationError();
 		}
+
+		return allocator;
 	}
 }

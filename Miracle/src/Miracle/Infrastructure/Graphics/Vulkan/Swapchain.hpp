@@ -6,6 +6,7 @@
 #include <Miracle/Application/Graphics/ISwapchain.hpp>
 #include <Miracle/Application/ILogger.hpp>
 #include "Vulkan.hpp"
+#include "Vma.hpp"
 #include "GraphicsContext.hpp"
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
@@ -20,6 +21,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::PresentModeKHR m_presentMode;
 		vk::raii::SwapchainKHR m_swapchain;
 		std::vector<std::pair<vk::Image, vk::raii::ImageView>> m_images;
+		vk::Format m_depthImageFormat;
+		vk::Image m_depthImage;
+		VmaAllocation m_depthImageAllocation;
+		vk::raii::ImageView m_depthImageView = nullptr;
 		vk::raii::RenderPass m_renderPass = nullptr;
 		std::vector<vk::raii::Framebuffer> m_frameBuffers;
 		uint32_t m_imageIndex = 0;
@@ -38,6 +43,8 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		virtual void beginRenderPass(ColorRgb clearColor) override;
 
 		virtual void endRenderPass() override;
+
+		virtual void prepareNextImage() override;
 
 		virtual void swap() override;
 
@@ -73,6 +80,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		vk::raii::RenderPass createRenderPass() const;
 
 		vk::raii::Framebuffer createFrameBuffer(const vk::raii::ImageView& imageView) const;
+
+		vk::Format selectOptimalTilingDepthImageFormat() const;
+
+		std::pair<vk::Image, VmaAllocation> createDepthImage() const;
+
+		vk::raii::ImageView createDepthImageView(const vk::Image& depthImage) const;
 
 		uint32_t getNextImageIndex();
 	};

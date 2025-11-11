@@ -15,7 +15,7 @@ find_package(spdlog CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(tinyfiledialogs CONFIG REQUIRED)
 find_package(Vulkan REQUIRED)
-find_package(unofficial-vulkan-memory-allocator-hpp CONFIG REQUIRED)
+find_package(VulkanMemoryAllocator CONFIG REQUIRED)
 find_package(EnTT CONFIG REQUIRED)
 
 # Link 3rd-party libraries
@@ -25,7 +25,7 @@ target_link_libraries(
 	PRIVATE glfw
 	PRIVATE tinyfiledialogs::tinyfiledialogs
 	PRIVATE Vulkan::Vulkan
-	PRIVATE unofficial::VulkanMemoryAllocator-Hpp::VulkanMemoryAllocator-Hpp
+	PRIVATE GPUOpen::VulkanMemoryAllocator
 	PRIVATE EnTT::EnTT
 )
 

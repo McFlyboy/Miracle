@@ -8,8 +8,9 @@ static void updateTitle() {
 	Window::setTitle(
 		UnicodeConverter::toUtf8(
 			std::format(
-				"{} - FPS: {} - UPS: {} - Entity count: {}",
+				"{} - Depth test: {} - FPS: {} - UPS: {} - Entity count: {}",
 				CurrentApp::getName(),
+				Renderer::isUsingDepthTesting() ? "enabled" : "disabled",
 				PerformanceCounters::getFps(),
 				PerformanceCounters::getUps(),
 				CurrentScene::getEntityCount()
@@ -17,80 +18,6 @@ static void updateTitle() {
 		)
 	);
 }
-
-class ProjectileBehavior : public BehaviorBase {
-private:
-	Vector3 m_velocity;
-
-public:
-	ProjectileBehavior(
-		const EntityContext& context,
-		float movementSpeed
-	) : BehaviorBase(context),
-		m_velocity(Vector3s::up * movementSpeed)
-	{}
-
-	virtual void act() override {
-		auto& transform = m_context.getTransform();
-
-		transform.translate(m_velocity * DeltaTime::get());
-
-		if (transform.getTranslation().getLength() > 10.0f) {
-			m_context.destroyEntity();
-		}
-	}
-};
-
-class PlayerBehavior : public BehaviorBase {
-private:
-	float m_movementSpeed;
-	Degrees m_turnSpeed;
-
-public:
-	PlayerBehavior(
-		const EntityContext& context,
-		float movementSpeed,
-		Degrees turnSpeed
-	) : BehaviorBase(context),
-		m_movementSpeed(movementSpeed),
-		m_turnSpeed(turnSpeed)
-	{}
-	
-	virtual void act() override {
-		auto velocity = Vector3{
-			.x = static_cast<float>(Keyboard::isKeyHeld(KeyboardKey::keyD) - Keyboard::isKeyHeld(KeyboardKey::keyA)),
-			.y = static_cast<float>(Keyboard::isKeyHeld(KeyboardKey::keyW) - Keyboard::isKeyHeld(KeyboardKey::keyS))
-		};
-
-		float rotation = Keyboard::isKeyHeld(KeyboardKey::keyQ) - Keyboard::isKeyHeld(KeyboardKey::keyE);
-
-		auto& transform = m_context.getTransform();
-
-		transform.rotate(Quaternion::createRotation(Vector3s::forward, rotation * m_turnSpeed * DeltaTime::get()));
-		transform.translate(velocity.toNormalized() * m_movementSpeed * DeltaTime::get());
-
-		if (Keyboard::isKeyPressed(KeyboardKey::keySpace)) {
-			CurrentScene::createEntity(
-				EntityConfig{
-					.transformConfig = TransformConfig{
-						.translation = transform.getTranslation(),
-						.rotation    = transform.getRotation(),
-						.scale       = Vector3{ .x = 0.5f, .y = 0.5f, .z = 1.0f }
-					},
-					.appearanceConfig = AppearanceConfig{
-						.meshIndex = 1,
-						.color     = ColorRgbs::magenta
-					},
-					.behaviorFactory = BehaviorFactory::createFactoryFor<ProjectileBehavior>(3.0f)
-				}
-			);
-		}
-
-		if (Keyboard::isKeyPressed(KeyboardKey::keyDelete)) {
-			m_context.destroyEntity();
-		}
-	}
-};
 
 class CameraBehavior : public BehaviorBase {
 private:
@@ -129,14 +56,18 @@ int main() {
 		AppConfig{
 			.windowConfig = WindowConfig{
 				.size = WindowSize{
-					.width  = 800,
+					.width = 800,
 					.height = 600
 				},
 				.resizable = true
 			},
 			.rendererConfig = RendererConfig{
-				.meshes = std::vector<Mesh>{
-					{
+				.swapchainConfig = SwapchainConfig{
+					.useVsync = true
+				},
+				.useDepthTesting = true,
+				.meshes          = std::vector{
+					Mesh{
 						.vertices = std::vector{
 							Vertex{ .position = Vector3{ .x = -0.5f, .y = -0.5f, .z = 0.0f } },
 							Vertex{ .position = Vector3{ .x =  0.5f, .y = -0.5f, .z = 0.0f } },
@@ -147,34 +78,52 @@ int main() {
 							Face{ .indices = { 0, 1, 2 } },
 							Face{ .indices = { 0, 2, 3 } }
 						}
-					},
-					{
-						.vertices = std::vector{
-							Vertex{ .position = Vector3{ .x = -0.5f, .y = -0.5f, .z = 0.0f } },
-							Vertex{ .position = Vector3{ .x =  0.5f, .y = -0.5f, .z = 0.0f } },
-							Vertex{ .position = Vector3{ .x =  0.0f, .y =  0.5f, .z = 0.0f } }
-						},
-						.faces = std::vector{
-							Face{ .indices = { 0, 1, 2 } }
-						}
 					}
 				}
 			},
 			.sceneConfig = SceneConfig{
-				.entityConfigs = std::vector<EntityConfig>{
-					{
+				.entityConfigs = std::vector{
+					EntityConfig{
 						.transformConfig = TransformConfig{
 							.translation = Vector3{ 0.0f, 0.0f, -1.0f }
 						},
-						.cameraConfig = PerspectiveCameraConfig{},
-						.behaviorFactory = BehaviorFactory::createFactoryFor<CameraBehavior>(1.0f, 120.0_deg)
+						.cameraConfig    = PerspectiveCameraConfig{
+							.fieldOfView = 80.0_deg
+						},
+						.behaviorFactory = BehaviorFactory::createFactoryFor<CameraBehavior>(2.0f, 120.0_deg)
 					},
-					{
+					EntityConfig{
 						.appearanceConfig = AppearanceConfig{
 							.meshIndex = 0,
-							.color     = ColorRgbs::green
+							.color     = ColorRgb::createFromNonlinearSrgbColorCode(0xFF7700)
+						}
+					},
+					EntityConfig{
+						.transformConfig = TransformConfig{
+							.translation = Vector3{
+								.x = -1.0f,
+								.z =  1.0f
+							}
 						},
-						.behaviorFactory = BehaviorFactory::createFactoryFor<PlayerBehavior>(10.0f, 270.0_deg)
+						.appearanceConfig = AppearanceConfig{
+							.meshIndex = 0,
+							.color = ColorRgbs::magenta
+						}
+					},
+					EntityConfig{
+						.transformConfig = TransformConfig{
+							.translation = Vector3{
+								.x = -0.5f,
+								.y = -0.5f,
+								.z =  0.5f
+							},
+							.rotation    = Quaternion::createRotation(Vector3s::right, 90.0_deg),
+							.scale = Vector3{ .x = 1.0f, .y = 1.0f, .z = 1.0f } * 6.0f
+						},
+						.appearanceConfig = AppearanceConfig{
+							.meshIndex = 0,
+							.color = ColorRgbs::green
+						}
 					}
 				},
 				.entityCreatedCallback   = [](EntityId) { updateTitle(); },
@@ -198,16 +147,14 @@ int main() {
 				}
 
 				if (Keyboard::isKeyPressed(KeyboardKey::keyF3)) {
-					Renderer::setVsyncAndTripleBuffering(
-						!Renderer::isUsingVsync(),
-						!Renderer::isUsingTripleBuffering()
-					);
+					Renderer::setDepthTesting(!Renderer::isUsingDepthTesting());
+					updateTitle();
 				}
 			}
 		}
 	);
 
 	int exitCode = app.run();
-
+	
 	return exitCode;
 }

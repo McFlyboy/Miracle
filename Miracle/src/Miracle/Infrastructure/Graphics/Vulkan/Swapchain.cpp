@@ -28,6 +28,14 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_images.emplace_back(image, createImageView(image));
 		}
 
+		m_depthImageFormat = selectOptimalTilingDepthImageFormat();
+
+		auto [depthImage, depthImageAllocation] = createDepthImage();
+
+		m_depthImage = depthImage;
+		m_depthImageAllocation = depthImageAllocation;
+		m_depthImageView = createDepthImageView(m_depthImage);
+
 		m_renderPass = createRenderPass();
 
 		m_frameBuffers.reserve(m_images.size());
@@ -36,7 +44,7 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_frameBuffers.push_back(createFrameBuffer(imageView));
 		}
 
-		m_imageIndex = getNextImageIndex();
+		m_context.allocateGraphicsCommandsExecutedSemaphores(m_images.size());
 
 		m_logger.info(
 			std::format(
@@ -49,6 +57,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 
 	Swapchain::~Swapchain() {
 		m_logger.info("Destroying Vulkan swapchain...");
+
+		m_frameBuffers.clear();
+		m_depthImageView.clear();
+		vmaDestroyImage(m_context.getAllocator(), m_depthImage, m_depthImageAllocation);
 	}
 
 	Application::SwapchainImageSize Swapchain::getImageSize() const {
@@ -69,6 +81,12 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 						1.0f
 					}
 				)
+			),
+			vk::ClearValue(
+				vk::ClearDepthStencilValue{
+					.depth   = 1.0f,
+					.stencil = 0
+				}
 			)
 		};
 
@@ -94,11 +112,26 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		m_context.getGraphicsCommandBuffer().endRenderPass();
 	}
 
+	void Swapchain::prepareNextImage() {
+		auto result = m_context.getDevice().waitForFences(
+			*m_context.getRenderingCompletedFence(),
+			true,
+			std::numeric_limits<uint64_t>::max()
+		);
+
+		if (result == vk::Result::eTimeout) [[unlikely]] {
+			m_logger.warning("Timed out on waiting for Vulkan fence");
+		}
+
+		m_imageIndex = getNextImageIndex();
+		m_context.setGraphicsCommandsExecutedSemaphoreIndex(m_imageIndex);
+	}
+
 	void Swapchain::swap() {
 		auto result = m_context.getPresentQueue().presentKHR(
 			vk::PresentInfoKHR{
 				.waitSemaphoreCount = 1,
-				.pWaitSemaphores    = &*m_context.getGraphicsCommandExecutionCompletedSemaphore(),
+				.pWaitSemaphores    = &*m_context.getGraphicsCommandsExecutedSemaphore(),
 				.swapchainCount     = 1,
 				.pSwapchains        = &*m_swapchain,
 				.pImageIndices      = &m_imageIndex,
@@ -111,12 +144,14 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 
 		m_context.nextGraphicsCommandBuffer();
-
-		m_imageIndex = getNextImageIndex();
 	}
 
 	void Swapchain::recreate() {
 		m_frameBuffers.clear();
+
+		m_depthImageView.clear();
+		vmaDestroyImage(m_context.getAllocator(), m_depthImage, m_depthImageAllocation);
+
 		m_images.clear();
 		m_swapchain.clear();
 
@@ -129,13 +164,17 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			m_images.emplace_back(image, createImageView(image));
 		}
 
+		auto [depthImage, depthImageAllocation] = createDepthImage();
+
+		m_depthImage = depthImage;
+		m_depthImageAllocation = depthImageAllocation;
+		m_depthImageView = createDepthImageView(m_depthImage);
+
 		for (auto& [image, imageView] : m_images) {
 			m_frameBuffers.push_back(createFrameBuffer(imageView));
 		}
 
-		m_context.recreatePresentCompletedSemaphores();
-
-		m_imageIndex = getNextImageIndex();
+		m_context.allocateGraphicsCommandsExecutedSemaphores(m_images.size());
 
 		m_logger.info(
 			std::format(
@@ -318,14 +357,30 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				.stencilStoreOp = vk::AttachmentStoreOp::eDontCare,
 				.initialLayout  = vk::ImageLayout::eUndefined,
 				.finalLayout    = vk::ImageLayout::ePresentSrcKHR
+			},
+			vk::AttachmentDescription{
+				.flags          = {},
+				.format         = m_depthImageFormat,
+				.samples        = vk::SampleCountFlagBits::e1,
+				.loadOp         = vk::AttachmentLoadOp::eClear,
+				.storeOp        = vk::AttachmentStoreOp::eDontCare,
+				.stencilLoadOp  = vk::AttachmentLoadOp::eDontCare,
+				.stencilStoreOp = vk::AttachmentStoreOp::eDontCare,
+				.initialLayout  = vk::ImageLayout::eUndefined,
+				.finalLayout    = vk::ImageLayout::eDepthStencilAttachmentOptimal
 			}
 		};
 
-		auto attachmentReferences = std::array{
+		auto colorAttachmentReferences = std::array{
 			vk::AttachmentReference{
 				.attachment = 0,
 				.layout     = vk::ImageLayout::eColorAttachmentOptimal
 			}
+		};
+
+		auto depthStencilAttachmentReference = vk::AttachmentReference{
+			.attachment = 1,
+			.layout = vk::ImageLayout::eDepthStencilAttachmentOptimal
 		};
 
 		auto subpasses = std::array{
@@ -334,10 +389,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				.pipelineBindPoint       = vk::PipelineBindPoint::eGraphics,
 				.inputAttachmentCount    = 0,
 				.pInputAttachments       = nullptr,
-				.colorAttachmentCount    = static_cast<uint32_t>(attachmentReferences.size()),
-				.pColorAttachments       = attachmentReferences.data(),
+				.colorAttachmentCount    = static_cast<uint32_t>(colorAttachmentReferences.size()),
+				.pColorAttachments       = colorAttachmentReferences.data(),
 				.pResolveAttachments     = nullptr,
-				.pDepthStencilAttachment = nullptr,
+				.pDepthStencilAttachment = &depthStencilAttachmentReference,
 				.preserveAttachmentCount = 0,
 				.pPreserveAttachments    = nullptr
 			}
@@ -347,10 +402,10 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 			vk::SubpassDependency{
 				.srcSubpass      = VK_SUBPASS_EXTERNAL,
 				.dstSubpass      = 0,
-				.srcStageMask    = vk::PipelineStageFlagBits::eColorAttachmentOutput,
-				.dstStageMask    = vk::PipelineStageFlagBits::eColorAttachmentOutput,
-				.srcAccessMask   = vk::AccessFlags(),
-				.dstAccessMask   = vk::AccessFlagBits::eColorAttachmentWrite,
+				.srcStageMask    = vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eLateFragmentTests,
+				.dstStageMask    = vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+				.srcAccessMask   = vk::AccessFlagBits::eDepthStencilAttachmentWrite,
+				.dstAccessMask   = vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite,
 				.dependencyFlags = {}
 			}
 		};
@@ -378,13 +433,18 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 	}
 
 	vk::raii::Framebuffer Swapchain::createFrameBuffer(const vk::raii::ImageView& imageView) const {
+		auto attachments = std::array{
+			*imageView,
+			*m_depthImageView
+		};
+
 		try {
 			return m_context.getDevice().createFramebuffer(
 				vk::FramebufferCreateInfo{
 					.flags           = {},
 					.renderPass      = *m_renderPass,
-					.attachmentCount = 1,
-					.pAttachments    = &*imageView,
+					.attachmentCount = static_cast<uint32_t>(attachments.size()),
+					.pAttachments    = attachments.data(),
 					.width           = m_imageExtent.width,
 					.height          = m_imageExtent.height,
 					.layers          = 1
@@ -400,10 +460,112 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		}
 	}
 
+	vk::Format Swapchain::selectOptimalTilingDepthImageFormat() const {
+		for (auto& format : m_context.getDeviceInfo().depthStencilOptimalTilingImageFormatsSupported) {
+			if (format == vk::Format::eD32Sfloat) return format;
+		}
+
+		return m_context.getDeviceInfo().depthStencilOptimalTilingImageFormatsSupported.back();
+	}
+
+	std::pair<vk::Image, VmaAllocation> Swapchain::createDepthImage() const {
+		auto createInfo = VkImageCreateInfo{
+			.sType				   = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+			.pNext				   = {},
+			.flags                 = {},
+			.imageType             = VK_IMAGE_TYPE_2D,
+			.format                = static_cast<VkFormat>(m_depthImageFormat),
+			.extent                = VkExtent3D{
+				.width  = m_imageExtent.width,
+				.height = m_imageExtent.height,
+				.depth  = 1
+			},
+			.mipLevels             = 1,
+			.arrayLayers           = 1,
+			.samples               = VK_SAMPLE_COUNT_1_BIT,
+			.tiling                = VK_IMAGE_TILING_OPTIMAL,
+			.usage                 = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+			.sharingMode           = VK_SHARING_MODE_EXCLUSIVE,
+			.queueFamilyIndexCount = 0,
+			.pQueueFamilyIndices   = nullptr,
+			.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED
+		};
+
+		auto allocationCreateInfo = VmaAllocationCreateInfo{
+			.flags          = {},
+			.usage          = VMA_MEMORY_USAGE_AUTO,
+			.requiredFlags  = {},
+			.preferredFlags = {},
+			.memoryTypeBits = {},
+			.pool           = nullptr,
+			.pUserData      = nullptr,
+			.priority       = 1.0
+		};
+
+		VkImage image;
+		VmaAllocation allocation;
+		VmaAllocationInfo allocationInfo;
+
+		auto result = vmaCreateImage(
+			m_context.getAllocator(),
+			&createInfo,
+			&allocationCreateInfo,
+			&image,
+			&allocation,
+			&allocationInfo
+		);
+
+		if (result != VK_SUCCESS) {
+			m_logger.error(
+				std::format("Failed to create Vulkan depth image for swapchain.\n{}", "vmaCreateImage")
+			);
+
+			throw Application::SwapchainErrors::CreationError();
+		}
+
+		return { image, allocation };
+	}
+
+	vk::raii::ImageView Swapchain::createDepthImageView(const vk::Image& depthImage) const {
+		try {
+			return m_context.getDevice().createImageView(
+				vk::ImageViewCreateInfo{
+					.flags            = {},
+					.image            = depthImage,
+					.viewType         = vk::ImageViewType::e2D,
+					.format           = m_depthImageFormat,
+					.components       = vk::ComponentMapping{
+						.r = vk::ComponentSwizzle::eIdentity,
+						.g = vk::ComponentSwizzle::eIdentity,
+						.b = vk::ComponentSwizzle::eIdentity,
+						.a = vk::ComponentSwizzle::eIdentity
+					},
+					.subresourceRange = vk::ImageSubresourceRange{
+						.aspectMask     = vk::ImageAspectFlagBits::eDepth,
+						.baseMipLevel   = 0,
+						.levelCount     = 1,
+						.baseArrayLayer = 0,
+						.layerCount     = 1
+					}
+				}
+			);
+		}
+		catch (const std::exception& e) {
+			m_logger.error(
+				std::format(
+					"Failed to create Vulkan depth image view for depth image for swapchain.\n{}",
+					e.what()
+				)
+			);
+
+			throw Application::SwapchainErrors::CreationError();
+		}
+	}
+
 	uint32_t Swapchain::getNextImageIndex() {
 		auto [result, imageIndex] = m_swapchain.acquireNextImage(
 			std::numeric_limits<uint64_t>().max(),
-			*m_context.getGraphicsCommandPresentCompletedSemaphore()
+			*m_context.getImageAcquiredSemaphore()
 		);
 
 		switch (result) {

@@ -8,6 +8,7 @@
 namespace Miracle {
 	struct RendererConfig {
 		SwapchainConfig swapchainConfig = {};
+		bool useDepthTesting = false;
 		std::vector<Mesh> meshes = {};
 	};
 }

@@ -2,6 +2,8 @@
 
 #include <cstring>
 #include <span>
+#include <vector>
+#include <utility>
 
 namespace Miracle::Infrastructure::Graphics::Vulkan {
 	DeviceInfo DeviceExplorer::getDeviceInfo(
@@ -20,24 +22,44 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 				memorySize += memoryProperties.memoryHeaps[memoryType.heapIndex].size;
 			}
 		}
+
+		auto depthStencilImageFormats = std::vector{
+			vk::Format::eD16Unorm,
+			vk::Format::eD16UnormS8Uint,
+			vk::Format::eD24UnormS8Uint,
+			vk::Format::eD32Sfloat,
+			vk::Format::eD32SfloatS8Uint
+		};
+
+		auto supportedDepthStencilImageFormatsWithOptimalTiling = std::vector<vk::Format>();
+
+		for (auto& depthStencilImageFormat : depthStencilImageFormats) {
+			auto formatProperties = device.getFormatProperties(depthStencilImageFormat);
+
+			if (formatProperties.optimalTilingFeatures & vk::FormatFeatureFlagBits::eDepthStencilAttachment)
+				supportedDepthStencilImageFormatsWithOptimalTiling.push_back(depthStencilImageFormat);
+		}
 		
 		return DeviceInfo{
-			.name                  = properties.deviceName,
-			.type                  = properties.deviceType,
-			.deviceLocalMemorySize = memorySize,
-			.queueFamilyIndices    = queryQueueFamilyIndices(device, surface),
-			.extensionSupport      = queryExtensionSupport(device, surface)
+			.name                                           = properties.deviceName,
+			.type                                           = properties.deviceType,
+			.deviceLocalMemorySize                          = memorySize,
+			.depthStencilOptimalTilingImageFormatsSupported = std::move(supportedDepthStencilImageFormatsWithOptimalTiling),
+			.queueFamilyIndices                             = queryQueueFamilyIndices(device, surface),
+			.extensionSupport                               = queryExtensionSupport(device, surface)
 		};
 	}
 
 	bool DeviceExplorer::isDeviceSupported(const DeviceInfo& deviceInfo) {
-		return deviceInfo.queueFamilyIndices.graphicsFamilyIndex.has_value()
+		return !deviceInfo.depthStencilOptimalTilingImageFormatsSupported.empty()
+			&& deviceInfo.queueFamilyIndices.graphicsFamilyIndex.has_value()
 			&& deviceInfo.queueFamilyIndices.presentFamilyIndex.has_value()
 			&& deviceInfo.queueFamilyIndices.transferFamilyIndex.has_value()
 			&& deviceInfo.extensionSupport.swapchainSupport.has_value()
 			&& deviceInfo.extensionSupport.swapchainSupport.value().hasDoubleBufferingSupport
 			&& !deviceInfo.extensionSupport.swapchainSupport.value().surfaceFormats.empty()
-			&& deviceInfo.extensionSupport.swapchainSupport.value().hasImmediateModePresentationSupport;
+			&& deviceInfo.extensionSupport.swapchainSupport.value().hasImmediateModePresentationSupport
+			&& deviceInfo.extensionSupport.hasExtendedDynamicStateSupport;
 	}
 
 	QueueFamilyIndices DeviceExplorer::queryQueueFamilyIndices(
@@ -91,7 +113,9 @@ namespace Miracle::Infrastructure::Graphics::Vulkan {
 		for (auto& extensionProperties : device.enumerateDeviceExtensionProperties()) {
 			if (std::strcmp(extensionProperties.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0) {
 				extensionSupport.swapchainSupport = querySwapchainSupport(device, surface);
-				break;
+			}
+			else if (std::strcmp(extensionProperties.extensionName, VK_EXT_EXTENDED_DYNAMIC_STATE_EXTENSION_NAME) == 0) {
+				extensionSupport.hasExtendedDynamicStateSupport = true;
 			}
 		}
 
