@@ -30,7 +30,7 @@ public:
 		m_movementSpeed(movementSpeed)
 	{}
 
-	virtual void act() {
+	virtual void act() override {
 		auto velocity = Vector3{
 			.x = static_cast<float>(Keyboard::isKeyHeld(KeyboardKey::keyRight) - Keyboard::isKeyHeld(KeyboardKey::keyLeft)),
 			.y = static_cast<float>(Keyboard::isKeyHeld(KeyboardKey::keyUp) - Keyboard::isKeyHeld(KeyboardKey::keyDown)),
@@ -52,7 +52,7 @@ public:
 		m_velocity(Vector3s::up * movementSpeed)
 	{}
 
-	virtual void act() {
+	virtual void act() override {
 		auto& transform = m_context.getTransform();
 		transform.translate(m_velocity * DeltaTime::get());
 
@@ -76,7 +76,7 @@ public:
 		m_turnSpeed(turnSpeed)
 	{}
 
-	virtual void act() {
+	virtual void act() override {
 		auto velocity = (Vector3s::up * (static_cast<float>(Keyboard::isKeyHeld(KeyboardKey::keyW) - Keyboard::isKeyHeld(KeyboardKey::keyS))))
 			.toNormalized() * m_movementSpeed;
 

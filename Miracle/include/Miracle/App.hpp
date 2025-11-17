@@ -53,7 +53,7 @@ namespace Miracle {
 		bool m_running = false;
 
 	public:
-		App(
+		explicit App(
 			std::string&& name,
 			AppConfig&& config = {},
 			UserData&& userData = {}

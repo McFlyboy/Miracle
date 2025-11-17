@@ -34,7 +34,7 @@ public:
 		m_turnSpeed(turnSpeed)
 	{}
 
-	virtual void act() {
+	virtual void act() override {
 		auto velocity = Vector3{
 			.x = static_cast<float>(Keyboard::isKeyHeld(KeyboardKey::keyRight) - Keyboard::isKeyHeld(KeyboardKey::keyLeft)),
 			.y = static_cast<float>(Keyboard::isKeyHeld(KeyboardKey::keyPageUp) - Keyboard::isKeyHeld(KeyboardKey::keyPageDown)),
